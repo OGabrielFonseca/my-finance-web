@@ -119,7 +119,6 @@ export class TransactionListPage {
   protected readonly list = injectCrudList(this.api, {
     sort: { field: 'transactionDate', direction: 'desc' },
     initialFilter: this.initialFilter,
-    filterFields: this.filters,
   });
 
   constructor() {

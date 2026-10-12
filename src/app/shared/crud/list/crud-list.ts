@@ -1,21 +1,16 @@
 import type { Signal } from '@angular/core';
-import { computed, effect, inject, signal, untracked } from '@angular/core';
+import { computed, signal } from '@angular/core';
 import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
-import { ActivatedRoute, Router } from '@angular/router';
 import { Subject, catchError, finalize, map, merge, of, switchMap } from 'rxjs';
 
 import type { PageRequest, PageResponse, SortSpec } from '../../data/page';
 import { DEFAULT_PAGE_SIZE, samePageRequest } from '../../data/page';
 import type { ListSource } from '../api/crud-api.service';
-import type { FilterField, FilterValue } from '../filter/filter';
-import { readListState, writeListState } from './list-state';
 
 export interface CrudListOptions<F> {
   sort?: SortSpec; // ordenação inicial
   size?: number; // padrão 20
   initialFilter?: Partial<F>; // ex.: { archived: false }
-  filterFields?: readonly FilterField[]; // usado para ler o filtro da URL com os tipos certos
-  syncWithUrl?: boolean; // padrão true
 }
 
 /** O que a <app-data-table> precisa de uma listagem. */
@@ -35,26 +30,18 @@ export interface CrudList<T, F> extends PagedList<T> {
 }
 
 /**
- * Estado de uma listagem paginada: filtro, página, ordenação, carregamento e sincronização com a URL.
- * Chamar em inicializador de campo (contexto de injeção): `readonly list = injectCrudList(this.api, {...})`.
+ * Estado de uma listagem paginada: filtro, página, ordenação e carregamento. O filtro vem do filter-bar; a lista não
+ * lê nem grava a URL. Chamar em inicializador de campo (contexto de injeção): `readonly list = injectCrudList(this.api, {...})`.
  */
 export function injectCrudList<T, F extends object>(
   api: ListSource<T, F>,
   options: CrudListOptions<F> = {},
 ): CrudList<T, F> {
-  const route = inject(ActivatedRoute);
-  const router = inject(Router);
-  const syncWithUrl = options.syncWithUrl ?? true;
   const initialFilter = options.initialFilter ?? {};
   const defaultSize = options.size ?? DEFAULT_PAGE_SIZE;
-  const fromUrl = syncWithUrl ? readListState(route.snapshot.queryParamMap, options.filterFields ?? []) : undefined;
 
-  const filter = signal<Partial<F>>({ ...initialFilter, ...(fromUrl?.filter as Partial<F> | undefined) });
-  const page = signal<PageRequest>({
-    page: fromUrl?.page ?? 0,
-    size: fromUrl?.size ?? defaultSize,
-    sort: fromUrl?.sort ?? options.sort,
-  });
+  const filter = signal<Partial<F>>({ ...initialFilter });
+  const page = signal<PageRequest>({ page: 0, size: defaultSize, sort: options.sort });
   const data = signal<PageResponse<T> | null>(null);
   const loading = signal(false);
   const reload$ = new Subject<void>();
@@ -75,17 +62,6 @@ export function injectCrudList<T, F extends object>(
     .subscribe((result) => {
       if (result) data.set(result);
     });
-
-  if (syncWithUrl) {
-    effect(() => {
-      const queryParams = writeListState(filter() as FilterValue, page(), {
-        filter: initialFilter as FilterValue,
-        size: defaultSize,
-        sort: options.sort,
-      });
-      untracked(() => void router.navigate([], { relativeTo: route, queryParams, replaceUrl: true }));
-    });
-  }
 
   return {
     filter: filter.asReadonly(),

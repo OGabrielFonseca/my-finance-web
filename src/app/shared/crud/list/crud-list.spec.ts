@@ -1,16 +1,10 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { Router, provideRouter } from '@angular/router';
 import { of, throwError } from 'rxjs';
 
 import type { PageRequest, PageResponse } from '../../data/page';
 import type { ListSource } from '../api/crud-api.service';
 import type { CrudList, CrudListOptions } from './crud-list';
 import { injectCrudList } from './crud-list';
-import type { FilterField } from '../filter/filter';
-
-@Component({ template: '', changeDetection: ChangeDetectionStrategy.OnPush })
-class BlankPage {}
 
 interface Item {
   id: string;
@@ -28,19 +22,11 @@ const page = (ids: string[], totalItems = ids.length): PageResponse<Item> => ({
   totalPages: 1,
 });
 
-const fields: FilterField[] = [
-  { key: 'name', type: 'text', label: 'x' },
-  { key: 'archived', type: 'boolean', label: 'x' },
-];
-
 describe('injectCrudList', () => {
   let api: ListSource<Item, Filter> & { list: ReturnType<typeof vi.fn> };
-  let router: Router;
 
   beforeEach(() => {
     api = { list: vi.fn(() => of(page(['a', 'b'], 42))) };
-    TestBed.configureTestingModule({ providers: [provideRouter([{ path: '**', component: BlankPage }])] });
-    router = TestBed.inject(Router);
   });
 
   function create(options: CrudListOptions<Filter> = {}): CrudList<Item, Filter> {
@@ -95,38 +81,5 @@ describe('injectCrudList', () => {
 
     expect(list.items().map((i) => i.id)).toEqual(['a', 'b']);
     expect(list.loading()).toBe(false);
-  });
-
-  it('lê filtro, página e ordenação da URL, por cima do filtro inicial', async () => {
-    await router.navigateByUrl('/accounts?name=nu&page=2&sort=type,desc');
-
-    create({ initialFilter: { archived: false }, filterFields: fields });
-
-    expect(lastCall()).toEqual([
-      { archived: false, name: 'nu' },
-      { page: 2, size: 20, sort: { field: 'type', direction: 'desc' } },
-    ]);
-  });
-
-  it('grava na URL só o que difere do padrão', async () => {
-    await router.navigateByUrl('/accounts');
-    const list = create({ initialFilter: { archived: false }, filterFields: fields });
-
-    list.setFilter({ archived: true, name: 'nu' });
-    TestBed.tick();
-
-    await vi.waitFor(() => expect(router.url).toBe('/accounts?archived=true&name=nu'));
-  });
-
-  it('syncWithUrl: false não lê nem grava a URL', async () => {
-    await router.navigateByUrl('/accounts?name=nu');
-    const list = create({ syncWithUrl: false, filterFields: fields });
-
-    list.setFilter({ name: 'outro' });
-    TestBed.tick();
-    await Promise.resolve();
-
-    expect(lastCall()[0]).toEqual({ name: 'outro' });
-    expect(router.url).toBe('/accounts?name=nu');
   });
 });

@@ -1,5 +1,5 @@
 <ng-template #fieldsTemplate let-prefix>
-  <form [formGroup]="form()" class="flex flex-col gap-3 lg:flex-row lg:flex-wrap lg:items-end">
+  <form [formGroup]="form" class="flex flex-col gap-3 lg:flex-row lg:flex-wrap lg:items-end">
     @for (field of fields(); track field.key) {
       @let id = prefix + field.key;
       <div class="flex flex-col gap-1 lg:w-56">

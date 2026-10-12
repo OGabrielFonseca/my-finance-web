@@ -80,3 +80,15 @@ describe('sameFilter', () => {
     expect(sameFilter({ a: '1' }, { a: '2' })).toBe(false);
   });
 });
+
+describe('ida e volta do formulário', () => {
+  it('ida e volta do formulário preserva o período inicial', () => {
+    const f: FilterField[] = [
+      { key: 'period', type: 'dateRange', label: 'x', fromKey: 'from', toKey: 'to' },
+      { key: 'archived', type: 'boolean', label: 'x' },
+    ];
+    const initial = { from: '2026-10-01', to: '2026-10-31', archived: false };
+    const form = filterToForm(f, initial);
+    expect(formToFilter(f, form)).toEqual(initial);
+  });
+});

@@ -61,7 +61,6 @@ export class AccountListPage {
   protected readonly list = injectCrudList(this.api, {
     sort: { field: 'name', direction: 'asc' },
     initialFilter: this.initialFilter,
-    filterFields: this.filters,
   });
 
   /** Saldo por conta visível: a listagem não traz saldo, então é uma chamada /balance por linha (poucas contas). */

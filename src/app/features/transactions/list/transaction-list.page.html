@@ -4,12 +4,7 @@
     <p-menu #newMenu [model]="newItems" [popup]="true" appendTo="body" />
   </ng-container>
 
-  <app-filter-bar
-    [fields]="filters"
-    [value]="list.filter()"
-    [initial]="initialFilter"
-    (changed)="list.setFilter($event)"
-  />
+  <app-filter-bar [fields]="filters" [initial]="initialFilter" (changed)="list.setFilter($event)" />
 
   <app-data-table [columns]="columns" [list]="list" [actions]="actions" (action)="onAction($event)">
     <ng-template appCell="description" let-t>
