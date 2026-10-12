@@ -1,0 +1,5 @@
+docs/
+dist/
+.angular/
+package-lock.json
+src/api/schema.d.ts

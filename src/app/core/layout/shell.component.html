@@ -1,0 +1,51 @@
+<div class="flex min-h-screen flex-col">
+  <header
+    class="sticky top-0 z-10 flex h-14 items-center gap-3 border-b border-surface bg-surface-0 px-4 dark:bg-surface-900"
+  >
+    <p-button
+      class="lg:hidden"
+      icon="pi pi-bars"
+      severity="secondary"
+      [text]="true"
+      [ariaLabel]="'menu.open' | transloco"
+      (onClick)="menuOpen.set(true)"
+    />
+    <a routerLink="/dashboard" class="text-lg font-semibold text-color no-underline">{{ 'app.name' | transloco }}</a>
+    <span class="flex-1"></span>
+    <app-theme-toggle />
+    <app-user-menu />
+  </header>
+
+  <div class="flex flex-1">
+    <aside class="hidden w-60 shrink-0 border-r border-surface bg-surface-0 p-3 lg:block dark:bg-surface-900">
+      <ng-container *ngTemplateOutlet="nav" />
+    </aside>
+    <main class="min-w-0 flex-1 p-4 lg:p-6">
+      <router-outlet />
+    </main>
+  </div>
+</div>
+
+<p-drawer [(visible)]="menuOpen" [header]="'app.name' | transloco">
+  <ng-container *ngTemplateOutlet="nav" />
+</p-drawer>
+
+<ng-template #nav>
+  <nav [attr.aria-label]="'menu.label' | transloco">
+    <ul class="m-0 flex list-none flex-col gap-1 p-0">
+      @for (item of menu; track item.route) {
+        <li>
+          <a
+            [routerLink]="item.route"
+            routerLinkActive="bg-emphasis font-semibold"
+            class="flex items-center gap-3 rounded-border px-3 py-2 text-color no-underline hover:bg-emphasis"
+            (click)="menuOpen.set(false)"
+          >
+            <i [class]="item.icon"></i>
+            {{ item.label | transloco }}
+          </a>
+        </li>
+      }
+    </ul>
+  </nav>
+</ng-template>
