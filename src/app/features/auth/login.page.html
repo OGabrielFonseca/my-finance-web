@@ -31,9 +31,5 @@
 
       <p-button type="submit" [label]="'auth.submit' | transloco" [loading]="submit.submitting()" [fluid]="true" />
     </form>
-
-    @if (isMock) {
-      <p-message class="mt-4 block" severity="info" size="small">{{ 'auth.mockHint' | transloco }}</p-message>
-    }
   </section>
 </main>

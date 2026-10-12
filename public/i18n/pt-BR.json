@@ -18,9 +18,7 @@
   },
   "user": {
     "menu": "Menu do usuário",
-    "logout": "Sair",
-    "expireSession": "Expirar sessão (mock)",
-    "expireSessionDone": "A próxima ação vai encerrar a sessão."
+    "logout": "Sair"
   },
   "common": {
     "new": "Novo",

@@ -5,6 +5,5 @@
     "email": "E-mail",
     "password": "Senha"
   },
-  "submit": "Entrar",
-  "mockHint": "Protótipo com dados fictícios: use qualquer e-mail e senha. A senha \"errada\" simula credenciais inválidas."
+  "submit": "Entrar"
 }

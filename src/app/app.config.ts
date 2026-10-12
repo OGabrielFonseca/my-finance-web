@@ -6,8 +6,6 @@ import { ConfirmationService, MessageService } from 'primeng/api';
 import { providePrimeNG } from 'primeng/config';
 import { DialogService } from 'primeng/dynamicdialog';
 
-import { environment } from '@env/environment';
-
 import { routes } from './app.routes';
 import { authInterceptor } from './core/auth/auth.interceptor';
 import { provideAuth } from './core/auth/auth.providers';
@@ -20,10 +18,7 @@ export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
     provideRouter(routes, withComponentInputBinding()),
-    provideHttpClient(
-      withFetch(),
-      withInterceptors([authInterceptor, languageInterceptor, errorInterceptor, ...environment.mockInterceptors]),
-    ),
+    provideHttpClient(withFetch(), withInterceptors([authInterceptor, languageInterceptor, errorInterceptor])),
     providePrimeNG({
       theme: {
         preset: MyFinancePreset,

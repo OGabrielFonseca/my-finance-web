@@ -2,7 +2,6 @@ import { ChangeDetectionStrategy, Component, inject, input } from '@angular/core
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthStore } from '@core/auth/auth.store';
-import { environment } from '@env/environment';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { FieldComponent } from '@shared/forms/field.component';
 import { injectFormSubmit } from '@shared/forms/form-submit';
@@ -24,7 +23,6 @@ export class LoginPage {
   /** Preenchido pelo query param ?returnUrl= (withComponentInputBinding). */
   readonly returnUrl = input<string>();
 
-  protected readonly isMock = environment.useMockApi;
   protected readonly form = inject(NonNullableFormBuilder).group({
     email: ['', [Validators.required, Validators.email]],
     password: ['', Validators.required],
