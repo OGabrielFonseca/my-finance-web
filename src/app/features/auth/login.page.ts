@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject, input } from '@angular/core';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { AuthStoreService } from '@core/auth/auth-store.service';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { FieldComponent } from '@shared/forms';
@@ -12,7 +12,7 @@ import { Password } from 'primeng/password';
 
 @Component({
   selector: 'app-login-page',
-  imports: [ReactiveFormsModule, TranslocoPipe, FieldComponent, Button, InputText, Message, Password],
+  imports: [ReactiveFormsModule, RouterLink, TranslocoPipe, FieldComponent, Button, InputText, Message, Password],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './login.page.html',
 })

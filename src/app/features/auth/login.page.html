@@ -30,6 +30,8 @@
       }
 
       <p-button type="submit" [label]="'auth.submit' | transloco" [loading]="submit.submitting()" [fluid]="true" />
+
+      <a routerLink="/register" class="text-center text-sm text-primary">{{ 'auth.link' | transloco }}</a>
     </form>
   </section>
 </main>
