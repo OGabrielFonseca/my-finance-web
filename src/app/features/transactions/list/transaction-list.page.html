@@ -1,0 +1,61 @@
+<app-crud-page title="transactions.title" [showCreate]="false">
+  <ng-container pageActions>
+    <p-button icon="pi pi-plus" [label]="'common.new' | transloco" (onClick)="newMenu.toggle($event)" />
+    <p-menu #newMenu [model]="newItems" [popup]="true" appendTo="body" />
+  </ng-container>
+
+  <app-filter-bar
+    [fields]="filters"
+    [value]="list.filter()"
+    [initial]="initialFilter"
+    (changed)="list.setFilter($event)"
+  />
+
+  <app-data-table [columns]="columns" [list]="list" [actions]="actions" (action)="onAction($event)">
+    <ng-template appCell="description" let-t>
+      <span class="flex items-center gap-2">
+        {{ t.description }}
+        @if (t.installmentTotal) {
+          <small class="text-muted-color">{{ t.installmentNumber }}/{{ t.installmentTotal }}</small>
+        }
+        @if (readOnly(t); as reason) {
+          <i
+            class="pi pi-lock text-xs text-muted-color"
+            [attr.title]="'transactions.readOnly.' + reason | transloco"
+            [attr.aria-label]="'transactions.readOnly.' + reason | transloco"
+          ></i>
+        }
+      </span>
+    </ng-template>
+
+    <ng-template appCell="category" let-t>
+      @if (t.category; as category) {
+        <span class="flex items-center gap-2">
+          <span class="inline-block size-3 shrink-0 rounded-full" [style.background]="category.color"></span>
+          {{ category.name }}
+        </span>
+      } @else {
+        <span class="text-muted-color">{{ 'enums.transactionType.TRANSFER' | transloco }}</span>
+      }
+    </ng-template>
+
+    <ng-template appCell="account" let-t>
+      {{ t.account.name }}
+      @if (t.destinationAccount; as destination) {
+        <i class="pi pi-arrow-right mx-1 text-xs text-muted-color"></i>
+        {{ destination.name }}
+      }
+    </ng-template>
+
+    <ng-template appCell="status" let-t>
+      <p-tag
+        [severity]="t.status === 'PENDING' ? 'warn' : 'success'"
+        [value]="'enums.transactionStatus.' + t.status | transloco"
+      />
+    </ng-template>
+
+    <ng-template appCell="amount" let-t>
+      <app-money [amount]="t.amount" [kind]="t.type" />
+    </ng-template>
+  </app-data-table>
+</app-crud-page>

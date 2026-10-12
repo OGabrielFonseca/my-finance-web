@@ -1,0 +1,39 @@
+<main class="flex min-h-screen items-center justify-center p-4">
+  <section class="w-full max-w-sm rounded-border border border-surface bg-surface-0 p-6 shadow-sm dark:bg-surface-900">
+    <header class="mb-6 flex flex-col gap-1">
+      <span class="flex items-center gap-2 text-xl font-semibold">
+        <i class="pi pi-wallet"></i>
+        {{ 'app.name' | transloco }}
+      </span>
+      <h1 class="m-0 text-2xl font-semibold">{{ 'auth.title' | transloco }}</h1>
+      <p class="m-0 text-muted-color">{{ 'auth.subtitle' | transloco }}</p>
+    </header>
+
+    <form [formGroup]="form" (ngSubmit)="submit.submit()" class="flex flex-col gap-4">
+      <app-field label="auth.fields.email" fieldId="login-email" [control]="form.controls.email">
+        <input pInputText id="login-email" type="email" autocomplete="username" formControlName="email" />
+      </app-field>
+
+      <app-field label="auth.fields.password" fieldId="login-password" [control]="form.controls.password">
+        <p-password
+          inputId="login-password"
+          formControlName="password"
+          autocomplete="current-password"
+          [feedback]="false"
+          [toggleMask]="true"
+          [fluid]="true"
+        />
+      </app-field>
+
+      @if (submit.error(); as message) {
+        <p-message severity="error">{{ message }}</p-message>
+      }
+
+      <p-button type="submit" [label]="'auth.submit' | transloco" [loading]="submit.submitting()" [fluid]="true" />
+    </form>
+
+    @if (isMock) {
+      <p-message class="mt-4 block" severity="info" size="small">{{ 'auth.mockHint' | transloco }}</p-message>
+    }
+  </section>
+</main>

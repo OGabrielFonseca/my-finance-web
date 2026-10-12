@@ -1,0 +1,71 @@
+<form [formGroup]="form" (ngSubmit)="submit.submit()" class="flex flex-col gap-4">
+  <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+    <app-field label="transactions.fields.fromAccount" fieldId="tf-from" [control]="form.controls.fromAccountId">
+      <p-select
+        inputId="tf-from"
+        formControlName="fromAccountId"
+        [options]="accountOptions()"
+        optionLabel="label"
+        optionValue="value"
+        appendTo="body"
+      />
+    </app-field>
+
+    <app-field label="transactions.fields.toAccount" fieldId="tf-to" [control]="form.controls.toAccountId">
+      <p-select
+        inputId="tf-to"
+        formControlName="toAccountId"
+        [options]="accountOptions()"
+        optionLabel="label"
+        optionValue="value"
+        appendTo="body"
+      />
+    </app-field>
+  </div>
+
+  <app-field label="transactions.fields.description" fieldId="tf-description" [control]="form.controls.description">
+    <input pInputText id="tf-description" formControlName="description" />
+  </app-field>
+
+  <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
+    <app-field label="transactions.fields.amount" fieldId="tf-amount" [control]="form.controls.amount">
+      <p-inputnumber
+        inputId="tf-amount"
+        formControlName="amount"
+        mode="currency"
+        currency="BRL"
+        locale="pt-BR"
+        [min]="0.01"
+        [fluid]="true"
+      />
+    </app-field>
+
+    <app-field label="transactions.fields.date" fieldId="tf-date" [control]="form.controls.date">
+      <p-datepicker
+        inputId="tf-date"
+        formControlName="date"
+        dateFormat="dd/mm/yy"
+        [showButtonBar]="true"
+        [fluid]="true"
+        appendTo="body"
+      />
+    </app-field>
+
+    <app-field label="transactions.fields.status" fieldId="tf-status" [control]="form.controls.status">
+      <p-select
+        inputId="tf-status"
+        formControlName="status"
+        [options]="statusOptions"
+        optionLabel="label"
+        optionValue="value"
+        appendTo="body"
+      />
+    </app-field>
+  </div>
+
+  <app-field label="transactions.fields.notes" fieldId="tf-notes" [control]="form.controls.notes">
+    <textarea pTextarea id="tf-notes" formControlName="notes" rows="2" [autoResize]="true"></textarea>
+  </app-field>
+
+  <app-form-footer [submit]="submit" (cancelled)="ref.close(false)" />
+</form>

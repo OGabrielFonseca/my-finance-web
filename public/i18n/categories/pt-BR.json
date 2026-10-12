@@ -1,0 +1,15 @@
+{
+  "title": "Categorias",
+  "newTitle": "Nova categoria",
+  "newSubTitle": "Nova subcategoria",
+  "editTitle": "Editar categoria",
+  "addSub": "Adicionar subcategoria",
+  "fields": {
+    "name": "Nome",
+    "type": "Tipo",
+    "parent": "Categoria pai",
+    "color": "Cor",
+    "icon": "Ícone"
+  },
+  "empty": "Nenhuma categoria cadastrada."
+}

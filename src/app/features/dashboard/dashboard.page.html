@@ -1,0 +1,75 @@
+<section class="flex flex-col gap-4">
+  <header class="flex flex-wrap items-center gap-3">
+    <h1 class="m-0 flex-1 text-2xl font-semibold">{{ 'dashboard.title' | transloco }}</h1>
+    <div class="flex items-center gap-1">
+      <p-button
+        icon="pi pi-chevron-left"
+        severity="secondary"
+        [text]="true"
+        [ariaLabel]="'dashboard.previousMonth' | transloco"
+        (onClick)="shiftMonth(-1)"
+      />
+      <label for="dashboard-month" class="sr-only">{{ 'dashboard.month' | transloco }}</label>
+      <p-datepicker
+        inputId="dashboard-month"
+        view="month"
+        dateFormat="mm/yy"
+        [readonlyInput]="true"
+        [ngModel]="month()"
+        (ngModelChange)="selectMonth($event)"
+        inputStyleClass="w-28 text-center"
+      />
+      <p-button
+        icon="pi pi-chevron-right"
+        severity="secondary"
+        [text]="true"
+        [ariaLabel]="'dashboard.nextMonth' | transloco"
+        (onClick)="shiftMonth(1)"
+      />
+    </div>
+  </header>
+
+  <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+    @if (summary(); as s) {
+      <app-stat-card label="dashboard.cards.totalBalance" icon="pi pi-wallet" [value]="s.totalBalance" />
+      <app-stat-card label="dashboard.cards.income" icon="pi pi-arrow-up" kind="INCOME" [value]="s.income" />
+      <app-stat-card label="dashboard.cards.expenses" icon="pi pi-arrow-down" kind="EXPENSE" [value]="s.expenses" />
+      <app-stat-card label="dashboard.cards.result" icon="pi pi-chart-line" [value]="s.result" />
+    } @else {
+      @for (i of [1, 2, 3, 4]; track i) {
+        <p-skeleton height="5.5rem" />
+      }
+    }
+  </div>
+
+  <section class="rounded-border border border-surface bg-surface-0 p-4 dark:bg-surface-900">
+    <header class="mb-2 flex flex-wrap items-center gap-2">
+      <h2 class="m-0 flex-1 text-lg font-semibold">{{ 'dashboard.expensesByCategory' | transloco }}</h2>
+      <a routerLink="/transactions" [queryParams]="monthFilter()" class="text-sm">{{
+        'dashboard.seeTransactions' | transloco
+      }}</a>
+    </header>
+
+    @if (expenses(); as data) {
+      @if (data.categories.length) {
+        <div class="grid grid-cols-1 items-center gap-4 md:grid-cols-2">
+          <app-chart [options]="chartOptions()" [dark]="theme.isDark()" height="18rem" />
+          <ul class="m-0 flex list-none flex-col gap-2 p-0">
+            @for (c of data.categories; track c.categoryId) {
+              <li class="flex items-center gap-2">
+                <span class="inline-block size-3 shrink-0 rounded-full" [style.background]="c.color"></span>
+                <span class="flex-1">{{ c.name }}</span>
+                <span class="text-sm text-muted-color tabular-nums">{{ c.percentage | number: '1.0-1' }}%</span>
+                <span class="w-28 text-right tabular-nums">{{ c.amount | currency }}</span>
+              </li>
+            }
+          </ul>
+        </div>
+      } @else {
+        <app-empty-state message="dashboard.noExpenses" icon="pi pi-chart-pie" />
+      }
+    } @else if (loading()) {
+      <p-skeleton height="18rem" />
+    }
+  </section>
+</section>

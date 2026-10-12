@@ -1,0 +1,89 @@
+<app-crud-page title="categories.title" (create)="create()">
+  <div class="flex flex-wrap items-center justify-between gap-3">
+    <p-tabs [value]="type()" (valueChange)="selectType($event)">
+      <p-tablist>
+        @for (t of types; track t) {
+          <p-tab [value]="t">{{ 'enums.categoryType.' + t | transloco }}</p-tab>
+        }
+      </p-tablist>
+    </p-tabs>
+    <div class="flex items-center gap-2">
+      <p-checkbox
+        inputId="categories-archived"
+        [binary]="true"
+        [ngModel]="onlyArchived()"
+        (ngModelChange)="onlyArchived.set($event)"
+      />
+      <label for="categories-archived" class="text-sm">{{ 'common.onlyArchived' | transloco }}</label>
+    </div>
+  </div>
+
+  <p-treetable [value]="nodes()" [loading]="loading()" dataKey="id" [scrollable]="true">
+    <ng-template #header>
+      <tr>
+        <th>{{ 'categories.fields.name' | transloco }}</th>
+        <th class="w-40">
+          <span class="sr-only">{{ 'common.actions' | transloco }}</span>
+        </th>
+      </tr>
+    </ng-template>
+
+    <ng-template #body let-rowNode let-category="rowData">
+      <tr [ttRow]="rowNode" [class.opacity-60]="category.archived">
+        <td>
+          <div class="flex items-center gap-2">
+            <p-treetable-toggler [rowNode]="rowNode" />
+            <span
+              class="inline-flex size-7 shrink-0 items-center justify-center rounded-full text-surface-0"
+              [style.background]="category.color"
+            >
+              <i [class]="category.icon ?? 'pi pi-tag'" class="text-sm"></i>
+            </span>
+            {{ category.name }}
+            @if (category.archived) {
+              <p-tag severity="secondary" [value]="'common.archived' | transloco" />
+            }
+          </div>
+        </td>
+        <td class="text-right whitespace-nowrap">
+          @if (!category.parentId && !category.archived) {
+            <p-button
+              icon="pi pi-plus"
+              severity="secondary"
+              [text]="true"
+              [rounded]="true"
+              [ariaLabel]="'categories.addSub' | transloco"
+              (onClick)="addSub(category)"
+            />
+          }
+          <p-button
+            icon="pi pi-pencil"
+            severity="secondary"
+            [text]="true"
+            [rounded]="true"
+            [ariaLabel]="'common.edit' | transloco"
+            (onClick)="edit(category)"
+          />
+          @if (!category.archived) {
+            <p-button
+              icon="pi pi-inbox"
+              severity="secondary"
+              [text]="true"
+              [rounded]="true"
+              [ariaLabel]="'common.archive' | transloco"
+              (onClick)="archive(category)"
+            />
+          }
+        </td>
+      </tr>
+    </ng-template>
+
+    <ng-template #emptymessage>
+      <tr>
+        <td colspan="2">
+          <app-empty-state message="categories.empty" icon="pi pi-tags" />
+        </td>
+      </tr>
+    </ng-template>
+  </p-treetable>
+</app-crud-page>

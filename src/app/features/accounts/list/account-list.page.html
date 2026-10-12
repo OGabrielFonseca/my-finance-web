@@ -1,0 +1,23 @@
+<app-crud-page title="accounts.title" (create)="openForm()">
+  <app-filter-bar
+    [fields]="filters"
+    [value]="list.filter()"
+    [initial]="initialFilter"
+    (changed)="list.setFilter($event)"
+  />
+
+  <app-data-table [columns]="columns" [list]="list" [actions]="actions" (action)="onAction($event)">
+    <ng-template appCell="balance" let-account>
+      @if (balances()[account.id]; as balance) {
+        <span class="flex flex-col items-end" [attr.title]="'accounts.balanceHint' | transloco">
+          <app-money [amount]="balance.currentBalance" />
+          <small class="text-muted-color">
+            {{ 'accounts.projected' | transloco }}: {{ balance.projectedBalance | currency }}
+          </small>
+        </span>
+      } @else {
+        <p-skeleton width="6rem" styleClass="ml-auto" />
+      }
+    </ng-template>
+  </app-data-table>
+</app-crud-page>

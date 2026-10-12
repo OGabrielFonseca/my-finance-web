@@ -1,0 +1,32 @@
+<form [formGroup]="form" (ngSubmit)="submit.submit()" class="flex flex-col gap-4">
+  <app-field label="accounts.fields.name" fieldId="account-name" [control]="form.controls.name">
+    <input pInputText id="account-name" formControlName="name" />
+  </app-field>
+
+  <app-field label="accounts.fields.type" fieldId="account-type" [control]="form.controls.type">
+    <p-select
+      inputId="account-type"
+      formControlName="type"
+      [options]="typeOptions"
+      optionLabel="label"
+      optionValue="value"
+      appendTo="body"
+    />
+  </app-field>
+
+  <app-field label="accounts.fields.institution" fieldId="account-institution" [control]="form.controls.institution">
+    <input pInputText id="account-institution" formControlName="institution" />
+  </app-field>
+
+  <app-field label="accounts.fields.initialBalance" fieldId="account-balance" [control]="form.controls.initialBalance">
+    <p-inputnumber
+      inputId="account-balance"
+      formControlName="initialBalance"
+      mode="currency"
+      currency="BRL"
+      locale="pt-BR"
+    />
+  </app-field>
+
+  <app-form-footer [submit]="submit" (cancelled)="ref.close(false)" />
+</form>
