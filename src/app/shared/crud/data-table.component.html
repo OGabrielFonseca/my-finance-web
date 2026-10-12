@@ -1,0 +1,112 @@
+<p-table
+  [value]="list().items()"
+  [lazy]="true"
+  [lazyLoadOnInit]="false"
+  [paginator]="true"
+  [rows]="list().page().size"
+  [first]="first()"
+  [totalRecords]="list().totalItems()"
+  [loading]="list().loading()"
+  [rowsPerPageOptions]="[10, 20, 50, 100]"
+  [sortField]="tableSort().field"
+  [sortOrder]="tableSort().order"
+  [scrollable]="true"
+  dataKey="id"
+  (onLazyLoad)="onLazyLoad($event)"
+>
+  <ng-template #header>
+    <tr>
+      @for (column of columns(); track columnKey(column)) {
+        @if (isSortable(column)) {
+          <th [pSortableColumn]="columnKey(column)" [class]="alignClass(column)" [style.width]="column.width">
+            {{ column.header | transloco }}
+            <p-sortIcon [field]="columnKey(column)" />
+          </th>
+        } @else {
+          <th [class]="alignClass(column)" [style.width]="column.width">{{ column.header | transloco }}</th>
+        }
+      }
+      @if (actions().length) {
+        <th class="w-16">
+          <span class="sr-only">{{ 'common.actions' | transloco }}</span>
+        </th>
+      }
+    </tr>
+  </ng-template>
+
+  <ng-template #body let-row>
+    <tr [class.opacity-60]="isArchived(row)">
+      @for (column of columns(); track columnKey(column); let isFirst = $first) {
+        <td [class]="alignClass(column)">
+          @if (cellTemplate(column); as template) {
+            <ng-container *ngTemplateOutlet="template; context: { $implicit: row }" />
+          } @else {
+            @switch (column.type) {
+              @case ('money') {
+                <span class="whitespace-nowrap tabular-nums">{{ $any(value(row, column)) | currency }}</span>
+              }
+              @case ('date') {
+                {{ $any(value(row, column)) | date: 'dd/MM/yyyy' }}
+              }
+              @case ('month') {
+                {{ $any(value(row, column)) | date: 'MM/yyyy' }}
+              }
+              @case ('enum') {
+                {{ 'enums.' + column.enumKey + '.' + value(row, column) | transloco }}
+              }
+              @case ('boolean') {
+                {{ (value(row, column) ? 'common.yes' : 'common.no') | transloco }}
+              }
+              @case ('color') {
+                <span
+                  class="inline-block size-4 rounded-full border border-surface"
+                  [style.background]="value(row, column)"
+                ></span>
+              }
+              @default {
+                {{ value(row, column) }}
+              }
+            }
+          }
+          @if (isFirst && isArchived(row)) {
+            <p-tag class="ml-2" severity="secondary" [value]="'common.archived' | transloco" />
+          }
+        </td>
+      }
+      @if (actions().length) {
+        <td class="text-right">
+          @let rowActions = visibleActions(row);
+          @if (rowActions.length === 1) {
+            <p-button
+              [icon]="rowActions[0].icon"
+              severity="secondary"
+              [text]="true"
+              [rounded]="true"
+              [ariaLabel]="rowActions[0].label | transloco"
+              (onClick)="emit(rowActions[0].id, row)"
+            />
+          } @else if (rowActions.length > 1) {
+            <p-button
+              icon="pi pi-ellipsis-v"
+              severity="secondary"
+              [text]="true"
+              [rounded]="true"
+              [ariaLabel]="'common.actions' | transloco"
+              (onClick)="openMenu($event, row)"
+            />
+          }
+        </td>
+      }
+    </tr>
+  </ng-template>
+
+  <ng-template #emptymessage>
+    <tr>
+      <td [attr.colspan]="colspan()">
+        <app-empty-state [message]="emptyMessage()" />
+      </td>
+    </tr>
+  </ng-template>
+</p-table>
+
+<p-menu #rowMenu [model]="menuItems()" [popup]="true" appendTo="body" />

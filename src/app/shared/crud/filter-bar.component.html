@@ -1,0 +1,97 @@
+<ng-template #fieldsTemplate let-prefix>
+  <form [formGroup]="form()" class="flex flex-col gap-3 lg:flex-row lg:flex-wrap lg:items-end">
+    @for (field of fields(); track field.key) {
+      @let id = prefix + field.key;
+      <div class="flex flex-col gap-1 lg:w-56">
+        @switch (field.type) {
+          @case ('text') {
+            <label [for]="id" class="text-sm text-muted-color">{{ field.label | transloco }}</label>
+            <input pInputText [id]="id" [formControlName]="field.key" />
+          }
+          @case ('enum') {
+            <label [for]="id" class="text-sm text-muted-color">{{ field.label | transloco }}</label>
+            <p-select
+              [inputId]="id"
+              [formControlName]="field.key"
+              [options]="enumOptions(field)"
+              optionLabel="label"
+              optionValue="value"
+              [showClear]="true"
+              [placeholder]="'common.all' | transloco"
+              appendTo="body"
+            />
+          }
+          @case ('lookup') {
+            <label [for]="id" class="text-sm text-muted-color">{{ field.label | transloco }}</label>
+            <p-select
+              [inputId]="id"
+              [formControlName]="field.key"
+              [options]="$any(lookupOptions(field))"
+              optionLabel="label"
+              optionValue="value"
+              [filter]="true"
+              filterBy="label"
+              [showClear]="true"
+              [placeholder]="'common.all' | transloco"
+              appendTo="body"
+            >
+              <ng-template #item let-option>
+                <span class="flex items-center gap-2" [style.padding-left.rem]="(option.depth ?? 0) * 1.25">
+                  @if (option.color) {
+                    <span class="inline-block size-3 rounded-full" [style.background]="option.color"></span>
+                  }
+                  {{ option.label }}
+                </span>
+              </ng-template>
+            </p-select>
+          }
+          @case ('dateRange') {
+            <label [for]="id" class="text-sm text-muted-color">{{ field.label | transloco }}</label>
+            <p-datepicker
+              [inputId]="id"
+              [formControlName]="field.key"
+              selectionMode="range"
+              dateFormat="dd/mm/yy"
+              [showButtonBar]="true"
+              [readonlyInput]="true"
+              appendTo="body"
+            />
+          }
+          @case ('boolean') {
+            <div class="flex items-center gap-2 lg:h-10">
+              <p-checkbox [inputId]="id" [formControlName]="field.key" [binary]="true" />
+              <label [for]="id" class="text-sm">{{ field.label | transloco }}</label>
+            </div>
+          }
+        }
+      </div>
+    }
+    <p-button
+      type="button"
+      icon="pi pi-filter-slash"
+      severity="secondary"
+      [text]="true"
+      [label]="'common.clearFilters' | transloco"
+      (onClick)="clear()"
+    />
+  </form>
+</ng-template>
+
+<div class="mb-4 hidden lg:block">
+  <ng-container *ngTemplateOutlet="fieldsTemplate; context: { $implicit: 'filter-' }" />
+</div>
+
+<div class="mb-4 lg:hidden">
+  <p-button
+    icon="pi pi-filter"
+    severity="secondary"
+    [outlined]="true"
+    [label]="'common.filters' | transloco"
+    [badge]="activeCount() ? '' + activeCount() : undefined"
+    (onClick)="drawerOpen.set(true)"
+  />
+</div>
+
+<p-drawer [(visible)]="drawerOpen" position="right" [header]="'common.filters' | transloco">
+  <ng-container *ngTemplateOutlet="fieldsTemplate; context: { $implicit: 'filter-drawer-' }" />
+</p-drawer>
