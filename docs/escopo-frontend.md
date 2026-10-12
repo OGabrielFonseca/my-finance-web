@@ -1,9 +1,12 @@
 # MyFinance — Escopo inicial do Frontend (my-finance-web)
 
-> Versão 0.2 · 12/10/2026 · Documento vivo: atualizar conforme as decisões evoluírem.
+> Versão 0.3 · 12/10/2026 · Documento vivo: atualizar conforme as decisões evoluírem.
+>
+> **Mudanças na v0.3:** API mock removida; models escritos à mão (sem OpenAPI); filtro com o formulário como fonte de verdade,
+> sem URL; `shared/crud` em subpastas; services com sufixo `Service`.
 >
 > **Mudanças na v0.2** (revisão contra o código do backend): rotas aninhadas de faturas e compras; lookups pelos endpoints
-> `/options` com `LookupStore`; categoria sem `GET /{id}` (o formulário recebe a linha); `month` do orçamento é `LocalDate`;
+> `/options` com `LookupService`; categoria sem `GET /{id}` (o formulário recebe a linha); `month` do orçamento é `LocalDate`;
 > requests distintos de criação e edição; saldo por conta via `/balance` (atual e projetado); ação de efetivar lançamento;
 > estado vazio sem categorias; CORS movido para "em aberto"; nova fase **0b. Protótipo com API mock**; lista de pedidos ao backend
 > (seção 15).
@@ -36,7 +39,7 @@ não código repetido.
 | HTTP | `HttpClient` (`withFetch`) + interceptors funcionais | |
 | Estado | **Signals** (`signal`, `computed`, `linkedSignal`) | Sem NgRx/biblioteca de estado: o estado é local à tela ou em stores simples |
 | i18n | **Transloco** (`@jsverse/transloco`) | Traduções em JSON carregadas em runtime, com escopo por feature; ver seção 7 |
-| Tipos da API | **`openapi-typescript`** | Gera **só os tipos** a partir do `/v3/api-docs` do springdoc; os services são escritos à mão sobre a base genérica |
+| Models da API | **Escritos à mão** | Interfaces e listas de enums em `*.model.ts`, espelhando os DTOs do backend; sem geração de código (seção 5.4) |
 | Lint/format | **angular-eslint** + **typescript-eslint** + **Prettier** + Husky/lint-staged | Ver seção 8 |
 | Testes | **Vitest** (runner padrão do Angular 21) | **Só testes unitários da lógica reutilizável**, no mesmo espírito do backend; ver seção 9 |
 | Locale | `pt-BR`, moeda `BRL` | `LOCALE_ID`, `DEFAULT_CURRENCY_CODE`, tradução dos componentes do PrimeNG via `primelocale` |
@@ -49,13 +52,18 @@ não código repetido.
 src/
 ├── app/
 │   ├── core/                        # singleton, carregado uma vez
-│   │   ├── auth/                    # AuthStore, authGuard, guestGuard, authInterceptor, token storage
+│   │   ├── auth/                    # AuthStoreService, authGuard, guestGuard, authInterceptor, token storage
 │   │   ├── http/                    # errorInterceptor, languageInterceptor, ApiError
 │   │   ├── i18n/                    # TranslocoHttpLoader, configuração do Transloco e do PrimeNG
 │   │   ├── theme/                   # preset do PrimeNG, ThemeService (claro/escuro/sistema)
 │   │   └── layout/                  # ShellComponent (topbar + menu lateral), páginas de erro
 │   ├── shared/                      # reutilizável, sem regra de negócio
-│   │   ├── crud/                    # CrudApi, injectCrudList, DataTable, FilterBar, CrudPage, FormDialog, CrudActions
+│   │   ├── crud/
+│   │   │   ├── api/                 # CrudApiService, LookupService
+│   │   │   ├── list/                # injectCrudList (estado da listagem)
+│   │   │   ├── table/               # DataTable, ColumnDef, appCell
+│   │   │   ├── filter/              # FilterBar, FilterField
+│   │   │   └── page/                # CrudPage, CrudActionsService
 │   │   ├── data/                    # PageResponse, PageRequest, toHttpParams, datas (LocalDate/YearMonth)
 │   │   ├── forms/                   # FieldComponent, applyServerErrors, validadores
 │   │   ├── ui/                      # MoneyComponent (+/-), StatCard, EmptyState, ChartComponent
@@ -70,11 +78,8 @@ src/
 │   │   ├── credit-cards/            # cartões, faturas, compras
 │   │   ├── budgets/
 │   │   └── investments/             # ativos, operações, proventos, carteira
-│   ├── mock/                        # API falsa da fase 0b (só na configuração `mock`; ver seção 13)
 │   ├── app.config.ts
 │   └── app.routes.ts
-├── api/
-│   └── schema.d.ts                  # gerado pelo openapi-typescript (não editar)
 └── styles.css
 public/
 └── i18n/                            # traduções (seção 7)
@@ -87,8 +92,8 @@ features/accounts/
 ├── index.ts                         # API pública da feature (o que outras features podem importar)
 ├── accounts.routes.ts               # rotas lazy + provideTranslocoScope('accounts')
 ├── data/
-│   ├── account.model.ts             # tipos (derivados do schema gerado) + listas de enums
-│   └── account.api.ts               # AccountApi extends CrudApi
+│   ├── account.model.ts             # interfaces escritas à mão + listas de enums
+│   └── account-api.service.ts       # AccountApiService extends CrudApiService
 ├── list/
 │   └── account-list.page.ts         # listagem: colunas + filtros declarados
 ├── form/
@@ -102,7 +107,7 @@ features/accounts/
 - **Tudo standalone, `ChangeDetectionStrategy.OnPush`, `inject()`** em vez de construtor, `input()`/`output()`/`model()` em vez de
   decorators, control flow novo (`@if`/`@for`). Sem `NgModule`.
 - **Uma rota lazy por feature** (`loadChildren: () => import('./features/accounts/accounts.routes')`).
-- **Feature não importa arquivo interno de outra feature.** Só o que estiver no `index.ts` dela (ex.: `AccountApi`, `AccountSelect`,
+- **Feature não importa arquivo interno de outra feature.** Só o que estiver no `index.ts` dela (ex.: `AccountApiService`, `AccountSelect`,
   tipos). É o equivalente ao "service público do módulo" do backend, e o lint quebra se alguém fizer import profundo (seção 8).
 - **`shared/` não conhece features.** `core/` não conhece features, exceto `app.routes.ts` e o menu.
 - **Componentes de página** (`*.page.ts`) montam a tela e chamam services; **componentes de UI** em `shared/ui` só recebem `input()`
@@ -118,9 +123,8 @@ features/accounts/
 |---|---|
 | `*.page.ts` | Componente roteado (uma tela) |
 | `*.component.ts` | Componente reutilizável ou parte de tela |
-| `*.api.ts` | Service HTTP de um recurso |
+| `*.service.ts` | Classe `@Injectable` (service HTTP de um recurso, `LookupService`, `AuthStoreService`, bases abstratas): arquivo `<nome>.service.ts`, classe `<Nome>Service` (ex.: `account-api.service.ts` → `AccountApiService`) |
 | `*.model.ts` | Tipos e constantes (enums) |
-| `*.store.ts` | Estado compartilhado com signals (raro; ex.: `AuthStore`, lookups) |
 | `*.routes.ts` | Rotas da feature |
 | `*.spec.ts` | Teste unitário (Vitest) |
 
@@ -131,13 +135,13 @@ Templates e estilos inline nos componentes pequenos; arquivo `.html` separado qu
 Peças, de baixo para cima:
 
 ```
-CrudApi (HTTP)  →  injectCrudList (estado da listagem + URL)  →  <app-filter-bar> + <app-data-table>  →  <app-crud-page>
-                                                          CrudActions (diálogo de formulário, confirmação, toast)
+CrudApiService (HTTP)  →  injectCrudList (estado da listagem)  →  <app-filter-bar> + <app-data-table>  →  <app-crud-page>
+                                                          CrudActionsService (diálogo de formulário, confirmação, toast)
 ```
 
 ### 4.1 Contratos da API no front
 
-Espelham o `PageResponse` e o `ProblemDetail` do backend (escopo-backend, seções 3.4 e 3.8):
+Models escritos à mão (sem OpenAPI), espelhando o `PageResponse` e o `ProblemDetail` do backend (escopo-backend, seções 3.4 e 3.8):
 
 ```ts
 // shared/data/page.ts
@@ -208,11 +212,11 @@ export function toYearMonth(d: Date): YearMonth {
   2 casas. Valores sempre positivos; o sinal visual vem do `type` (receita/despesa), como no backend.
 - **Moeda:** tudo BRL (`currency` existe, mas é ignorada na exibição por enquanto).
 
-### 4.2 `CrudApi`: service HTTP genérico
+### 4.2 `CrudApiService`: service HTTP genérico
 
 ```ts
-// shared/crud/crud-api.ts
-export abstract class CrudApi<T extends { id: string }, TCreate, TUpdate = TCreate, TFilter extends object = object> {
+// shared/crud/api/crud-api.service.ts
+export abstract class CrudApiService<T extends { id: string }, TCreate, TUpdate = TCreate, TFilter extends object = object> {
   protected readonly http = inject(HttpClient);
   protected abstract readonly path: string;            // ex.: '/accounts'
 
@@ -242,9 +246,9 @@ export abstract class CrudApi<T extends { id: string }, TCreate, TUpdate = TCrea
 ```
 
 ```ts
-// features/accounts/data/account.api.ts: só declara o que for específico
+// features/accounts/data/account-api.service.ts: só declara o que for específico
 @Injectable({ providedIn: 'root' })
-export class AccountApi extends CrudApi<Account, CreateAccountRequest, UpdateAccountRequest, AccountFilter> {
+export class AccountApiService extends CrudApiService<Account, CreateAccountRequest, UpdateAccountRequest, AccountFilter> {
   protected readonly path = '/accounts';
 
   balance(id: string): Observable<AccountBalance> {
@@ -256,33 +260,32 @@ export class AccountApi extends CrudApi<Account, CreateAccountRequest, UpdateAcc
 - Nem todo recurso tem todas as operações (categorias não têm `DELETE`, lançamentos não têm `archive`). A base expõe todas, e
   **a tela declara quais ações mostra** (`actions` da tabela, seção 4.4). Separar em interfaces por operação seria abstração sem ganho.
 - Recursos que fogem do CRUD (faturas, pagamento, compras parceladas, posição, carteira, dashboard) ganham **métodos próprios** no
-  `*.api.ts` da feature ou um service simples sem herdar `CrudApi`.
+  `*-api.service.ts` da feature ou um service simples sem herdar `CrudApiService`.
 - **Recursos aninhados** (faturas e compras ficam sob o cartão: `/credit-cards/{cardId}/invoices/{invoiceId}`) não herdam
-  `CrudApi`: o service recebe o `cardId` em cada método (`invoices(cardId, page)`, `close(cardId, invoiceId)`...).
+  `CrudApiService`: o service recebe o `cardId` em cada método (`invoices(cardId, page)`, `close(cardId, invoiceId)`...).
 - **Criação e edição podem ter corpos diferentes** (ex.: `CreateAccountRequest` × `UpdateAccountRequest`, `UpdateCategoryRequest`
-  sem `type`/`parentId`, `UpdateTransactionRequest` sem `type`). Por isso `CrudApi` tem `TCreate` e `TUpdate` separados.
+  sem `type`/`parentId`, `UpdateTransactionRequest` sem `type`). Por isso `CrudApiService` tem `TCreate` e `TUpdate` separados.
 - **Nem todo recurso tem `GET /{id}`** (categorias não têm). Nesses casos o formulário de edição recebe a linha da tabela pelo
   `DynamicDialogConfig.data` em vez de buscar pelo id.
 
 ### 4.3 `injectCrudList`: estado da listagem
 
 Função de injeção (no lugar de classe base) que concentra o estado de uma listagem: filtro, página, ordenação, carregamento
-e sincronização com a URL.
+sem sincronização com a URL.
 
 ```ts
-// shared/crud/crud-list.ts (resumo)
+// shared/crud/list/crud-list.ts (resumo)
 export interface CrudListOptions<F> {
   sort?: SortSpec;                   // ordenação inicial
   size?: number;                     // padrão 20
   initialFilter?: Partial<F>;        // ex.: { archived: false }
-  syncWithUrl?: boolean;             // padrão true
 }
 
 export function injectCrudList<T extends { id: string }, F extends object>(
-  api: CrudApi<T, unknown, unknown, F>,
+  api: ListSource<T, F>,
   options: CrudListOptions<F> = {},
 ) {
-  const filter = signal<Partial<F>>(readFilterFromUrl() ?? options.initialFilter ?? {});
+  const filter = signal<Partial<F>>(options.initialFilter ?? {});
   const page = signal<PageRequest>({ page: 0, size: options.size ?? 20, sort: options.sort });
   const data = signal<PageResponse<T> | null>(null);
   const loading = signal(false);
@@ -311,9 +314,8 @@ export function injectCrudList<T extends { id: string }, F extends object>(
 export type CrudList<T extends { id: string }, F extends object> = ReturnType<typeof injectCrudList<T, F>>;
 ```
 
-- **Filtro na URL** (`/transactions?from=2026-10-01&accountId=...&page=2`): voltar do navegador, recarregar a página e compartilhar
-  link mantêm a busca. A gravação usa `router.navigate([], { queryParams, replaceUrl: true })`. A leitura converte os tipos
-  conforme a definição dos filtros (seção 4.5).
+- **Filtro fora da URL:** o filtro vive só no signal da lista e no formulário do `<app-filter-bar>`. Recarregar a página volta ao
+  `initialFilter`; a navegação não grava nem lê query params.
 - **Erro na busca:** o `errorInterceptor` já mostra o toast (seção 5.2). A lista mantém os dados anteriores.
 - Por que função e não classe base: chamada em inicializador de campo (`readonly list = injectCrudList(...)`), roda no contexto de
   injeção, não depende de herança, e cada tela pode ter mais de uma lista.
@@ -324,7 +326,7 @@ export type CrudList<T extends { id: string }, F extends object> = ReturnType<ty
 Tabela em modo **lazy** (paginação e ordenação no servidor). As colunas são declaradas e a formatação por tipo é automática:
 
 ```ts
-// shared/crud/column.ts
+// shared/crud/table/column.ts
 export interface ColumnDef<T> {
   field: keyof T & string;
   header: string;                      // chave i18n
@@ -360,7 +362,7 @@ export type RowAction = 'edit' | 'archive' | 'delete';
 ### 4.5 `<app-filter-bar>`: filtros declarativos
 
 ```ts
-// shared/crud/filter.ts
+// shared/crud/filter/filter.ts
 export type FilterField =
   | { key: string; type: 'text'; label: string }
   | { key: string; type: 'enum'; label: string; enumKey: string; options: readonly string[] }
@@ -370,19 +372,20 @@ export type FilterField =
   | { key: string; type: 'lookup'; label: string; lookup: LookupRef };      // conta, categoria, ativo, cartão
 ```
 
-- Monta um `FormGroup` a partir das definições; texto com `debounceTime(300)`, os demais aplicam ao mudar.
-- Botão "Limpar" volta ao `initialFilter`. Em telas estreitas os filtros ficam num `p-drawer` com contador de filtros ativos.
+- Monta um `FormGroup` a partir das definições. **O formulário é a fonte de verdade:** cada mudança emite `changed` com o filtro
+  novo (texto com `debounceTime(300)`, os demais ao mudar) e a tela chama `list.setFilter($event)`. O input `initial` (normalmente o
+  `initialFilter` da lista) é o valor inicial. O botão "Limpar" faz `reset` do formulário para o `initial` e emite uma única vez. Em telas estreitas os filtros ficam num `p-drawer` com contador de filtros ativos.
 - Os `key` têm o mesmo nome dos query params da API (`accountId`, `categoryId`, `from`, `to`...), então o filtro vai direto para o
   `toHttpParams` sem mapeamento.
 - **Lookups** (`lookup`) usam componentes de seleção exportados pelas features: `AccountSelect`, `CategorySelect`
   (`p-treeselect` com subcategorias, filtrável por tipo), `AssetSelect`, `CreditCardSelect`.
 - Os seletores consomem os endpoints **`GET /<recurso>/options`** (contas, categorias, cartões e ativos), que devolvem um resumo
   (`AccountSummary`, `CategorySummary`...) já ordenado por nome, em `PageResponse` (máximo de 100 por página). As opções ficam em
-  cache num **`LookupStore`** por recurso (signal carregado uma vez, invalidado quando a tela do recurso salva ou arquiva), para
+  cache num **`LookupService`** por recurso (signal carregado uma vez, invalidado quando a tela do recurso salva ou arquiva), para
   não repetir a chamada a cada formulário aberto. `/categories/options` já exclui a categoria de sistema.
 - Se um usuário passar de 100 itens num lookup, o store busca as páginas seguintes; até lá, uma página basta.
 
-### 4.6 `<app-crud-page>`, formulário em diálogo e `CrudActions`
+### 4.6 `<app-crud-page>`, formulário em diálogo e `CrudActionsService`
 
 ```ts
 // features/accounts/list/account-list.page.ts: tela de cadastro completa
@@ -392,15 +395,15 @@ export type FilterField =
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <app-crud-page title="accounts.title" (create)="openForm()">
-      <app-filter-bar [fields]="filters" [value]="list.filter()" (changed)="list.setFilter($event)" />
+      <app-filter-bar [fields]="filters" [initial]="list.filter()" (changed)="list.setFilter($event)" />
       <app-data-table [columns]="columns" [list]="list" [actions]="['edit', 'archive']"
                       (edit)="openForm($event)" (archive)="archive($event)" />
     </app-crud-page>
   `,
 })
 export class AccountListPage {
-  private readonly api = inject(AccountApi);
-  private readonly crud = inject(CrudActions);
+  private readonly api = inject(AccountApiService);
+  private readonly crud = inject(CrudActionsService);
 
   readonly list = injectCrudList(this.api, {
     sort: { field: 'name', direction: 'asc' },
@@ -430,7 +433,7 @@ export class AccountListPage {
 }
 ```
 
-**`CrudActions`** (service em `shared/crud`) junta o que toda tela repete:
+**`CrudActionsService`** (em `shared/crud/page`) junta o que toda tela repete:
 - `openForm(Component, data)`: abre o formulário no `DialogService` do PrimeNG (`DynamicDialog`) e devolve um `Observable<boolean>`
   (salvou ou não).
 - `confirmAndRun(action, name, op)`: `ConfirmationService` com texto traduzido ("Arquivar a conta Nubank?"), executa a operação e
@@ -442,7 +445,7 @@ export class AccountListPage {
 ```ts
 // features/accounts/form/account-form.component.ts (resumo)
 export class AccountFormComponent {
-  private readonly api = inject(AccountApi);
+  private readonly api = inject(AccountApiService);
   private readonly ref = inject(DynamicDialogRef);
   private readonly id = inject(DynamicDialogConfig).data?.id as string | undefined;
 
@@ -557,34 +560,36 @@ export function applyServerErrors(form: FormGroup, error: ApiError): void {
 Os nomes de campo do backend (`amount`, `transactionDate`) são os mesmos do formulário. Quando divergirem, o formulário declara o
 mapeamento.
 
-### 5.4 Tipos gerados do OpenAPI
+### 5.4 Models escritos à mão
 
-```bash
-npm run api:types   # openapi-typescript http://localhost:8080/v3/api-docs -o src/api/schema.d.ts
-```
+Os tipos da API não são gerados: cada feature escreve seus `*.model.ts` espelhando os DTOs do backend.
 
 ```ts
 // features/accounts/data/account.model.ts
-import type { components } from '@api/schema';
+export const ACCOUNT_TYPES = ['CHECKING', 'SAVINGS', 'WALLET', 'INVESTMENT', 'OTHER'] as const;
+export type AccountType = (typeof ACCOUNT_TYPES)[number];
 
-export type Account = components['schemas']['AccountResponse'];
-export type CreateAccountRequest = components['schemas']['CreateAccountRequest'];
-export type UpdateAccountRequest = components['schemas']['UpdateAccountRequest'];
-export type AccountBalance = components['schemas']['AccountBalanceResponse'];   // initialBalance, currentBalance, projectedBalance
-export type AccountType = Account['type'];
-export const ACCOUNT_TYPES = ['CHECKING', 'SAVINGS', 'WALLET', 'INVESTMENT', 'OTHER'] as const satisfies readonly AccountType[];
+export interface Account {
+  id: string;
+  name: string;
+  type: AccountType;
+  institution: string | null;   // pode vir nulo
+  initialBalance: number;
+}
 ```
 
-- O `schema.d.ts` é **versionado** (o build não depende da API no ar) e regenerado quando um contrato mudar.
-- O `satisfies` faz a lista de enums quebrar a compilação se o backend adicionar ou remover um valor.
-- Por que não gerar os services (`openapi-generator`): eles não herdariam o `CrudApi`, a paginação e o `toHttpParams` do projeto.
-  Os tipos já garantem o contrato; os services são poucos e finos.
+- **Regra de nulidade:** campo que o backend pode devolver nulo é `T | null` (não `T | undefined` nem opcional); os demais são
+  obrigatórios.
+- Requests de criação e edição são interfaces próprias (`CreateAccountRequest`, `UpdateAccountRequest`), pelo mesmo motivo do
+  `TCreate`/`TUpdate` da seção 4.2.
+- Sem `schema.d.ts`, sem alias `@api/*` e sem script de geração. Quando o contrato do backend mudar, o model é ajustado à mão
+  junto com a tela. Os services continuam finos sobre o `CrudApiService`.
 
 ### 5.5 Autenticação
 
 - **Login/cadastro** (`POST /auth/login`, `/auth/register`) devolvem `{ accessToken, tokenType, expiresIn }`. O front guarda o
   token e o instante de expiração no `localStorage` e carrega o usuário com `GET /me`.
-- **`AuthStore`** (signals): `user`, `isAuthenticated`, `login()`, `register()`, `logout()`. Um timer faz logout automático na
+- **`AuthStoreService`** (signals): `user`, `isAuthenticated`, `login()`, `register()`, `logout()`. Um timer faz logout automático na
   expiração (24h); sem refresh token, o usuário precisa logar de novo (mesma decisão do backend).
 - **Guards:** `authGuard` nas rotas internas; `guestGuard` em `/login` e `/register` (logado vai para o dashboard).
 - **Trade-off conhecido:** token no `localStorage` é acessível a um XSS. Mitigação: Angular sanitiza templates por padrão, não usar
@@ -762,7 +767,7 @@ module.exports = tseslint.config(
   "overrides": [{ "files": "*.html", "options": { "parser": "angular" } }] }
 ```
 
-Aliases no `tsconfig.json`: `@core/*`, `@shared/*`, `@features/*`, `@api/*`, `@env/*`. Sem `../../..` entre camadas.
+Aliases no `tsconfig.json`: `@core/*`, `@shared/*`, `@features/*`, `@env/*`. Sem `../../..` entre camadas.
 
 Scripts do `package.json`:
 
@@ -774,16 +779,15 @@ Scripts do `package.json`:
 | `lint` | `ng lint` |
 | `format` | `prettier --write .` |
 | `i18n:check` | `transloco-keys-manager find --emit-error-on-extra-keys` |
-| `api:types` | `openapi-typescript http://localhost:8080/v3/api-docs -o src/api/schema.d.ts` |
 
 ## 9. Testes
 
 Mesmo critério do backend: **só testes unitários de lógica**, sem testes de componente ou e2e por enquanto.
 
 - **Testar:** `toHttpParams` e helpers de data (incluindo o caso do fuso), `applyServerErrors`, `injectCrudList` (filtro novo volta à
-  página 0, leitura/gravação na URL), conversão do `onLazyLoad` em `PageRequest`, `AuthStore` (expiração do token), montagem da árvore
+  página 0), conversão do `onLazyLoad` em `PageRequest`, `AuthStoreService` (expiração do token), montagem da árvore
   de categorias, `errorInterceptor` (status → comportamento).
-- **Não testar:** templates, telas de CRUD declarativas, componentes do PrimeNG, services que só repassam para o `CrudApi`.
+- **Não testar:** templates, telas de CRUD declarativas, componentes do PrimeNG, services que só repassam para o `CrudApiService`.
 - Ferramentas: Vitest + `TestBed` só quando precisar de injeção; `provideHttpClientTesting` para os services.
 
 ## 10. Versões e licença do PrimeNG
@@ -867,17 +871,13 @@ Regras de tela que vêm do backend e precisam ser respeitadas na UI:
 { "/api": { "target": "http://localhost:8080", "secure": false } }
 ```
 
-- `environment.ts`: `apiUrl: '/api/v1'`, `useMockApi: false`. Em produção, o front é servido no mesmo domínio da API (proxy
+- `environment.ts`: `apiUrl: '/api/v1'`. Em produção, o front é servido no mesmo domínio da API (proxy
   reverso) ou a API passa a liberar o domínio no CORS. **Hoje o backend não tem configuração de CORS**: em dev o proxy resolve;
   para produção é decisão em aberto (seção 15).
-- **API mock (fase 0b):** `environment.mock.ts` com `useMockApi: true` e o script `npm run start:mock` (`ng serve
-  --configuration mock`). Um `mockApiInterceptor`, registrado só nessa configuração, responde às chamadas `/api/v1/...` com dados
-  em memória no mesmo formato da API (`PageResponse`, `ProblemDetail`). O código do mock fica em `src/app/mock/` e não entra no
-  build de produção.
 - Node LTS compatível com o Angular 21. Criação do projeto:
   `ng new my-finance-web --style=css --routing --ssr=false` (com Tailwind) e depois `ng add angular-eslint`.
 - Pacotes: `primeng@^21`, `@primeuix/themes`, `primeicons`, `tailwindcss-primeui`, `primelocale`, `@jsverse/transloco`,
-  `ngx-echarts@^21`, `echarts`; dev: `openapi-typescript`, `@jsverse/transloco-keys-manager`, `prettier`,
+  `ngx-echarts@^21`, `echarts`; dev: `@jsverse/transloco-keys-manager`, `prettier`,
   `prettier-plugin-tailwindcss`, `eslint-config-prettier`, `husky`, `lint-staged`. Conferir no `npm` as versões compatíveis
   (`peerDependencies`) de cada um com o Angular 21 na instalação.
 
@@ -885,9 +885,9 @@ Regras de tela que vêm do backend e precisam ser respeitadas na UI:
 
 | Fase | Entregas |
 |---|---|
-| **0a. Fundação** | Projeto Angular 21, lint/Prettier/Husky, Tailwind + PrimeNG com o preset, tema claro/escuro, Transloco + `primelocale`, tipos do OpenAPI, shell |
-| **0b. Protótipo com API mock** | Camada de CRUD (seção 4) com testes, interceptors e `ApiError`, `AuthStore`/guards, `mockApiInterceptor` com dados fictícios, telas de login, dashboard, contas, categorias e extrato. **Checkpoint: validação do design antes de integrar** |
-| **0c. Integração** | Desligar o mock, rodar contra a API real, cadastro, CI (lint + test + build + i18n:check) |
+| **0a. Fundação** | Projeto Angular 21, lint/Prettier/Husky, Tailwind + PrimeNG com o preset, tema claro/escuro, Transloco + `primelocale`, shell |
+| **0b. Protótipo** | Camada de CRUD (seção 4) com testes, interceptors e `ApiError`, `AuthStoreService`/guards, telas de login, dashboard, contas, categorias e extrato, direto contra a API real. **Checkpoint: validação do design** |
+| **0c. Integração** | Cadastro, CI (lint + test + build + i18n:check) |
 | **1. MVP financeiro** | Contas, categorias, lançamentos e transferências, dashboard mensal, perfil |
 | **2. Cartões e planejamento** | Cartões, faturas, compras parceladas, pagamento de fatura, orçamentos |
 | **3. Investimentos** | Ativos, operações, proventos, carteira |
@@ -904,17 +904,20 @@ Regras de tela que vêm do backend e precisam ser respeitadas na UI:
 | Gráficos | ngx-echarts com import modular e wrapper `<app-chart>` ligado ao tema |
 | Estado | Signals; sem biblioteca de estado |
 | Formulários | Reactive Forms tipados; Signal Forms só quando sair de experimental |
-| CRUD | `CrudApi` + `injectCrudList` + `<app-data-table>`/`<app-filter-bar>`/`<app-crud-page>` + `CrudActions`; formulário em diálogo |
-| Filtros | Declarativos, nomes iguais aos query params da API, sincronizados com a URL |
+| CRUD | `CrudApiService` + `injectCrudList` + `<app-data-table>`/`<app-filter-bar>`/`<app-crud-page>` + `CrudActionsService`; formulário em diálogo |
+| Filtros | Declarativos, nomes iguais aos query params da API; o formulário é a fonte de verdade e o filtro não vai para a URL |
 | Erros | `ProblemDetail` → `ApiError`; comportamento pelo `code`, texto pelo `detail`; erros de campo aplicados no formulário |
 | i18n | Transloco, JSON por feature, só `pt-BR`; mensagens de negócio vêm do backend via `Accept-Language` |
-| Tipos da API | `openapi-typescript` (só tipos), services escritos à mão |
+| Models da API | Escritos à mão (`T \| null` nos campos anuláveis), sem OpenAPI; services escritos à mão |
 | Auth | JWT no `localStorage`, logout na expiração, sem refresh token |
 | Lint | angular-eslint + typescript-eslint strict + Prettier + Husky; import só pela API pública da feature |
 | Testes | Vitest, só lógica reutilizável |
 
-| Protótipo | Fase 0b com `mockApiInterceptor` próprio (sem MSW nem `angular-in-memory-web-api`), ligado só na configuração `mock` |
-| Lookups | Endpoints `/options` com cache no `LookupStore` |
+| Protótipo | A API mock (`mockApiInterceptor`, configuração `mock`, `start:mock`) foi removida: o protótipo roda contra o backend real |
+| Geração de tipos | `openapi-typescript`, `schema.d.ts` e o alias `@api/*` foram removidos em favor de models à mão |
+| Filtro na URL | Removido: `syncWithUrl` e a leitura/gravação de query params saíram do `injectCrudList` |
+| Nomes | Classes `@Injectable` e bases abstratas em `<nome>.service.ts` / `<Nome>Service`; `shared/crud` em subpastas; features importam de `shared/` só pelas barrels |
+| Lookups | Endpoints `/options` com cache no `LookupService` |
 
 **Em aberto:**
 - Lançamentos recorrentes e tags (dependem do modelo no backend, fase 2).
