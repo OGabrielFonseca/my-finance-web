@@ -1,10 +1,24 @@
-import type { ApiResponse } from '@api/api-types';
 import type { YearMonth } from '@shared/data/dates';
 
-// month é YearMonth no backend ('2026-10'); o tipo é fixado aqui caso o OpenAPI o descreva de outro jeito.
-export type DashboardSummary = Omit<ApiResponse<'DashboardSummaryResponse'>, 'month'> & { month: YearMonth };
-export type CategoryExpense = ApiResponse<'CategoryExpense', 'color' | 'icon'>;
-export type ExpensesByCategory = Omit<ApiResponse<'ExpensesByCategoryResponse'>, 'month' | 'categories'> & {
+export interface DashboardSummary {
   month: YearMonth;
+  totalBalance: number;
+  income: number;
+  expenses: number;
+  result: number;
+}
+
+export interface CategoryExpense {
+  categoryId: string;
+  name: string;
+  color: string | null;
+  icon: string | null;
+  amount: number;
+  percentage: number;
+}
+
+export interface ExpensesByCategory {
+  month: YearMonth;
+  total: number;
   categories: CategoryExpense[];
-};
+}

@@ -1,25 +1,65 @@
-import type { ApiResponse, ApiSchema } from '@api/api-types';
 import type { AccountSummary } from '@features/accounts';
 import type { CategorySummary } from '@features/categories';
 import type { LocalDate } from '@shared/data/dates';
 import { toLocalDate } from '@shared/data/dates';
 
-type TransactionBase = ApiResponse<
-  'TransactionResponse',
-  'creditCardInvoiceId' | 'installmentGroupId' | 'installmentNumber' | 'installmentTotal' | 'notes'
->;
+export const TRANSACTION_TYPES = ['INCOME', 'EXPENSE', 'TRANSFER'] as const;
+export type TransactionType = (typeof TRANSACTION_TYPES)[number];
+
+export const TRANSACTION_STATUSES = ['PENDING', 'CLEARED'] as const;
+export type TransactionStatus = (typeof TRANSACTION_STATUSES)[number];
 
 /** Lançamento como a API devolve (conta, destino e categoria vêm resumidos). */
-export type Transaction = Omit<TransactionBase, 'account' | 'destinationAccount' | 'category'> & {
+export interface Transaction {
+  id: string;
+  type: TransactionType;
+  description: string;
+  amount: number;
+  date: LocalDate;
+  status: TransactionStatus;
   account: AccountSummary;
   destinationAccount: AccountSummary | null;
   category: CategorySummary | null;
-};
-export type CreateTransactionRequest = ApiSchema<'CreateTransactionRequest'>;
-export type UpdateTransactionRequest = ApiSchema<'UpdateTransactionRequest'>;
-export type CreateTransferRequest = ApiSchema<'CreateTransferRequest'>;
-export type TransactionType = Transaction['type'];
-export type TransactionStatus = Transaction['status'];
+  creditCardInvoiceId: string | null;
+  installmentGroupId: string | null;
+  installmentNumber: number | null;
+  installmentTotal: number | null;
+  notes: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CreateTransactionRequest {
+  type: TransactionType;
+  description: string;
+  amount: number;
+  date: LocalDate;
+  status?: TransactionStatus;
+  accountId: string;
+  categoryId: string;
+  notes?: string;
+}
+
+export interface UpdateTransactionRequest {
+  description: string;
+  amount: number;
+  date: LocalDate;
+  status: TransactionStatus;
+  accountId: string;
+  destinationAccountId?: string;
+  categoryId?: string;
+  notes?: string;
+}
+
+export interface CreateTransferRequest {
+  fromAccountId: string;
+  toAccountId: string;
+  description: string;
+  amount: number;
+  date: LocalDate;
+  status?: TransactionStatus;
+  notes?: string;
+}
 
 /** Query params de GET /transactions. */
 export interface TransactionFilter {
@@ -32,9 +72,6 @@ export interface TransactionFilter {
   status: TransactionStatus;
   description: string;
 }
-
-export const TRANSACTION_TYPES = ['INCOME', 'EXPENSE', 'TRANSFER'] as const satisfies readonly TransactionType[];
-export const TRANSACTION_STATUSES = ['PENDING', 'CLEARED'] as const satisfies readonly TransactionStatus[];
 
 export type ReadOnlyReason = 'card' | 'system';
 

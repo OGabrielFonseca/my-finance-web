@@ -1,10 +1,41 @@
-import type { ApiResponse, ApiSchema } from '@api/api-types';
+export const CATEGORY_TYPES = ['EXPENSE', 'INCOME'] as const;
+export type CategoryType = (typeof CATEGORY_TYPES)[number];
 
-export type Category = ApiResponse<'CategoryResponse', 'parentId' | 'color' | 'icon'>;
-export type CategorySummary = ApiResponse<'CategorySummary', 'parentId' | 'color' | 'icon'>;
-export type CreateCategoryRequest = ApiSchema<'CreateCategoryRequest'>;
-export type UpdateCategoryRequest = ApiSchema<'UpdateCategoryRequest'>;
-export type CategoryType = Category['type'];
+export interface Category {
+  id: string;
+  parentId: string | null;
+  name: string;
+  type: CategoryType;
+  color: string | null;
+  icon: string | null;
+  archived: boolean;
+  system: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CategorySummary {
+  id: string;
+  name: string;
+  type: CategoryType;
+  color: string | null;
+  icon: string | null;
+  parentId: string | null;
+}
+
+export interface CreateCategoryRequest {
+  name: string;
+  type?: CategoryType;
+  parentId?: string;
+  color?: string;
+  icon?: string;
+}
+
+export interface UpdateCategoryRequest {
+  name: string;
+  color?: string;
+  icon?: string;
+}
 
 /** Query params de GET /categories e /categories/options. */
 export interface CategoryFilter {
@@ -12,8 +43,6 @@ export interface CategoryFilter {
   type: CategoryType;
   archived: boolean;
 }
-
-export const CATEGORY_TYPES = ['EXPENSE', 'INCOME'] as const satisfies readonly CategoryType[];
 
 /** Paleta oferecida no formulário (a cor é dado do usuário, guardada em hexadecimal na API). */
 export const CATEGORY_COLORS = [
