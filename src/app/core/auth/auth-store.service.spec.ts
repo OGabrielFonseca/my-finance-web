@@ -50,6 +50,40 @@ describe('AuthStoreService', () => {
     expect(readSession()).toEqual({ token: 'jwt', expiresAt: Date.now() + 3600 * 1000 });
   });
 
+  it('register grava a sessão e carrega o usuário', () => {
+    vi.useFakeTimers({ now: new Date(2026, 9, 12, 10, 0) });
+    const store = TestBed.inject(AuthStoreService);
+    let done = false;
+
+    store
+      .register({ name: 'Gabriel', email: 'demo@myfinance.dev', password: '12345678' })
+      .subscribe(() => (done = true));
+    http.expectOne('/api/v1/auth/register').flush({ accessToken: 'jwt', tokenType: 'Bearer', expiresIn: 3600 });
+    http.expectOne('/api/v1/me').flush(user);
+
+    expect(done).toBe(true);
+    expect(store.isAuthenticated()).toBe(true);
+    expect(store.token()).toBe('jwt');
+    expect(store.user()?.name).toBe('Gabriel');
+    expect(readSession()).toEqual({ token: 'jwt', expiresAt: Date.now() + 3600 * 1000 });
+  });
+
+  it('register com erro não inicia a sessão', () => {
+    const store = TestBed.inject(AuthStoreService);
+    let failed = false;
+
+    store
+      .register({ name: 'Gabriel', email: 'demo@myfinance.dev', password: '12345678' })
+      .subscribe({ error: () => (failed = true) });
+    http
+      .expectOne('/api/v1/auth/register')
+      .flush({ detail: 'E-mail já cadastrado.' }, { status: 409, statusText: 'Conflict' });
+
+    expect(failed).toBe(true);
+    expect(store.isAuthenticated()).toBe(false);
+    expect(localStorage.getItem(SESSION_STORAGE_KEY)).toBeNull();
+  });
+
   it('restoreSession descarta sessão expirada', () => {
     writeSession({ token: 'old', expiresAt: 1000 });
     const store = TestBed.inject(AuthStoreService);
