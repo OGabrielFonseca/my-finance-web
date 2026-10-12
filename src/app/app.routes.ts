@@ -6,6 +6,7 @@ import { ShellComponent } from './core/layout/shell.component';
 
 export const routes: Routes = [
   { path: 'login', canActivate: [guestGuard], loadChildren: () => import('./features/auth/auth.routes') },
+  { path: 'register', canActivate: [guestGuard], loadChildren: () => import('./features/auth/register.routes') },
   {
     path: '',
     component: ShellComponent,
