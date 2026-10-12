@@ -1,8 +1,8 @@
 import type { ParamMap, Params } from '@angular/router';
 
-import type { PageRequest, SortSpec } from '../data/page';
-import type { FilterField, FilterValue } from './filter';
-import { fieldKeys } from './filter';
+import type { PageRequest, SortSpec } from '../../data/page';
+import type { FilterField, FilterValue } from '../filter/filter';
+import { fieldKeys } from '../filter/filter';
 
 export interface UrlListState {
   filter: FilterValue; // só o que veio na URL

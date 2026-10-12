@@ -4,7 +4,7 @@ import { MessageService } from 'primeng/api';
 
 /** Toasts padronizados. Sucesso recebe chave i18n; erro recebe o texto já pronto (normalmente o detail da API). */
 @Injectable({ providedIn: 'root' })
-export class Notifier {
+export class NotifierService {
   private readonly messages = inject(MessageService);
   private readonly transloco = inject(TranslocoService);
 

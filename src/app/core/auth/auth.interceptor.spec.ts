@@ -4,7 +4,7 @@ import { signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 
 import { authInterceptor } from './auth.interceptor';
-import { AuthStore } from './auth.store';
+import { AuthStoreService } from './auth-store.service';
 
 describe('authInterceptor', () => {
   const token = signal<string | null>('jwt');
@@ -17,7 +17,7 @@ describe('authInterceptor', () => {
       providers: [
         provideHttpClient(withInterceptors([authInterceptor])),
         provideHttpClientTesting(),
-        { provide: AuthStore, useValue: { token } },
+        { provide: AuthStoreService, useValue: { token } },
       ],
     });
     http = TestBed.inject(HttpClient);

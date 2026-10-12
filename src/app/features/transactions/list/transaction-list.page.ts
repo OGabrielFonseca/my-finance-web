@@ -1,24 +1,24 @@
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
-import { AccountLookup, toAccountOptions } from '@features/accounts';
-import { ActiveCategoryLookup, AllCategoryLookup, toCategoryOptions } from '@features/categories';
+import { AccountLookupService, toAccountOptions } from '@features/accounts';
+import { ActiveCategoryLookupService, AllCategoryLookupService, toCategoryOptions } from '@features/categories';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
-import { CellDirective } from '@shared/crud/cell.directive';
-import type { ColumnDef, RowActionDef, RowActionEvent } from '@shared/crud/column';
-import { DELETE_ACTION, EDIT_ACTION } from '@shared/crud/column';
-import { CrudActions } from '@shared/crud/crud-actions';
-import { injectCrudList } from '@shared/crud/crud-list';
-import { CrudPageComponent } from '@shared/crud/crud-page.component';
-import { DataTableComponent } from '@shared/crud/data-table.component';
+import { CellDirective } from '@shared/crud/table';
+import type { ColumnDef, RowActionDef, RowActionEvent } from '@shared/crud/table';
+import { DELETE_ACTION, EDIT_ACTION } from '@shared/crud/table';
+import { CrudActionsService } from '@shared/crud/page';
+import { injectCrudList } from '@shared/crud/list';
+import { CrudPageComponent } from '@shared/crud/page';
+import { DataTableComponent } from '@shared/crud/table';
 import type { FilterField } from '@shared/crud/filter';
-import { FilterBarComponent } from '@shared/crud/filter-bar.component';
-import { toLocalDate } from '@shared/data/dates';
-import { MoneyComponent } from '@shared/ui/money.component';
+import { FilterBarComponent } from '@shared/crud/filter';
+import { toLocalDate } from '@shared/data';
+import { MoneyComponent } from '@shared/ui';
 import type { MenuItem } from 'primeng/api';
 import { Button } from 'primeng/button';
 import { Menu } from 'primeng/menu';
 import { Tag } from 'primeng/tag';
 
-import { TransactionApi } from '../data/transaction.api';
+import { TransactionApiService } from '../data/transaction-api.service';
 import type { Transaction, TransactionFilter } from '../data/transaction.model';
 import { TRANSACTION_STATUSES, TRANSACTION_TYPES, readOnlyReason, toUpdateRequest } from '../data/transaction.model';
 import type { TransactionFormData } from '../form/transaction-form.component';
@@ -52,12 +52,12 @@ function currentMonth(): Partial<TransactionFilter> {
   templateUrl: './transaction-list.page.html',
 })
 export class TransactionListPage {
-  private readonly api = inject(TransactionApi);
-  private readonly crud = inject(CrudActions);
+  private readonly api = inject(TransactionApiService);
+  private readonly crud = inject(CrudActionsService);
   private readonly transloco = inject(TranslocoService);
-  private readonly accountLookup = inject(AccountLookup);
-  private readonly activeCategoryLookup = inject(ActiveCategoryLookup);
-  private readonly allCategoryLookup = inject(AllCategoryLookup);
+  private readonly accountLookup = inject(AccountLookupService);
+  private readonly activeCategoryLookup = inject(ActiveCategoryLookupService);
+  private readonly allCategoryLookup = inject(AllCategoryLookupService);
 
   /** Ids das categorias não-sistema; null enquanto não carregou. */
   private readonly knownCategoryIds = computed(() =>
@@ -166,7 +166,7 @@ export class TransactionListPage {
     }
   }
 
-  private reloadWhenSaved(saved$: ReturnType<CrudActions['openForm']>): void {
+  private reloadWhenSaved(saved$: ReturnType<CrudActionsService['openForm']>): void {
     saved$.subscribe((saved) => {
       if (saved) this.list.reload();
     });

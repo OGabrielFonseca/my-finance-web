@@ -3,8 +3,8 @@ import { HttpTestingController, provideHttpClientTesting } from '@angular/common
 import { Injectable } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 
-import { skipBusinessErrorToast, SKIP_BUSINESS_ERROR_TOAST } from '../data/http-context';
-import { CrudApi } from './crud-api';
+import { skipBusinessErrorToast, SKIP_BUSINESS_ERROR_TOAST } from '../../data/http-context';
+import { CrudApiService } from './crud-api.service';
 
 interface Thing {
   id: string;
@@ -12,17 +12,22 @@ interface Thing {
 }
 
 @Injectable({ providedIn: 'root' })
-class ThingApi extends CrudApi<Thing, { name: string }, { name: string }, { name: string; archived: boolean }> {
+class ThingApiService extends CrudApiService<
+  Thing,
+  { name: string },
+  { name: string },
+  { name: string; archived: boolean }
+> {
   protected readonly path = '/things';
 }
 
-describe('CrudApi', () => {
-  let api: ThingApi;
+describe('CrudApiService', () => {
+  let api: ThingApiService;
   let backend: HttpTestingController;
 
   beforeEach(() => {
     TestBed.configureTestingModule({ providers: [provideHttpClient(), provideHttpClientTesting()] });
-    api = TestBed.inject(ThingApi);
+    api = TestBed.inject(ThingApiService);
     backend = TestBed.inject(HttpTestingController);
   });
 

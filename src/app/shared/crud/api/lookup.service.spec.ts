@@ -1,7 +1,7 @@
 import { of, throwError } from 'rxjs';
 
-import type { PageResponse } from '../data/page';
-import { Lookup } from './lookup';
+import type { PageResponse } from '../../data/page';
+import { LookupService } from './lookup.service';
 
 const page = (items: string[]): PageResponse<string> => ({
   items,
@@ -11,10 +11,10 @@ const page = (items: string[]): PageResponse<string> => ({
   totalPages: 1,
 });
 
-describe('Lookup', () => {
+describe('LookupService', () => {
   it('carrega uma vez só', () => {
     const loader = vi.fn(() => of(page(['a', 'b'])));
-    const lookup = new Lookup(loader);
+    const lookup = new LookupService(loader);
 
     lookup.ensureLoaded();
     lookup.ensureLoaded();
@@ -29,7 +29,7 @@ describe('Lookup', () => {
       .fn()
       .mockReturnValueOnce(of(page(['a'])))
       .mockReturnValueOnce(of(page(['a', 'c'])));
-    const lookup = new Lookup<string>(loader);
+    const lookup = new LookupService<string>(loader);
     lookup.ensureLoaded();
 
     lookup.invalidate();
@@ -40,7 +40,7 @@ describe('Lookup', () => {
 
   it('invalidate não carrega se ninguém pediu ainda', () => {
     const loader = vi.fn(() => of(page([])));
-    new Lookup(loader).invalidate();
+    new LookupService(loader).invalidate();
     expect(loader).not.toHaveBeenCalled();
   });
 
@@ -49,7 +49,7 @@ describe('Lookup', () => {
       .fn()
       .mockReturnValueOnce(throwError(() => new Error('x')))
       .mockReturnValueOnce(of(page(['a'])));
-    const lookup = new Lookup<string>(loader);
+    const lookup = new LookupService<string>(loader);
 
     lookup.ensureLoaded();
     lookup.ensureLoaded();

@@ -1,6 +1,6 @@
 import type { HttpContext } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { CrudApi } from '@shared/crud/crud-api';
+import { CrudApiService } from '@shared/crud/api';
 import type { Observable } from 'rxjs';
 
 import type {
@@ -13,7 +13,7 @@ import type {
 
 /** Lançamentos não têm archive. Transferência é criada por um endpoint próprio e editada pelo PUT comum. */
 @Injectable({ providedIn: 'root' })
-export class TransactionApi extends CrudApi<
+export class TransactionApiService extends CrudApiService<
   Transaction,
   CreateTransactionRequest,
   UpdateTransactionRequest,

@@ -4,17 +4,17 @@ import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { ThemeService } from '@core/theme/theme.service';
 import { TranslocoPipe } from '@jsverse/transloco';
-import { toLocalDate, toYearMonth } from '@shared/data/dates';
-import { ChartComponent } from '@shared/ui/chart/chart.component';
-import { EmptyStateComponent } from '@shared/ui/empty-state.component';
-import { StatCardComponent } from '@shared/ui/stat-card.component';
+import { toLocalDate, toYearMonth } from '@shared/data';
+import { ChartComponent } from '@shared/ui';
+import { EmptyStateComponent } from '@shared/ui';
+import { StatCardComponent } from '@shared/ui';
 import type { EChartsCoreOption } from 'echarts/core';
 import { Button } from 'primeng/button';
 import { DatePicker } from 'primeng/datepicker';
 import { Skeleton } from 'primeng/skeleton';
 import { finalize, forkJoin } from 'rxjs';
 
-import { DashboardApi } from './data/dashboard.api';
+import { DashboardApiService } from './data/dashboard-api.service';
 import type { DashboardSummary, ExpensesByCategory } from './data/dashboard.model';
 
 const firstOfMonth = (date: Date) => new Date(date.getFullYear(), date.getMonth(), 1);
@@ -38,7 +38,7 @@ const firstOfMonth = (date: Date) => new Date(date.getFullYear(), date.getMonth(
   templateUrl: './dashboard.page.html',
 })
 export class DashboardPage {
-  private readonly api = inject(DashboardApi);
+  private readonly api = inject(DashboardApiService);
   protected readonly theme = inject(ThemeService);
 
   protected readonly month = signal(firstOfMonth(new Date()));

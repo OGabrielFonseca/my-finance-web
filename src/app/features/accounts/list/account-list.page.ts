@@ -1,21 +1,21 @@
 import { CurrencyPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, effect, inject, signal, untracked } from '@angular/core';
 import { TranslocoPipe } from '@jsverse/transloco';
-import { CellDirective } from '@shared/crud/cell.directive';
-import type { ColumnDef, RowActionDef, RowActionEvent } from '@shared/crud/column';
-import { ARCHIVE_ACTION, EDIT_ACTION } from '@shared/crud/column';
-import { CrudActions } from '@shared/crud/crud-actions';
-import { injectCrudList } from '@shared/crud/crud-list';
-import { CrudPageComponent } from '@shared/crud/crud-page.component';
-import { DataTableComponent } from '@shared/crud/data-table.component';
+import { CellDirective } from '@shared/crud/table';
+import type { ColumnDef, RowActionDef, RowActionEvent } from '@shared/crud/table';
+import { ARCHIVE_ACTION, EDIT_ACTION } from '@shared/crud/table';
+import { CrudActionsService } from '@shared/crud/page';
+import { injectCrudList } from '@shared/crud/list';
+import { CrudPageComponent } from '@shared/crud/page';
+import { DataTableComponent } from '@shared/crud/table';
 import type { FilterField } from '@shared/crud/filter';
-import { FilterBarComponent } from '@shared/crud/filter-bar.component';
-import { MoneyComponent } from '@shared/ui/money.component';
+import { FilterBarComponent } from '@shared/crud/filter';
+import { MoneyComponent } from '@shared/ui';
 import { Skeleton } from 'primeng/skeleton';
 import { forkJoin } from 'rxjs';
 
-import { AccountApi } from '../data/account.api';
-import { AccountLookup } from '../data/account.lookup';
+import { AccountApiService } from '../data/account-api.service';
+import { AccountLookupService } from '../data/account-lookup.service';
 import type { Account, AccountBalance, AccountFilter } from '../data/account.model';
 import { ACCOUNT_TYPES } from '../data/account.model';
 import { AccountFormComponent } from '../form/account-form.component';
@@ -36,9 +36,9 @@ import { AccountFormComponent } from '../form/account-form.component';
   templateUrl: './account-list.page.html',
 })
 export class AccountListPage {
-  private readonly api = inject(AccountApi);
-  private readonly lookup = inject(AccountLookup);
-  private readonly crud = inject(CrudActions);
+  private readonly api = inject(AccountApiService);
+  private readonly lookup = inject(AccountLookupService);
+  private readonly crud = inject(CrudActionsService);
 
   protected readonly initialFilter: Partial<AccountFilter> = { archived: false };
   protected readonly filters: FilterField[] = [

@@ -1,6 +1,6 @@
 import type { TableLazyLoadEvent } from 'primeng/table';
 
-import type { PageRequest, SortSpec } from '../data/page';
+import type { PageRequest, SortSpec } from '../../data/page';
 
 export type ColumnType = 'text' | 'money' | 'date' | 'month' | 'enum' | 'boolean' | 'color';
 

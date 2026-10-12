@@ -1,8 +1,8 @@
 import type { Signal } from '@angular/core';
 
-import { fromLocalDate, toLocalDate } from '../data/dates';
+import { fromLocalDate, toLocalDate } from '../../data/dates';
 
-/** Opção de seletor vinda de um Lookup. depth indenta subcategorias; color mostra a bolinha da categoria. */
+/** Opção de seletor vinda de um LookupService. depth indenta subcategorias; color mostra a bolinha da categoria. */
 export interface LookupOption {
   value: string;
   label: string;

@@ -2,14 +2,14 @@ import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { Router, provideRouter } from '@angular/router';
-import { Notifier } from '@shared/ui/notifier';
+import { NotifierService } from '@shared/ui';
 
 import { SESSION_STORAGE_KEY, readSession, writeSession } from './auth-storage';
-import { AuthStore } from './auth.store';
+import { AuthStoreService } from './auth-store.service';
 
 const user = { id: 'u1', name: 'Gabriel', email: 'demo@myfinance.dev', createdAt: '', updatedAt: '' };
 
-describe('AuthStore', () => {
+describe('AuthStoreService', () => {
   let http: HttpTestingController;
   let notifier: { errorKey: ReturnType<typeof vi.fn> };
 
@@ -21,7 +21,7 @@ describe('AuthStore', () => {
         provideHttpClient(),
         provideHttpClientTesting(),
         provideRouter([]),
-        { provide: Notifier, useValue: notifier },
+        { provide: NotifierService, useValue: notifier },
       ],
     });
     http = TestBed.inject(HttpTestingController);
@@ -36,7 +36,7 @@ describe('AuthStore', () => {
 
   it('login grava a sessão com a expiração e carrega o usuário', () => {
     vi.useFakeTimers({ now: new Date(2026, 9, 12, 10, 0) });
-    const store = TestBed.inject(AuthStore);
+    const store = TestBed.inject(AuthStoreService);
     let done = false;
 
     store.login({ email: 'demo@myfinance.dev', password: '12345678' }).subscribe(() => (done = true));
@@ -52,7 +52,7 @@ describe('AuthStore', () => {
 
   it('restoreSession descarta sessão expirada', () => {
     writeSession({ token: 'old', expiresAt: 1000 });
-    const store = TestBed.inject(AuthStore);
+    const store = TestBed.inject(AuthStoreService);
 
     store.restoreSession(2000);
 
@@ -62,7 +62,7 @@ describe('AuthStore', () => {
 
   it('restoreSession reaproveita sessão válida e carrega o usuário', () => {
     writeSession({ token: 'jwt', expiresAt: Date.now() + 60_000 });
-    const store = TestBed.inject(AuthStore);
+    const store = TestBed.inject(AuthStoreService);
 
     store.restoreSession();
     http.expectOne('/api/v1/me').flush(user);
@@ -74,7 +74,7 @@ describe('AuthStore', () => {
   it('expira a sessão no horário do token e volta ao login com returnUrl', () => {
     vi.useFakeTimers();
     writeSession({ token: 'jwt', expiresAt: Date.now() + 5_000 });
-    const store = TestBed.inject(AuthStore);
+    const store = TestBed.inject(AuthStoreService);
     store.restoreSession();
     http.expectOne('/api/v1/me').flush(user);
 
@@ -87,7 +87,7 @@ describe('AuthStore', () => {
 
   it('logout limpa a sessão sem avisar de expiração', () => {
     writeSession({ token: 'jwt', expiresAt: Date.now() + 60_000 });
-    const store = TestBed.inject(AuthStore);
+    const store = TestBed.inject(AuthStoreService);
     store.restoreSession();
     http.expectOne('/api/v1/me').flush(user);
 

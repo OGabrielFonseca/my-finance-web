@@ -4,7 +4,7 @@ import type { MenuItem } from 'primeng/api';
 import { Button } from 'primeng/button';
 import { Menu } from 'primeng/menu';
 
-import { AuthStore } from '../auth/auth.store';
+import { AuthStoreService } from '../auth/auth-store.service';
 
 /** Botão com o nome do usuário e menu (Sair). */
 @Component({
@@ -24,7 +24,7 @@ import { AuthStore } from '../auth/auth.store';
   `,
 })
 export class UserMenuComponent {
-  protected readonly auth = inject(AuthStore);
+  protected readonly auth = inject(AuthStoreService);
   private readonly transloco = inject(TranslocoService);
 
   // As traduções globais já estão carregadas (provideI18n espera por elas na inicialização).

@@ -1,14 +1,14 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TranslocoPipe } from '@jsverse/transloco';
-import { FieldComponent } from '@shared/forms/field.component';
-import { FormFooterComponent } from '@shared/forms/form-footer.component';
-import { injectFormSubmit } from '@shared/forms/form-submit';
+import { FieldComponent } from '@shared/forms';
+import { FormFooterComponent } from '@shared/forms';
+import { injectFormSubmit } from '@shared/forms';
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { InputText } from 'primeng/inputtext';
 import { Select } from 'primeng/select';
 
-import { CategoryApi } from '../data/category.api';
+import { CategoryApiService } from '../data/category-api.service';
 import type { Category, CategoryType } from '../data/category.model';
 import { CATEGORY_COLORS, CATEGORY_ICONS } from '../data/category.model';
 
@@ -26,7 +26,7 @@ export interface CategoryFormData {
   templateUrl: './category-form.component.html',
 })
 export class CategoryFormComponent {
-  private readonly api = inject(CategoryApi);
+  private readonly api = inject(CategoryApiService);
   protected readonly ref = inject(DynamicDialogRef);
   protected readonly data = inject(DynamicDialogConfig).data as CategoryFormData;
 

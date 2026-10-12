@@ -2,11 +2,11 @@ import type { HttpContext } from '@angular/common/http';
 import { HttpClient, provideHttpClient, withInterceptors } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
-import { ApiError } from '@shared/data/api-error';
-import { skipBusinessErrorToast } from '@shared/data/http-context';
-import { Notifier } from '@shared/ui/notifier';
+import { ApiError } from '@shared/data';
+import { skipBusinessErrorToast } from '@shared/data';
+import { NotifierService } from '@shared/ui';
 
-import { AuthStore } from '../auth/auth.store';
+import { AuthStoreService } from '../auth/auth-store.service';
 import { errorInterceptor } from './error.interceptor';
 
 describe('errorInterceptor', () => {
@@ -22,8 +22,8 @@ describe('errorInterceptor', () => {
       providers: [
         provideHttpClient(withInterceptors([errorInterceptor])),
         provideHttpClientTesting(),
-        { provide: Notifier, useValue: notifier },
-        { provide: AuthStore, useValue: auth },
+        { provide: NotifierService, useValue: notifier },
+        { provide: AuthStoreService, useValue: auth },
       ],
     });
     http = TestBed.inject(HttpClient);

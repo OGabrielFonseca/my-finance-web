@@ -4,8 +4,8 @@ import { inject } from '@angular/core';
 import { environment } from '@env/environment';
 import type { Observable } from 'rxjs';
 
-import { toHttpParams } from '../data/http-params';
-import type { PageRequest, PageResponse } from '../data/page';
+import { toHttpParams } from '../../data/http-params';
+import type { PageRequest, PageResponse } from '../../data/page';
 
 /** Fonte de uma listagem paginada (o que o injectCrudList precisa). */
 export interface ListSource<T, F> {
@@ -16,7 +16,7 @@ export interface ListSource<T, F> {
  * Service HTTP genérico de um recurso. Nem todo recurso tem todas as operações: a tela declara quais ações mostra.
  * Criação e edição podem ter corpos diferentes (TCreate × TUpdate).
  */
-export abstract class CrudApi<
+export abstract class CrudApiService<
   T extends { id: string },
   TCreate,
   TUpdate = TCreate,

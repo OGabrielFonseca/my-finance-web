@@ -1,15 +1,15 @@
 import { Injectable, inject } from '@angular/core';
-import { Lookup } from '@shared/crud/lookup';
-import { MAX_PAGE_SIZE } from '@shared/data/page';
+import { LookupService } from '@shared/crud/api';
+import { MAX_PAGE_SIZE } from '@shared/data';
 
-import { CategoryApi } from './category.api';
+import { CategoryApiService } from './category-api.service';
 import type { CategorySummary } from './category.model';
 
 /** Categorias ativas (sem a de sistema), para seletores de formulário e filtro. */
 @Injectable({ providedIn: 'root' })
-export class ActiveCategoryLookup extends Lookup<CategorySummary> {
+export class ActiveCategoryLookupService extends LookupService<CategorySummary> {
   constructor() {
-    const api = inject(CategoryApi);
+    const api = inject(CategoryApiService);
     super(() => api.options({ archived: false }, { page: 0, size: MAX_PAGE_SIZE }));
   }
 }
@@ -19,9 +19,9 @@ export class ActiveCategoryLookup extends Lookup<CategorySummary> {
  * são de categoria de sistema (os que não estão aqui), já que o lançamento não traz essa informação.
  */
 @Injectable({ providedIn: 'root' })
-export class AllCategoryLookup extends Lookup<CategorySummary> {
+export class AllCategoryLookupService extends LookupService<CategorySummary> {
   constructor() {
-    const api = inject(CategoryApi);
+    const api = inject(CategoryApiService);
     super(() => api.options({}, { page: 0, size: MAX_PAGE_SIZE }));
   }
 }

@@ -7,7 +7,7 @@ import type { Observable } from 'rxjs';
 import type { LoginRequest, RegisterRequest, TokenResponse, User } from './auth.model';
 
 @Injectable({ providedIn: 'root' })
-export class AuthApi {
+export class AuthApiService {
   private readonly http = inject(HttpClient);
 
   login(body: LoginRequest, context?: HttpContext): Observable<TokenResponse> {

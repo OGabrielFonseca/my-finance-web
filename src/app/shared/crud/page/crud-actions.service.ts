@@ -5,17 +5,17 @@ import { ConfirmationService } from 'primeng/api';
 import { DialogService } from 'primeng/dynamicdialog';
 import { Observable, map, of, tap } from 'rxjs';
 
-import { Notifier } from '../ui/notifier';
+import { NotifierService } from '../../ui/notifier.service';
 
 export type ConfirmAction = 'archive' | 'delete';
 
 /** O que toda tela de cadastro repete: abrir formulário em diálogo, confirmar e executar, toast de sucesso. */
 @Injectable({ providedIn: 'root' })
-export class CrudActions {
+export class CrudActionsService {
   private readonly dialog = inject(DialogService);
   private readonly confirmation = inject(ConfirmationService);
   private readonly transloco = inject(TranslocoService);
-  private readonly notifier = inject(Notifier);
+  private readonly notifier = inject(NotifierService);
 
   /** Abre o componente num diálogo. Emite true se o formulário salvou (ref.close(true)). */
   openForm<C, D>(component: Type<C>, header: string, data?: D): Observable<boolean> {

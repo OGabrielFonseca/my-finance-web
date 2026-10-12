@@ -1,10 +1,10 @@
 import { ChangeDetectionStrategy, Component, inject, input } from '@angular/core';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { AuthStore } from '@core/auth/auth.store';
+import { AuthStoreService } from '@core/auth/auth-store.service';
 import { TranslocoPipe } from '@jsverse/transloco';
-import { FieldComponent } from '@shared/forms/field.component';
-import { injectFormSubmit } from '@shared/forms/form-submit';
+import { FieldComponent } from '@shared/forms';
+import { injectFormSubmit } from '@shared/forms';
 import { Button } from 'primeng/button';
 import { InputText } from 'primeng/inputtext';
 import { Message } from 'primeng/message';
@@ -17,7 +17,7 @@ import { Password } from 'primeng/password';
   templateUrl: './login.page.html',
 })
 export class LoginPage {
-  private readonly auth = inject(AuthStore);
+  private readonly auth = inject(AuthStoreService);
   private readonly router = inject(Router);
 
   /** Preenchido pelo query param ?returnUrl= (withComponentInputBinding). */

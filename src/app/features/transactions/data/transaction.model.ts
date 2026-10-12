@@ -1,7 +1,7 @@
 import type { AccountSummary } from '@features/accounts';
 import type { CategorySummary } from '@features/categories';
-import type { LocalDate } from '@shared/data/dates';
-import { toLocalDate } from '@shared/data/dates';
+import type { LocalDate } from '@shared/data';
+import { toLocalDate } from '@shared/data';
 
 export const TRANSACTION_TYPES = ['INCOME', 'EXPENSE', 'TRANSFER'] as const;
 export type TransactionType = (typeof TRANSACTION_TYPES)[number];

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
-import { CrudApi } from '@shared/crud/crud-api';
-import { toHttpParams } from '@shared/data/http-params';
-import type { PageRequest, PageResponse } from '@shared/data/page';
+import { CrudApiService } from '@shared/crud/api';
+import { toHttpParams } from '@shared/data';
+import type { PageRequest, PageResponse } from '@shared/data';
 import type { Observable } from 'rxjs';
 
 import type {
@@ -14,7 +14,12 @@ import type {
 } from './account.model';
 
 @Injectable({ providedIn: 'root' })
-export class AccountApi extends CrudApi<Account, CreateAccountRequest, UpdateAccountRequest, AccountFilter> {
+export class AccountApiService extends CrudApiService<
+  Account,
+  CreateAccountRequest,
+  UpdateAccountRequest,
+  AccountFilter
+> {
   protected readonly path = '/accounts';
 
   options(filter: Partial<AccountFilter>, page: PageRequest): Observable<PageResponse<AccountSummary>> {

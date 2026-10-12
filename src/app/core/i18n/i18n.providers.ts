@@ -7,7 +7,7 @@ import { PrimeNG } from 'primeng/config';
 import { pt_BR } from 'primelocale/js/pt_BR.js';
 import { firstValueFrom } from 'rxjs';
 
-import { TranslocoHttpLoader } from './transloco-http.loader';
+import { TranslocoLoaderService } from './transloco-loader.service';
 
 export const DEFAULT_LANG = 'pt-BR';
 
@@ -28,7 +28,7 @@ export function provideI18n(): (Provider | EnvironmentProviders)[] {
         reRenderOnLangChange: true,
         prodMode: !isDevMode(),
       },
-      loader: TranslocoHttpLoader,
+      loader: TranslocoLoaderService,
     }),
     provideAppInitializer(() => {
       const transloco = inject(TranslocoService);

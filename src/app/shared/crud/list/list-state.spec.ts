@@ -1,6 +1,6 @@
 import { convertToParamMap } from '@angular/router';
 
-import type { FilterField } from './filter';
+import type { FilterField } from '../filter/filter';
 import { readListState, writeListState } from './list-state';
 
 const fields: FilterField[] = [

@@ -1,15 +1,15 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TranslocoService } from '@jsverse/transloco';
-import { FieldComponent } from '@shared/forms/field.component';
-import { FormFooterComponent } from '@shared/forms/form-footer.component';
-import { injectFormSubmit } from '@shared/forms/form-submit';
+import { FieldComponent } from '@shared/forms';
+import { FormFooterComponent } from '@shared/forms';
+import { injectFormSubmit } from '@shared/forms';
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { InputNumber } from 'primeng/inputnumber';
 import { InputText } from 'primeng/inputtext';
 import { Select } from 'primeng/select';
 
-import { AccountApi } from '../data/account.api';
+import { AccountApiService } from '../data/account-api.service';
 import type { AccountType } from '../data/account.model';
 import { ACCOUNT_TYPES } from '../data/account.model';
 
@@ -20,7 +20,7 @@ import { ACCOUNT_TYPES } from '../data/account.model';
   templateUrl: './account-form.component.html',
 })
 export class AccountFormComponent {
-  private readonly api = inject(AccountApi);
+  private readonly api = inject(AccountApiService);
   private readonly transloco = inject(TranslocoService);
   protected readonly ref = inject(DynamicDialogRef);
   private readonly id = (inject(DynamicDialogConfig).data as { id?: string } | undefined)?.id;

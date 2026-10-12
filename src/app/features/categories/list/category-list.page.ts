@@ -1,9 +1,9 @@
 import { ChangeDetectionStrategy, Component, effect, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TranslocoPipe } from '@jsverse/transloco';
-import { CrudActions } from '@shared/crud/crud-actions';
-import { CrudPageComponent } from '@shared/crud/crud-page.component';
-import { EmptyStateComponent } from '@shared/ui/empty-state.component';
+import { CrudActionsService } from '@shared/crud/page';
+import { CrudPageComponent } from '@shared/crud/page';
+import { EmptyStateComponent } from '@shared/ui';
 import type { TreeNode } from 'primeng/api';
 import { Button } from 'primeng/button';
 import { Checkbox } from 'primeng/checkbox';
@@ -13,8 +13,8 @@ import { TreeTableModule } from 'primeng/treetable';
 import { finalize } from 'rxjs';
 
 import { buildCategoryTree } from '../data/category-tree';
-import { CategoryApi } from '../data/category.api';
-import { ActiveCategoryLookup, AllCategoryLookup } from '../data/category.lookup';
+import { CategoryApiService } from '../data/category-api.service';
+import { ActiveCategoryLookupService, AllCategoryLookupService } from '../data/category-lookup.service';
 import type { Category, CategoryType } from '../data/category.model';
 import { CATEGORY_TYPES } from '../data/category.model';
 import type { CategoryFormData } from '../form/category-form.component';
@@ -40,10 +40,10 @@ import { CategoryFormComponent } from '../form/category-form.component';
   templateUrl: './category-list.page.html',
 })
 export class CategoryListPage {
-  private readonly api = inject(CategoryApi);
-  private readonly crud = inject(CrudActions);
-  private readonly activeLookup = inject(ActiveCategoryLookup);
-  private readonly allLookup = inject(AllCategoryLookup);
+  private readonly api = inject(CategoryApiService);
+  private readonly crud = inject(CrudActionsService);
+  private readonly activeLookup = inject(ActiveCategoryLookupService);
+  private readonly allLookup = inject(AllCategoryLookupService);
 
   protected readonly types = CATEGORY_TYPES;
   protected readonly type = signal<CategoryType>('EXPENSE');

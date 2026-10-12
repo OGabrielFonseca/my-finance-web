@@ -20,7 +20,7 @@ export interface FormSubmit {
 /**
  * Envio padrão: marca os campos como tocados, não envia inválido, bloqueia envio duplo, aplica os erros de validação do
  * servidor nos campos e guarda o detail de 401/409/422 para exibir dentro do formulário (sem toast).
- * A operação recebe o HttpContext que desliga o toast de 409/422: repasse-o para o CrudApi.
+ * A operação recebe o HttpContext que desliga o toast de 409/422: repasse-o para o CrudApiService.
  */
 export function injectFormSubmit<TForm extends FormGroup, R>(
   form: TForm,

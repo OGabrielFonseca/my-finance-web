@@ -19,11 +19,11 @@ import type { TableLazyLoadEvent } from 'primeng/table';
 import { TableModule } from 'primeng/table';
 import { Tag } from 'primeng/tag';
 
-import { EmptyStateComponent } from '../ui/empty-state.component';
+import { EmptyStateComponent } from '../../ui/empty-state.component';
 import { CellDirective } from './cell.directive';
 import type { ColumnDef, RowActionDef, RowActionEvent } from './column';
 import { columnKey, isSortable, toPageRequest, toTableSort } from './column';
-import type { PagedList } from './crud-list';
+import type { PagedList } from '../list/crud-list';
 
 /** Tabela lazy (paginação e ordenação no servidor) sobre p-table, com colunas declaradas e formatação por tipo. */
 @Component({

@@ -2,13 +2,13 @@ import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/c
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-import { AccountLookup, toAccountOptions } from '@features/accounts';
-import { ActiveCategoryLookup, toCategoryOptions } from '@features/categories';
+import { AccountLookupService, toAccountOptions } from '@features/accounts';
+import { ActiveCategoryLookupService, toCategoryOptions } from '@features/categories';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
-import { fromLocalDate, toLocalDate } from '@shared/data/dates';
-import { FieldComponent } from '@shared/forms/field.component';
-import { FormFooterComponent } from '@shared/forms/form-footer.component';
-import { injectFormSubmit } from '@shared/forms/form-submit';
+import { fromLocalDate, toLocalDate } from '@shared/data';
+import { FieldComponent } from '@shared/forms';
+import { FormFooterComponent } from '@shared/forms';
+import { injectFormSubmit } from '@shared/forms';
 import { DatePicker } from 'primeng/datepicker';
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { InputNumber } from 'primeng/inputnumber';
@@ -17,7 +17,7 @@ import { Message } from 'primeng/message';
 import { Select } from 'primeng/select';
 import { Textarea } from 'primeng/textarea';
 
-import { TransactionApi } from '../data/transaction.api';
+import { TransactionApiService } from '../data/transaction-api.service';
 import type { Transaction, TransactionStatus } from '../data/transaction.model';
 import { TRANSACTION_STATUSES, statusForDate } from '../data/transaction.model';
 
@@ -46,10 +46,10 @@ export interface TransactionFormData {
   templateUrl: './transaction-form.component.html',
 })
 export class TransactionFormComponent {
-  private readonly api = inject(TransactionApi);
+  private readonly api = inject(TransactionApiService);
   private readonly transloco = inject(TranslocoService);
-  private readonly accountLookup = inject(AccountLookup);
-  private readonly categoryLookup = inject(ActiveCategoryLookup);
+  private readonly accountLookup = inject(AccountLookupService);
+  private readonly categoryLookup = inject(ActiveCategoryLookupService);
   protected readonly ref = inject(DynamicDialogRef);
   protected readonly data = inject(DynamicDialogConfig).data as TransactionFormData;
   private readonly transaction = this.data.transaction;

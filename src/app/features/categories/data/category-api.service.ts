@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
-import { CrudApi } from '@shared/crud/crud-api';
-import { toHttpParams } from '@shared/data/http-params';
-import type { PageRequest, PageResponse } from '@shared/data/page';
-import { MAX_PAGE_SIZE } from '@shared/data/page';
+import { CrudApiService } from '@shared/crud/api';
+import { toHttpParams } from '@shared/data';
+import type { PageRequest, PageResponse } from '@shared/data';
+import { MAX_PAGE_SIZE } from '@shared/data';
 import type { Observable } from 'rxjs';
 import { map } from 'rxjs';
 
@@ -16,7 +16,12 @@ import type {
 
 /** Categorias não têm GET /{id} nem DELETE: a edição recebe a linha e a remoção é arquivar. */
 @Injectable({ providedIn: 'root' })
-export class CategoryApi extends CrudApi<Category, CreateCategoryRequest, UpdateCategoryRequest, CategoryFilter> {
+export class CategoryApiService extends CrudApiService<
+  Category,
+  CreateCategoryRequest,
+  UpdateCategoryRequest,
+  CategoryFilter
+> {
   protected readonly path = '/categories';
 
   /** Todas de uma vez (a tela mostra a árvore inteira; limite de 100 da API). */

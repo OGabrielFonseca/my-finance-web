@@ -2,18 +2,18 @@ import type { HttpInterceptorFn, HttpRequest } from '@angular/common/http';
 import { HttpErrorResponse } from '@angular/common/http';
 import { inject, isDevMode } from '@angular/core';
 import { environment } from '@env/environment';
-import type { ApiError } from '@shared/data/api-error';
-import { toApiError } from '@shared/data/api-error';
-import { SKIP_BUSINESS_ERROR_TOAST } from '@shared/data/http-context';
-import { Notifier } from '@shared/ui/notifier';
+import type { ApiError } from '@shared/data';
+import { toApiError } from '@shared/data';
+import { SKIP_BUSINESS_ERROR_TOAST } from '@shared/data';
+import { NotifierService } from '@shared/ui';
 import { catchError, throwError } from 'rxjs';
 
-import { AuthStore } from '../auth/auth.store';
+import { AuthStoreService } from '../auth/auth-store.service';
 
 /** Converte HttpErrorResponse em ApiError e aplica o comportamento padrão por status (escopo §5.2). */
 export const errorInterceptor: HttpInterceptorFn = (req, next) => {
-  const notifier = inject(Notifier);
-  const auth = inject(AuthStore);
+  const notifier = inject(NotifierService);
+  const auth = inject(AuthStoreService);
 
   return next(req).pipe(
     catchError((err: unknown) => {
@@ -25,7 +25,7 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
   );
 };
 
-function react(error: ApiError, req: HttpRequest<unknown>, notifier: Notifier, auth: AuthStore): void {
+function react(error: ApiError, req: HttpRequest<unknown>, notifier: NotifierService, auth: AuthStoreService): void {
   const isAuthEndpoint = req.url.startsWith(`${environment.apiUrl}/auth/`);
 
   if (error.status === 0) return notifier.errorKey('errors.network');

@@ -1,13 +1,13 @@
 import { signal } from '@angular/core';
 import type { Observable } from 'rxjs';
 
-import type { PageResponse } from '../data/page';
+import type { PageResponse } from '../../data/page';
 
 /**
  * Cache de opções de um seletor (endpoints /options). Carrega na primeira vez que alguém pede e recarrega quando a tela
  * do recurso salva ou arquiva (invalidate). As features expõem uma subclasse @Injectable({ providedIn: 'root' }).
  */
-export class Lookup<T> {
+export class LookupService<T> {
   private readonly state = signal<readonly T[]>([]);
   private readonly loadedState = signal(false);
   private requested = false;

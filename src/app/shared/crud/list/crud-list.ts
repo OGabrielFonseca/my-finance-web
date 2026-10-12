@@ -4,10 +4,10 @@ import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subject, catchError, finalize, map, merge, of, switchMap } from 'rxjs';
 
-import type { PageRequest, PageResponse, SortSpec } from '../data/page';
-import { DEFAULT_PAGE_SIZE, samePageRequest } from '../data/page';
-import type { ListSource } from './crud-api';
-import type { FilterField, FilterValue } from './filter';
+import type { PageRequest, PageResponse, SortSpec } from '../../data/page';
+import { DEFAULT_PAGE_SIZE, samePageRequest } from '../../data/page';
+import type { ListSource } from '../api/crud-api.service';
+import type { FilterField, FilterValue } from '../filter/filter';
 import { readListState, writeListState } from './list-state';
 
 export interface CrudListOptions<F> {

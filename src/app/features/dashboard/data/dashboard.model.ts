@@ -1,4 +1,4 @@
-import type { YearMonth } from '@shared/data/dates';
+import type { YearMonth } from '@shared/data';
 
 export interface DashboardSummary {
   month: YearMonth;

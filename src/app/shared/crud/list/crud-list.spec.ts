@@ -3,11 +3,11 @@ import { TestBed } from '@angular/core/testing';
 import { Router, provideRouter } from '@angular/router';
 import { of, throwError } from 'rxjs';
 
-import type { PageRequest, PageResponse } from '../data/page';
-import type { ListSource } from './crud-api';
+import type { PageRequest, PageResponse } from '../../data/page';
+import type { ListSource } from '../api/crud-api.service';
 import type { CrudList, CrudListOptions } from './crud-list';
 import { injectCrudList } from './crud-list';
-import type { FilterField } from './filter';
+import type { FilterField } from '../filter/filter';
 
 @Component({ template: '', changeDetection: ChangeDetectionStrategy.OnPush })
 class BlankPage {}

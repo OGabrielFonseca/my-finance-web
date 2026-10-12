@@ -1,14 +1,14 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { environment } from '@env/environment';
-import type { YearMonth } from '@shared/data/dates';
+import type { YearMonth } from '@shared/data';
 import type { Observable } from 'rxjs';
 
 import type { DashboardSummary, ExpensesByCategory } from './dashboard.model';
 
-/** Não é CRUD: service simples, sem herdar CrudApi. */
+/** Não é CRUD: service simples, sem herdar CrudApiService. */
 @Injectable({ providedIn: 'root' })
-export class DashboardApi {
+export class DashboardApiService {
   private readonly http = inject(HttpClient);
   private readonly url = `${environment.apiUrl}/dashboard`;
 

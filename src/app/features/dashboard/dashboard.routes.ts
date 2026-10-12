@@ -1,6 +1,6 @@
 import type { Routes } from '@angular/router';
 import { provideTranslocoScope } from '@jsverse/transloco';
-import { provideCharts } from '@shared/ui/chart/echarts';
+import { provideCharts } from '@shared/ui';
 
 import { DashboardPage } from './dashboard.page';
 

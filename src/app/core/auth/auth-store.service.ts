@@ -1,20 +1,20 @@
 import type { HttpContext } from '@angular/common/http';
 import { Injectable, computed, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
-import { Notifier } from '@shared/ui/notifier';
+import { NotifierService } from '@shared/ui';
 import type { Observable } from 'rxjs';
 import { map, switchMap, tap } from 'rxjs';
 
-import { AuthApi } from './auth.api';
+import { AuthApiService } from './auth-api.service';
 import { clearSession, readSession, writeSession } from './auth-storage';
 import type { LoginRequest, RegisterRequest, StoredSession, TokenResponse, User } from './auth.model';
 
 /** Sessão do usuário: token JWT (sem refresh), expiração automática e dados do /me. */
 @Injectable({ providedIn: 'root' })
-export class AuthStore {
-  private readonly api = inject(AuthApi);
+export class AuthStoreService {
+  private readonly api = inject(AuthApiService);
   private readonly router = inject(Router);
-  private readonly notifier = inject(Notifier);
+  private readonly notifier = inject(NotifierService);
 
   private readonly session = signal<StoredSession | null>(null);
   private readonly userState = signal<User | null>(null);
