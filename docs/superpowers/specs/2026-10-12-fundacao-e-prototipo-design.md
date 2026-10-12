@@ -74,11 +74,11 @@ src/app/mock/
 - **Seed determinístico** (ids fixos, datas relativas ao mês atual) recriado a cada carga da página. Recarregar o navegador volta
   ao estado inicial, mas os ids continuam válidos, então filtros na URL sobrevivem ao reload.
 - Usuário: "Gabriel" / `demo@myfinance.dev`.
-- 4 contas (corrente, poupança, carteira, investimentos), uma delas arquivada.
+- 5 contas: corrente, poupança, carteira, investimentos e uma corrente arquivada.
 - ~20 categorias em árvore (receitas: salário, freelance, rendimentos; despesas: moradia, alimentação → mercado/restaurante,
   transporte, saúde, lazer...), com cor e ícone PrimeIcons, uma arquivada e a categoria de sistema "Pagamento de fatura"
   (`system: true`).
-- ~150 lançamentos em 3 meses (anterior, atual e próximo): receitas e despesas recorrentes, transferências, alguns `PENDING`
+- ~110 lançamentos em 3 meses (anterior, atual e próximo): receitas e despesas recorrentes, transferências, alguns `PENDING`
   (datas futuras), 2 ou 3 lançamentos ligados a fatura de cartão (`creditCardInvoiceId` preenchido) e um com categoria de sistema,
   para exercitar as linhas não editáveis.
 
