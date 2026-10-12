@@ -5,7 +5,7 @@ import { RouterLink } from '@angular/router';
 import { ThemeService } from '@core/theme/theme.service';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { toLocalDate, toYearMonth } from '@shared/data';
-import { ChartComponent } from '@shared/ui';
+import { ChartComponent } from '@shared/ui/chart';
 import { EmptyStateComponent } from '@shared/ui';
 import { StatCardComponent } from '@shared/ui';
 import type { EChartsCoreOption } from 'echarts/core';

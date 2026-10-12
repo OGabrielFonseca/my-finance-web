@@ -152,7 +152,7 @@ Regras:
 - **`index.ts`:** cada pasta folha exporta a sua API pública (`export { X } from './x'`; `export type` para tipos).
 - **Features:** importam só pelas barrels, por exemplo `@shared/crud/table`, `@shared/forms` e `@shared/data`.
 - **Dentro de `shared/`:** os imports são relativos e apontam para o arquivo, nunca para uma barrel, para não criar ciclos.
-- **`ui/chart/`:** exporta pelo `ui/index.ts`.
+- **`ui/chart/`:** tem barrel própria (`@shared/ui/chart`), fora do `ui/index.ts`, para o ECharts não entrar no bundle inicial (o `ui/index.ts` é importado por `core/`).
 
 ## 6. Nomenclatura de services
 
