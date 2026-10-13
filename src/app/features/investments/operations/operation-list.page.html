@@ -1,0 +1,11 @@
+<app-crud-page title="investments.operations.title" (create)="openForm()">
+  <app-investments-nav />
+
+  <app-filter-bar [fields]="filters" [initial]="{}" (changed)="list.setFilter($event)" />
+
+  <app-data-table [columns]="columns" [list]="list" [actions]="actions" (action)="onAction($event)">
+    <ng-template appCell="asset" let-row>
+      <span class="font-semibold">{{ row.asset.ticker }}</span>
+    </ng-template>
+  </app-data-table>
+</app-crud-page>

@@ -1,0 +1,47 @@
+{
+  "title": "Cartões",
+  "newTitle": "Novo cartão",
+  "editTitle": "Editar cartão",
+  "back": "Voltar para os cartões",
+  "fields": {
+    "name": "Nome",
+    "brand": "Bandeira",
+    "creditLimit": "Limite",
+    "closingDay": "Dia de fechamento",
+    "dueDay": "Dia de vencimento",
+    "paymentAccount": "Conta de pagamento"
+  },
+  "invoices": {
+    "fields": {
+      "referenceMonth": "Mês de referência",
+      "closingDate": "Fechamento",
+      "dueDate": "Vencimento",
+      "status": "Situação",
+      "total": "Total"
+    }
+  },
+  "invoice": {
+    "back": "Voltar para o cartão",
+    "fields": {
+      "date": "Data",
+      "description": "Descrição",
+      "installment": "Parcela",
+      "amount": "Valor",
+      "status": "Situação",
+      "closingDate": "Fechamento",
+      "dueDate": "Vencimento",
+      "total": "Total"
+    }
+  },
+  "purchase": {
+    "new": "Nova compra",
+    "title": "Nova compra no cartão",
+    "fields": {
+      "description": "Descrição",
+      "amount": "Valor total",
+      "date": "Data da compra",
+      "installments": "Parcelas",
+      "category": "Categoria"
+    }
+  }
+}

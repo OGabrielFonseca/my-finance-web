@@ -7,7 +7,7 @@ import { Observable, map, of, tap } from 'rxjs';
 
 import { NotifierService } from '../../ui/notifier.service';
 
-export type ConfirmAction = 'archive' | 'delete';
+export type ConfirmAction = 'archive' | 'delete' | 'close' | 'pay';
 
 /** O que toda tela de cadastro repete: abrir formulário em diálogo, confirmar e executar, toast de sucesso. */
 @Injectable({ providedIn: 'root' })

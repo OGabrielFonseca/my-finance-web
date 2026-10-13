@@ -56,6 +56,11 @@ export class AuthStoreService {
     void this.router.navigate(['/login'], { queryParams: { returnUrl: this.router.url } });
   }
 
+  /** Substitui o usuário carregado (ex.: depois de editar o perfil), sem nova chamada ao /me. */
+  setUser(user: User): void {
+    this.userState.set(user);
+  }
+
   private startFromToken(token: TokenResponse): Observable<void> {
     const now = Date.now();
     const session: StoredSession = { token: token.accessToken, expiresAt: now + token.expiresIn * 1000 };

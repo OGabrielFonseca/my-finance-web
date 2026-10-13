@@ -1,0 +1,75 @@
+<form [formGroup]="form" (ngSubmit)="submit.submit()" class="flex flex-col gap-4">
+  <div class="grid grid-cols-2 gap-4">
+    <app-field label="investments.incomes.fields.asset" fieldId="income-asset" [control]="form.controls.assetId">
+      <p-select
+        inputId="income-asset"
+        formControlName="assetId"
+        [options]="assetOptions()"
+        optionLabel="label"
+        optionValue="value"
+        [filter]="true"
+        appendTo="body"
+      />
+    </app-field>
+
+    <app-field label="investments.incomes.fields.account" fieldId="income-account" [control]="form.controls.accountId">
+      <p-select
+        inputId="income-account"
+        formControlName="accountId"
+        [options]="accountOptions()"
+        optionLabel="label"
+        optionValue="value"
+        appendTo="body"
+      />
+    </app-field>
+  </div>
+
+  <div class="grid grid-cols-2 gap-4">
+    <app-field label="investments.incomes.fields.type" fieldId="income-type" [control]="form.controls.type">
+      <p-select
+        inputId="income-type"
+        formControlName="type"
+        [options]="typeOptions"
+        optionLabel="label"
+        optionValue="value"
+        appendTo="body"
+      />
+    </app-field>
+
+    <app-field
+      label="investments.incomes.fields.paymentDate"
+      fieldId="income-date"
+      [control]="form.controls.paymentDate"
+    >
+      <p-datepicker
+        inputId="income-date"
+        formControlName="paymentDate"
+        dateFormat="dd/mm/yy"
+        [showButtonBar]="true"
+        appendTo="body"
+      />
+    </app-field>
+  </div>
+
+  <div class="grid grid-cols-2 gap-4">
+    <app-field
+      label="investments.incomes.fields.grossAmount"
+      fieldId="income-gross"
+      [control]="form.controls.grossAmount"
+    >
+      <p-inputnumber
+        inputId="income-gross"
+        formControlName="grossAmount"
+        mode="currency"
+        currency="BRL"
+        locale="pt-BR"
+      />
+    </app-field>
+
+    <app-field label="investments.incomes.fields.taxAmount" fieldId="income-tax" [control]="form.controls.taxAmount">
+      <p-inputnumber inputId="income-tax" formControlName="taxAmount" mode="currency" currency="BRL" locale="pt-BR" />
+    </app-field>
+  </div>
+
+  <app-form-footer [submit]="submit" (cancelled)="ref.close(false)" />
+</form>

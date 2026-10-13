@@ -1,0 +1,26 @@
+<app-crud-page title="budgets.title" (create)="openForm()">
+  <div pageActions class="flex items-center gap-1">
+    <label for="budget-month" class="sr-only">{{ 'budgets.fields.month' | transloco }}</label>
+    <p-datepicker
+      inputId="budget-month"
+      view="month"
+      dateFormat="mm/yy"
+      [readonlyInput]="true"
+      [ngModel]="month()"
+      (ngModelChange)="onMonthChange($event)"
+      inputStyleClass="w-28 text-center"
+    />
+  </div>
+
+  <app-data-table [columns]="columns" [list]="list" [actions]="actions" (action)="onAction($event)">
+    <ng-template appCell="category" let-row>
+      <span class="flex items-center gap-2">
+        <span class="inline-block size-3 shrink-0 rounded-full" [style.background]="row.category.color"></span>
+        {{ row.category.name }}
+      </span>
+    </ng-template>
+    <ng-template appCell="progress" let-row>
+      <p-progressbar [value]="percentOf(row)" [showValue]="false" />
+    </ng-template>
+  </app-data-table>
+</app-crud-page>

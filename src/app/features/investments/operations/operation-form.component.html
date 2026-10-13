@@ -1,0 +1,74 @@
+<form [formGroup]="form" (ngSubmit)="submit.submit()" class="flex flex-col gap-4">
+  <div class="grid grid-cols-2 gap-4">
+    <app-field label="investments.operations.fields.asset" fieldId="op-asset" [control]="form.controls.assetId">
+      <p-select
+        inputId="op-asset"
+        formControlName="assetId"
+        [options]="assetOptions()"
+        optionLabel="label"
+        optionValue="value"
+        [filter]="true"
+        appendTo="body"
+      />
+    </app-field>
+
+    <app-field label="investments.operations.fields.account" fieldId="op-account" [control]="form.controls.accountId">
+      <p-select
+        inputId="op-account"
+        formControlName="accountId"
+        [options]="accountOptions()"
+        optionLabel="label"
+        optionValue="value"
+        appendTo="body"
+      />
+    </app-field>
+  </div>
+
+  <div class="grid grid-cols-2 gap-4">
+    <app-field label="investments.operations.fields.type" fieldId="op-type" [control]="form.controls.type">
+      <p-select
+        inputId="op-type"
+        formControlName="type"
+        [options]="typeOptions"
+        optionLabel="label"
+        optionValue="value"
+        appendTo="body"
+      />
+    </app-field>
+
+    <app-field label="investments.operations.fields.date" fieldId="op-date" [control]="form.controls.date">
+      <p-datepicker
+        inputId="op-date"
+        formControlName="date"
+        dateFormat="dd/mm/yy"
+        [showButtonBar]="true"
+        appendTo="body"
+      />
+    </app-field>
+  </div>
+
+  <app-field label="investments.operations.fields.quantity" fieldId="op-quantity" [control]="form.controls.quantity">
+    <p-inputnumber inputId="op-quantity" formControlName="quantity" [minFractionDigits]="0" [maxFractionDigits]="8" />
+  </app-field>
+
+  @if (trade()) {
+    <div class="grid grid-cols-2 gap-4">
+      <app-field label="investments.operations.fields.unitPrice" fieldId="op-price" [control]="form.controls.unitPrice">
+        <p-inputnumber
+          inputId="op-price"
+          formControlName="unitPrice"
+          mode="currency"
+          currency="BRL"
+          locale="pt-BR"
+          [maxFractionDigits]="8"
+        />
+      </app-field>
+
+      <app-field label="investments.operations.fields.fees" fieldId="op-fees" [control]="form.controls.fees">
+        <p-inputnumber inputId="op-fees" formControlName="fees" mode="currency" currency="BRL" locale="pt-BR" />
+      </app-field>
+    </div>
+  }
+
+  <app-form-footer [submit]="submit" (cancelled)="ref.close(false)" />
+</form>

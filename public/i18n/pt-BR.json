@@ -8,7 +8,10 @@
     "dashboard": "Dashboard",
     "transactions": "Lançamentos",
     "accounts": "Contas",
-    "categories": "Categorias"
+    "categories": "Categorias",
+    "creditCards": "Cartões",
+    "budgets": "Orçamentos",
+    "investments": "Investimentos"
   },
   "theme": {
     "label": "Tema",
@@ -18,6 +21,7 @@
   },
   "user": {
     "menu": "Menu do usuário",
+    "profile": "Perfil",
     "logout": "Sair"
   },
   "common": {
@@ -25,8 +29,11 @@
     "save": "Salvar",
     "cancel": "Cancelar",
     "edit": "Editar",
+    "open": "Abrir",
     "archive": "Arquivar",
     "delete": "Excluir",
+    "close": "Fechar",
+    "pay": "Pagar",
     "archived": "Arquivado",
     "onlyArchived": "Somente arquivados",
     "actions": "Ações",
@@ -45,12 +52,22 @@
       "delete": {
         "header": "Excluir",
         "message": "Excluir \"{{ name }}\"? Esta ação não pode ser desfeita."
+      },
+      "close": {
+        "header": "Fechar fatura",
+        "message": "Fechar a fatura de {{ name }}? Depois disso não entram novas compras."
+      },
+      "pay": {
+        "header": "Pagar fatura",
+        "message": "Pagar a fatura de {{ name }} hoje, pela conta de pagamento do cartão?"
       }
     },
     "success": {
       "saved": "Salvo com sucesso.",
       "archive": "Arquivado com sucesso.",
-      "delete": "Excluído com sucesso."
+      "delete": "Excluído com sucesso.",
+      "close": "Fatura fechada.",
+      "pay": "Fatura paga."
     }
   },
   "validation": {
@@ -82,6 +99,40 @@
     "transactionStatus": {
       "PENDING": "Pendente",
       "CLEARED": "Efetivado"
+    },
+    "invoiceStatus": {
+      "OPEN": "Aberta",
+      "CLOSED": "Fechada",
+      "PAID": "Paga"
+    },
+    "assetClass": {
+      "STOCK": "Ação",
+      "FII": "FII",
+      "ETF": "ETF",
+      "BDR": "BDR",
+      "FIXED_INCOME": "Renda fixa",
+      "TREASURY": "Tesouro direto",
+      "FUND": "Fundo",
+      "CRYPTO": "Cripto"
+    },
+    "incomeType": {
+      "DIVIDEND": "Dividendo",
+      "JCP": "JCP",
+      "FII_INCOME": "Rendimento de FII",
+      "INTEREST": "Juros",
+      "AMORTIZATION": "Amortização"
+    },
+    "operationType": {
+      "BUY": "Compra",
+      "SELL": "Venda",
+      "SPLIT": "Desdobramento",
+      "BONUS": "Bonificação"
+    },
+    "indexer": {
+      "PRE": "Pré-fixado",
+      "CDI": "CDI",
+      "IPCA": "IPCA",
+      "SELIC": "Selic"
     }
   },
   "errors": {

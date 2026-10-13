@@ -84,6 +84,20 @@ describe('AuthStoreService', () => {
     expect(localStorage.getItem(SESSION_STORAGE_KEY)).toBeNull();
   });
 
+  it('setUser substitui o usuário carregado', () => {
+    vi.useFakeTimers({ now: new Date(2026, 9, 12, 10, 0) });
+    const store = TestBed.inject(AuthStoreService);
+
+    store.login({ email: 'demo@myfinance.dev', password: '12345678' }).subscribe();
+    http.expectOne('/api/v1/auth/login').flush({ accessToken: 'jwt', tokenType: 'Bearer', expiresIn: 3600 });
+    http.expectOne('/api/v1/me').flush(user);
+
+    store.setUser({ ...user, name: 'Gabriel Fonseca' });
+
+    expect(store.user()?.name).toBe('Gabriel Fonseca');
+    expect(store.isAuthenticated()).toBe(true);
+  });
+
   it('restoreSession descarta sessão expirada', () => {
     writeSession({ token: 'old', expiresAt: 1000 });
     const store = TestBed.inject(AuthStoreService);

@@ -1,0 +1,32 @@
+<section class="flex flex-col gap-4">
+  <header class="flex flex-wrap items-center gap-3">
+    <a routerLink="/credit-cards" class="text-sm">{{ 'creditCards.back' | transloco }}</a>
+    <h1 class="m-0 flex-1 text-2xl font-semibold">{{ card()?.name }}</h1>
+    <p-button icon="pi pi-plus" [label]="'creditCards.purchase.new' | transloco" (onClick)="newPurchase()" />
+  </header>
+
+  @if (card(); as card) {
+    <dl
+      class="m-0 grid grid-cols-2 gap-x-6 gap-y-2 rounded-border border border-surface bg-surface-0 p-4 text-sm sm:grid-cols-4 dark:bg-surface-900"
+    >
+      <div>
+        <dt class="text-muted-color">{{ 'creditCards.fields.creditLimit' | transloco }}</dt>
+        <dd class="m-0">{{ card.creditLimit | currency }}</dd>
+      </div>
+      <div>
+        <dt class="text-muted-color">{{ 'creditCards.fields.closingDay' | transloco }}</dt>
+        <dd class="m-0">{{ card.closingDay }}</dd>
+      </div>
+      <div>
+        <dt class="text-muted-color">{{ 'creditCards.fields.dueDay' | transloco }}</dt>
+        <dd class="m-0">{{ card.dueDay }}</dd>
+      </div>
+      <div>
+        <dt class="text-muted-color">{{ 'creditCards.fields.paymentAccount' | transloco }}</dt>
+        <dd class="m-0">{{ card.paymentAccount.name }}</dd>
+      </div>
+    </dl>
+  }
+
+  <app-data-table [columns]="columns" [list]="invoices" [actions]="actions" (action)="onInvoiceAction($event)" />
+</section>

@@ -1,0 +1,12 @@
+{
+  "title": "Orçamentos",
+  "newTitle": "Novo orçamento",
+  "editTitle": "Editar orçamento",
+  "fields": {
+    "month": "Mês",
+    "category": "Categoria",
+    "amount": "Planejado",
+    "spent": "Realizado",
+    "progress": "Progresso"
+  }
+}

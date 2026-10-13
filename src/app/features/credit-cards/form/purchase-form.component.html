@@ -1,0 +1,50 @@
+<form [formGroup]="form" (ngSubmit)="submit.submit()" class="flex flex-col gap-4">
+  <app-field
+    label="creditCards.purchase.fields.description"
+    fieldId="purchase-description"
+    [control]="form.controls.description"
+  >
+    <input pInputText id="purchase-description" formControlName="description" />
+  </app-field>
+
+  <app-field label="creditCards.purchase.fields.amount" fieldId="purchase-amount" [control]="form.controls.amount">
+    <p-inputnumber inputId="purchase-amount" formControlName="amount" mode="currency" currency="BRL" locale="pt-BR" />
+  </app-field>
+
+  <div class="grid grid-cols-2 gap-4">
+    <app-field label="creditCards.purchase.fields.date" fieldId="purchase-date" [control]="form.controls.date">
+      <p-datepicker
+        inputId="purchase-date"
+        formControlName="date"
+        dateFormat="dd/mm/yy"
+        [showButtonBar]="true"
+        appendTo="body"
+      />
+    </app-field>
+
+    <app-field
+      label="creditCards.purchase.fields.installments"
+      fieldId="purchase-installments"
+      [control]="form.controls.installments"
+    >
+      <p-inputnumber inputId="purchase-installments" formControlName="installments" [min]="1" [max]="72" />
+    </app-field>
+  </div>
+
+  <app-field
+    label="creditCards.purchase.fields.category"
+    fieldId="purchase-category"
+    [control]="form.controls.categoryId"
+  >
+    <p-select
+      inputId="purchase-category"
+      formControlName="categoryId"
+      [options]="categoryOptions()"
+      optionLabel="label"
+      optionValue="value"
+      appendTo="body"
+    />
+  </app-field>
+
+  <app-form-footer [submit]="submit" (cancelled)="ref.close(false)" />
+</form>
