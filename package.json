@@ -9,6 +9,7 @@
     "test": "ng test",
     "lint": "ng lint",
     "format": "prettier --write .",
+    "i18n:check": "transloco-keys-manager find --emit-error-on-extra-keys",
     "prepare": "husky"
   },
   "private": true,
@@ -37,6 +38,7 @@
     "@angular/cli": "^21.2.26",
     "@angular/compiler-cli": "^21.2.0",
     "@eslint/js": "^10.0.1",
+    "@jsverse/transloco-keys-manager": "^8.1.1",
     "@tailwindcss/postcss": "^4.1.12",
     "angular-eslint": "21.4.0",
     "eslint": "^10.3.0",
