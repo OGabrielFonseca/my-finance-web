@@ -1,6 +1,9 @@
 # MyFinance — Escopo inicial do Frontend (my-finance-web)
 
-> Versão 0.3 · 12/10/2026 · Documento vivo: atualizar conforme as decisões evoluírem.
+> Versão 0.4 · 15/10/2026 · Documento vivo: atualizar conforme as decisões evoluírem.
+>
+> **Mudanças na v0.4:** login com conta Google (botão oficial do GIS, `POST /auth/google`); ver
+> `docs/superpowers/specs/2026-10-15-login-google-design.md`.
 >
 > **Mudanças na v0.3:** API mock removida; models escritos à mão (sem OpenAPI); filtro com o formulário como fonte de verdade,
 > sem URL; `shared/crud` em subpastas; services com sufixo `Service`.
@@ -12,7 +15,7 @@
 > (seção 15).
 >
 > **Decisões fechadas na v0.1:** **Angular 21** (standalone, signals, zoneless) + **PrimeNG 21** (MIT) com preset **Noir sobre surface
-> `slate`** e modo escuro; **ngx-echarts** para gráficos; **i18n em runtime com Transloco** (só `pt-BR` por enquanto, estrutura pronta
+> `slate`** e modo escuro; **ngx-echarts** para gráficos; **textos em português direto no código** (um único idioma, sem biblioteca de i18n
 > para outros idiomas); **lint** com angular-eslint + typescript-eslint + Prettier; **componentes e services genéricos de CRUD**
 > (listagem paginada com filtro, formulário em diálogo, arquivar/excluir). Contratos seguem o `escopo-backend.md` (v0.5).
 > Princípio geral, o mesmo do backend: **evitar over-engineering**.
@@ -35,10 +38,12 @@ não código repetido.
 | Tema | **`@primeuix/themes`** (preset Aura customizado: Noir + surface `slate`) | Design tokens, modo escuro por classe `.app-dark`; ver seção 6 |
 | Layout/utilitários CSS | **Tailwind CSS v4** + **`tailwindcss-primeui`** | Só para layout e espaçamento (grid, flex, gap). Cor e componentes vêm do PrimeNG. Substitui o antigo PrimeFlex |
 | Gráficos | **ngx-echarts 21.x** + **echarts** (import modular, tree-shaking) | A versão do ngx-echarts acompanha a do Angular (21 ↔ 21) |
+| Login social | **Script do Google Identity Services** (`accounts.google.com/gsi/client`), carregado sob demanda, **sem pacote npm** | Só `core/auth/google-identity.service.ts` toca `window.google`; tipos escritos à mão |
+| Integração bancária | **pluggy-connect-sdk** (versão exata, carregada sob demanda) | Widget oficial da Pluggy; só `features/integrations/data/pluggy-connect.service.ts` importa o SDK |
 | Formulários | **Reactive Forms tipados** | Signal Forms ainda é experimental no 21: não usar por enquanto |
 | HTTP | `HttpClient` (`withFetch`) + interceptors funcionais | |
 | Estado | **Signals** (`signal`, `computed`, `linkedSignal`) | Sem NgRx/biblioteca de estado: o estado é local à tela ou em stores simples |
-| i18n | **Transloco** (`@jsverse/transloco`) | Traduções em JSON carregadas em runtime, com escopo por feature; ver seção 7 |
+| Textos | **Português direto no código** (sem biblioteca de i18n) | Um único idioma; ver seção 7 |
 | Models da API | **Escritos à mão** | Interfaces e listas de enums em `*.model.ts`, espelhando os DTOs do backend; sem geração de código (seção 5.4) |
 | Lint/format | **angular-eslint** + **typescript-eslint** + **Prettier** + Husky/lint-staged | Ver seção 8 |
 | Testes | **Vitest** (runner padrão do Angular 21) | **Só testes unitários da lógica reutilizável**, no mesmo espírito do backend; ver seção 9 |
@@ -52,9 +57,9 @@ não código repetido.
 src/
 ├── app/
 │   ├── core/                        # singleton, carregado uma vez
-│   │   ├── auth/                    # AuthStoreService, authGuard, guestGuard, authInterceptor, token storage
+│   │   ├── auth/                    # AuthStoreService, authGuard, guestGuard, authInterceptor, token storage, google-identity.service (GIS)
 │   │   ├── http/                    # errorInterceptor, languageInterceptor, ApiError
-│   │   ├── i18n/                    # TranslocoHttpLoader, configuração do Transloco e do PrimeNG
+│   │   ├── i18n/                    # locale do app e configuração do PrimeNG
 │   │   ├── theme/                   # preset do PrimeNG, ThemeService (claro/escuro/sistema)
 │   │   └── layout/                  # ShellComponent (topbar + menu lateral), páginas de erro
 │   ├── shared/                      # reutilizável, sem regra de negócio
@@ -69,7 +74,7 @@ src/
 │   │   ├── ui/                      # MoneyComponent (+/-), StatCard, EmptyState, ChartComponent
 │   │   └── pipes/                   # money, localDate, yearMonth, enumLabel
 │   ├── features/                    # um diretório por módulo do backend
-│   │   ├── auth/                    # login, cadastro
+│   │   ├── auth/                    # login, cadastro, google-sign-in.component (botão do Google)
 │   │   ├── profile/                 # /me
 │   │   ├── dashboard/
 │   │   ├── accounts/
@@ -77,12 +82,12 @@ src/
 │   │   ├── transactions/
 │   │   ├── credit-cards/            # cartões, faturas, compras
 │   │   ├── budgets/
-│   │   └── investments/             # ativos, operações, proventos, carteira
+│   │   ├── investments/             # ativos, operações, proventos, carteira
+│   │   └── integrations/            # credenciais da Pluggy, bancos conectados e histórico (widget oficial)
 │   ├── app.config.ts
 │   └── app.routes.ts
 └── styles.css
 public/
-└── i18n/                            # traduções (seção 7)
 ```
 
 Estrutura de uma feature (exemplo: `accounts`):
@@ -90,7 +95,7 @@ Estrutura de uma feature (exemplo: `accounts`):
 ```
 features/accounts/
 ├── index.ts                         # API pública da feature (o que outras features podem importar)
-├── accounts.routes.ts               # rotas lazy + provideTranslocoScope('accounts')
+├── accounts.routes.ts               # rotas lazy
 ├── data/
 │   ├── account.model.ts             # interfaces escritas à mão + listas de enums
 │   └── account-api.service.ts       # AccountApiService extends CrudApiService
@@ -112,7 +117,7 @@ features/accounts/
 - **`shared/` não conhece features.** `core/` não conhece features, exceto `app.routes.ts` e o menu.
 - **Componentes de página** (`*.page.ts`) montam a tela e chamam services; **componentes de UI** em `shared/ui` só recebem `input()`
   e emitem `output()`, sem acessar HTTP.
-- **Nada de texto fixo no template:** todo texto visível vem do Transloco (seção 7). Exceções: dados vindos da API
+- **Textos visíveis em português** no template ou no TS (seção 7). Exceções: dados vindos da API
   (nomes cadastrados pelo usuário, `detail` dos erros).
 - **Nada de cálculo financeiro no front.** Saldos, totais de fatura, posição e preço médio vêm prontos da API (são derivados no
   backend). O front só formata e soma para exibição quando a própria API não entrega o total.
@@ -508,7 +513,7 @@ Registrados em `provideHttpClient(withFetch(), withInterceptors([...]))`, nesta 
 | Interceptor | Responsabilidade |
 |---|---|
 | `authInterceptor` | Adiciona `Authorization: Bearer <token>` nas chamadas para `/api` (exceto `/auth/**`) |
-| `languageInterceptor` | Envia `Accept-Language` com o idioma ativo do Transloco (hoje sempre `pt-BR`). Quando o backend trocar o `locale-resolver` para `accept-header`, o `detail` dos erros já virá no idioma certo |
+| `languageInterceptor` | Envia `Accept-Language: pt-BR` (constante do app), que o backend usa para localizar os erros. Quando o backend trocar o `locale-resolver` para `accept-header`, o `detail` dos erros já virá no idioma certo |
 | `errorInterceptor` | Converte `HttpErrorResponse` em `ApiError` (seção 5.2), trata 401 e mostra toast |
 
 ### 5.2 Erros: `ProblemDetail` → `ApiError`
@@ -589,7 +594,10 @@ export interface Account {
 
 - **Login/cadastro** (`POST /auth/login`, `/auth/register`) devolvem `{ accessToken, tokenType, expiresIn }`. O front guarda o
   token e o instante de expiração no `localStorage` e carrega o usuário com `GET /me`.
-- **`AuthStoreService`** (signals): `user`, `isAuthenticated`, `login()`, `register()`, `logout()`. Um timer faz logout automático na
+- **Login com Google** (`POST /auth/google`, body `{ idToken }`) devolve o mesmo `TokenResponse`; `AuthStoreService.loginWithGoogle()`
+  inicia a sessão do mesmo jeito. O ID token vem do botão oficial do GIS (popup). **CSP e COOP** do deploy precisam liberar o GIS
+  (`script-src`, `frame-src`, `connect-src`, `style-src` de `accounts.google.com/gsi/`; COOP `same-origin-allow-popups`).
+- **`AuthStoreService`** (signals): `user`, `isAuthenticated`, `login()`, `register()`, `loginWithGoogle()`, `logout()`. Um timer faz logout automático na
   expiração (24h); sem refresh token, o usuário precisa logar de novo (mesma decisão do backend).
 - **Guards:** `authGuard` nas rotas internas; `guestGuard` em `/login` e `/register` (logado vai para o dashboard).
 - **Trade-off conhecido:** token no `localStorage` é acessível a um XSS. Mitigação: Angular sanitiza templates por padrão, não usar
@@ -672,60 +680,24 @@ providePrimeNG({
   secundárias ocultas em telas pequenas; filtros em drawer.
 - **Acessibilidade:** regras de acessibilidade do angular-eslint nos templates (seção 8); componentes do PrimeNG já trazem ARIA.
 
-## 7. i18n
+## 7. Textos e idioma
 
-### 7.1 Decisão: Transloco (runtime) em vez do i18n nativo do Angular
+### 7.1 Decisão: textos direto no código, em português
 
-| Opção | Como funciona | Avaliação |
-|---|---|---|
-| **Transloco** (escolhida) | Chaves em JSON carregadas em runtime; escopos por feature (lazy) | Troca de idioma sem rebuild, um único build, JSON por feature (como os `messages/<modulo>.properties` do backend), integra com a tradução do PrimeNG |
-| `@angular/localize` (nativo) | Textos marcados com `i18n`/`$localize`, extraídos para XLIFF e **compilados por idioma** | Melhor desempenho, mas exige um build e um deploy por idioma e não troca idioma em tempo de execução. Exagero para um app pessoal |
-| ngx-translate | Parecido com o Transloco | Funciona, mas o Transloco tem escopos lazy, `transloco-keys-manager` e API mais moderna |
+O app tem um único idioma (pt-BR) e não troca idioma em tempo de execução. Por isso não há biblioteca de i18n: os textos ficam
+nos templates e nos arquivos TS, em português. Isso remove o build por idioma e o JSON de traduções que o Transloco exigia.
+Se um dia houver outro idioma, a troca passa por `@angular/localize` (atributos `i18n` e `$localize`), que é o nativo do Angular.
 
-### 7.2 Organização
+### 7.2 Regras
 
-```
-public/i18n/
-├── pt-BR.json                     # global: common, menu, validation, enums, errors genéricos
-├── accounts/pt-BR.json            # escopo carregado com a rota /accounts
-├── categories/pt-BR.json
-├── transactions/pt-BR.json
-├── credit-cards/pt-BR.json
-├── budgets/pt-BR.json
-├── investments/pt-BR.json
-├── dashboard/pt-BR.json
-└── auth/pt-BR.json
-```
-
-```json
-// public/i18n/pt-BR.json (trecho)
-{
-  "common": { "new": "Novo", "save": "Salvar", "cancel": "Cancelar", "archive": "Arquivar", "archived": "Arquivado", "clearFilters": "Limpar filtros" },
-  "validation": { "required": "Campo obrigatório", "maxlength": "Máximo de {{ requiredLength }} caracteres", "min": "Valor mínimo: {{ min }}" },
-  "enums": {
-    "accountType": { "CHECKING": "Conta corrente", "SAVINGS": "Poupança", "WALLET": "Carteira", "INVESTMENT": "Investimentos", "OTHER": "Outra" },
-    "transactionType": { "INCOME": "Receita", "EXPENSE": "Despesa", "TRANSFER": "Transferência" }
-  },
-  "errors": { "unexpected": "Erro inesperado. Tente novamente.", "network": "Sem conexão com o servidor.", "sessionExpired": "Sua sessão expirou." }
-}
-```
-
-```json
-// public/i18n/accounts/pt-BR.json
-{ "title": "Contas", "fields": { "name": "Nome", "type": "Tipo", "institution": "Instituição", "initialBalance": "Saldo inicial" } }
-```
-
-Regras:
-- **Chaves em inglês, organizadas por tela/campo**; valores no idioma. Nas features, a chave é prefixada pelo escopo
-  (`accounts.fields.name`).
-- **Enums traduzidos no front** (`enums.<enum>.<VALOR>`): o backend devolve só o código (`CHECKING`).
-- **Mensagens de erro de negócio vêm do backend** (`detail`), não do JSON (seção 5.2).
-- **Formatação** de moeda, data e número usa o locale ativo (`LOCALE_ID` + pipes `money`, `localDate`), nunca formatação manual.
-- **Componentes do PrimeNG** (datepicker, paginator, confirm, filtros) traduzidos com o pacote `primelocale` (`pt-br.json`) via
-  `PrimeNG.setTranslation`, chamado ao trocar de idioma.
-- **Novo idioma:** criar os `en.json` de cada pasta, adicionar em `availableLangs` e registrar o locale do Angular. Nenhum
-  componente muda.
-- `npm run i18n:check` (`transloco-keys-manager find`) quebra o CI com chave usada e não declarada ou chave sobrando.
+- **Textos visíveis em português, direto no template ou no TS.** Configs de colunas, filtros, títulos e toasts recebem o texto pronto.
+- **Enums** (`CHECKING`, `PENDING` etc.) são traduzidos por `src/app/shared/i18n/enum-labels.ts`: o mapa `ENUM_LABELS` e o pipe
+  `enumLabel` (`{{ item.status | enumLabel: transactionStatus }}`). O backend devolve só o código.
+- **Mensagens de erro de negócio vêm do backend** (`detail`). O `languageInterceptor` envia `Accept-Language: pt-BR` (constante em
+  `core/i18n/locale.ts`), porque o backend usa esse header para localizar as mensagens.
+- **Erros de validação do Angular** viram texto em `shared/forms/validation-message.ts`.
+- **Formatação** de moeda, data e número usa o locale do Angular (`LOCALE_ID` + pipes `currency`, `date`), nunca formatação manual.
+- **Componentes do PrimeNG** (datepicker, paginator, confirm) recebem a tradução `pt_BR` do `primelocale` na inicialização (`core/i18n/i18n.providers.ts`).
 
 ## 8. Lint e formatação
 
@@ -778,15 +750,15 @@ Scripts do `package.json`:
 | `test` | `ng test` (Vitest) |
 | `lint` | `ng lint` |
 | `format` | `prettier --write .` |
-| `i18n:check` | `transloco-keys-manager find --emit-error-on-extra-keys` |
 
 ## 9. Testes
 
 Mesmo critério do backend: **só testes unitários de lógica**, sem testes de componente ou e2e por enquanto.
 
 - **Testar:** `toHttpParams` e helpers de data (incluindo o caso do fuso), `applyServerErrors`, `injectCrudList` (filtro novo volta à
-  página 0), conversão do `onLazyLoad` em `PageRequest`, `AuthStoreService` (expiração do token), montagem da árvore
-  de categorias, `errorInterceptor` (status → comportamento).
+  página 0), conversão do `onLazyLoad` em `PageRequest`, `AuthStoreService` (expiração do token, `loginWithGoogle`),
+  `GoogleIdentityService` (script carregado uma vez, callback, falha do script), montagem da árvore
+  de categorias, `errorInterceptor` (status → comportamento), `PluggyConnectService` (SDK mockado: resultado do widget).
 - **Não testar:** templates, telas de CRUD declarativas, componentes do PrimeNG, services que só repassam para o `CrudApiService`.
 - Ferramentas: Vitest + `TestBed` só quando precisar de injeção; `provideHttpClientTesting` para os services.
 
@@ -810,7 +782,7 @@ Alinhadas ao roadmap e aos endpoints do backend (seções 6 e 7 do escopo-backen
 
 | Rota | Tela | Endpoints |
 |---|---|---|
-| `/login`, `/register` | Login e cadastro | `POST /auth/login`, `POST /auth/register` |
+| `/login`, `/register` | Login e cadastro, com botão "Entrar com o Google" | `POST /auth/login`, `POST /auth/register`, `POST /auth/google` |
 | `/dashboard` | Seletor de mês, cards (saldo total, receitas, despesas, resultado), rosca de despesas por categoria | `GET /dashboard/summary?month=`, `GET /dashboard/expenses-by-category?month=` |
 | `/accounts` | CRUD de contas + saldo atual e projetado por conta | `/accounts`, `GET /accounts/{id}/balance` |
 | `/categories` | CRUD em árvore (categoria → subcategoria), abas Receita/Despesa | `/categories` (sem `GET /{id}` e sem `DELETE`) |
@@ -834,6 +806,12 @@ Alinhadas ao roadmap e aos endpoints do backend (seções 6 e 7 do escopo-backen
 | `/investments/assets` | CRUD de ativos (com detalhe de renda fixa condicional) + posição | `/investments/assets`, `GET /assets/{id}/position` |
 | `/investments/operations` | CRUD de operações | `/investments/operations` |
 | `/investments/incomes` | CRUD de proventos | `/investments/incomes` |
+
+**Integrações (bancos via Pluggy, spec `docs/superpowers/specs/2026-10-14-integracoes-design.md`)**
+
+| Rota | Tela | Endpoints |
+|---|---|---|
+| `/integrations` | Credenciais da Pluggy, bancos conectados (renomear, excluir, conectar pelo widget) e histórico paginado | `/integrations/pluggy`, `/integrations/pluggy/connect-token`, `/integrations/pluggy/connections`, `/integrations/pluggy/logs` |
 
 Regras de tela que vêm do backend e precisam ser respeitadas na UI:
 - Lançamentos de cartão e de categoria de sistema não são editáveis em `/transactions`: esconder editar/excluir e linkar para a fatura.
@@ -871,13 +849,15 @@ Regras de tela que vêm do backend e precisam ser respeitadas na UI:
 { "/api": { "target": "http://localhost:8080", "secure": false } }
 ```
 
+- `environment.ts`: `googleClientId` (mesmo valor do `GOOGLE_CLIENT_ID` da API; vazio esconde o botão do Google). No Google Cloud Console, o cliente OAuth (tipo *Aplicativo da Web*) precisa das origens `http://localhost`,
+  `http://localhost:4200` e a de produção em *Origens JavaScript autorizadas*.
 - `environment.ts`: `apiUrl: '/api/v1'`. Em produção, o front é servido no mesmo domínio da API (proxy
   reverso) ou a API passa a liberar o domínio no CORS. **Hoje o backend não tem configuração de CORS**: em dev o proxy resolve;
   para produção é decisão em aberto (seção 15).
 - Node LTS compatível com o Angular 21. Criação do projeto:
   `ng new my-finance-web --style=css --routing --ssr=false` (com Tailwind) e depois `ng add angular-eslint`.
-- Pacotes: `primeng@^21`, `@primeuix/themes`, `primeicons`, `tailwindcss-primeui`, `primelocale`, `@jsverse/transloco`,
-  `ngx-echarts@^21`, `echarts`; dev: `@jsverse/transloco-keys-manager`, `prettier`,
+- Pacotes: `primeng@^21`, `@primeuix/themes`, `primeicons`, `tailwindcss-primeui`, `primelocale`,
+  `ngx-echarts@^21`, `echarts`; dev: `prettier`,
   `prettier-plugin-tailwindcss`, `eslint-config-prettier`, `husky`, `lint-staged`. Conferir no `npm` as versões compatíveis
   (`peerDependencies`) de cada um com o Angular 21 na instalação.
 
@@ -907,7 +887,7 @@ Regras de tela que vêm do backend e precisam ser respeitadas na UI:
 | CRUD | `CrudApiService` + `injectCrudList` + `<app-data-table>`/`<app-filter-bar>`/`<app-crud-page>` + `CrudActionsService`; formulário em diálogo |
 | Filtros | Declarativos, nomes iguais aos query params da API; o formulário é a fonte de verdade e o filtro não vai para a URL |
 | Erros | `ProblemDetail` → `ApiError`; comportamento pelo `code`, texto pelo `detail`; erros de campo aplicados no formulário |
-| i18n | Transloco, JSON por feature, só `pt-BR`; mensagens de negócio vêm do backend via `Accept-Language` |
+| Textos | Português direto no código, sem biblioteca de i18n; mensagens de negócio vêm do backend via `Accept-Language` |
 | Models da API | Escritos à mão (`T \| null` nos campos anuláveis), sem OpenAPI; services escritos à mão |
 | Auth | JWT no `localStorage`, logout na expiração, sem refresh token |
 | Lint | angular-eslint + typescript-eslint strict + Prettier + Husky; import só pela API pública da feature |
