@@ -1,0 +1,126 @@
+<section class="flex flex-col gap-4">
+  <header class="flex flex-col gap-1">
+    <h1 class="m-0 text-2xl font-semibold">{{ 'Integrações' }}</h1>
+    <p class="m-0 text-muted-color">{{ 'Conecte seus bancos pelo Meu Pluggy.' }}</p>
+  </header>
+
+  @if (integration(); as i) {
+    <app-integration-credentials [integration]="i" (changed)="reloadAll()" />
+
+    <p-card>
+      <header class="mb-3 flex flex-wrap items-center justify-between gap-2">
+        <div class="flex flex-col">
+          <h2 class="m-0 text-lg font-semibold">{{ 'Bancos conectados' }}</h2>
+          <span class="text-sm text-muted-color"> {{ i.connections.length }} de {{ i.maxConnections }} bancos </span>
+        </div>
+        <p-button
+          icon="pi pi-plus"
+          [label]="'Conectar banco'"
+          [disabled]="!canConnect()"
+          [loading]="opening() || registering()"
+          (onClick)="connect()"
+        />
+      </header>
+
+      <p-table [value]="connections()" dataKey="id" [tableStyle]="{ 'min-width': '40rem' }">
+        <ng-template #header>
+          <tr>
+            <th>{{ 'Nome' }}</th>
+            <th>{{ 'Status' }}</th>
+            <th>{{ 'Última sincronização' }}</th>
+            <th>{{ 'Conectado em' }}</th>
+            <th class="w-24"></th>
+          </tr>
+        </ng-template>
+
+        <ng-template #body let-connection>
+          <tr>
+            <td>
+              @if (editingId() === connection.id) {
+                <div class="flex items-center gap-2">
+                  <input
+                    pInputText
+                    class="w-full"
+                    [formControl]="nameControl"
+                    [attr.aria-label]="'Nome'"
+                    (keydown.enter)="saveRename(connection)"
+                    (keydown.escape)="cancelRename()"
+                  />
+                  <p-button
+                    icon="pi pi-check"
+                    severity="secondary"
+                    [text]="true"
+                    [rounded]="true"
+                    [disabled]="nameControl.invalid"
+                    [attr.aria-label]="'Salvar'"
+                    (onClick)="saveRename(connection)"
+                  />
+                  <p-button
+                    icon="pi pi-times"
+                    severity="secondary"
+                    [text]="true"
+                    [rounded]="true"
+                    [attr.aria-label]="'Cancelar'"
+                    (onClick)="cancelRename()"
+                  />
+                </div>
+              } @else {
+                <div class="flex items-center gap-2">
+                  <span [class.text-muted-color]="!connection.name" [class.italic]="!connection.name">
+                    {{ connectionName(connection) }}
+                  </span>
+                  <p-button
+                    icon="pi pi-pencil"
+                    severity="secondary"
+                    [text]="true"
+                    [rounded]="true"
+                    [attr.aria-label]="'Editar'"
+                    (onClick)="startRename(connection)"
+                  />
+                </div>
+              }
+            </td>
+            <td>
+              <p-tag [severity]="statusSeverity(connection.status)" [value]="statusLabel(connection.status)" />
+            </td>
+            <td>
+              {{ connection.lastSyncAt ? (connection.lastSyncAt | date: 'dd/MM/yyyy HH:mm') : '—' }}
+            </td>
+            <td>{{ connection.createdAt | date: 'dd/MM/yyyy HH:mm' }}</td>
+            <td class="text-right">
+              <p-button
+                icon="pi pi-trash"
+                severity="danger"
+                [text]="true"
+                [rounded]="true"
+                [attr.aria-label]="'Excluir'"
+                (onClick)="deleteConnection(connection)"
+              />
+            </td>
+          </tr>
+        </ng-template>
+
+        <ng-template #emptymessage>
+          <tr>
+            <td colspan="5" class="text-center text-muted-color">{{ 'Nenhum registro encontrado.' }}</td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </p-card>
+
+    <p-card>
+      <h2 class="m-0 mb-3 text-lg font-semibold">{{ 'Histórico' }}</h2>
+
+      <app-data-table [columns]="logColumns" [list]="logs">
+        <ng-template appCell="createdAt" let-row>{{ row.createdAt | date: 'dd/MM/yyyy HH:mm:ss' }}</ng-template>
+        <ng-template appCell="level" let-row>
+          <p-tag [severity]="row.level === 'ERROR' ? 'danger' : 'secondary'" [value]="levelLabel(row.level)" />
+        </ng-template>
+        <ng-template appCell="operation" let-row>
+          {{ operationLabel(row.operation) }}
+        </ng-template>
+        <ng-template appCell="connectionId" let-row>{{ connectionLabel(row.connectionId) }}</ng-template>
+      </app-data-table>
+    </p-card>
+  }
+</section>
