@@ -1,6 +1,6 @@
 <form [formGroup]="form" (ngSubmit)="submit.submit()" class="flex flex-col gap-4">
   <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
-    <app-field label="transactions.fields.fromAccount" fieldId="tf-from" [control]="form.controls.fromAccountId">
+    <app-field label="Conta de origem" fieldId="tf-from" [control]="form.controls.fromAccountId">
       <p-select
         inputId="tf-from"
         formControlName="fromAccountId"
@@ -11,7 +11,7 @@
       />
     </app-field>
 
-    <app-field label="transactions.fields.toAccount" fieldId="tf-to" [control]="form.controls.toAccountId">
+    <app-field label="Conta de destino" fieldId="tf-to" [control]="form.controls.toAccountId">
       <p-select
         inputId="tf-to"
         formControlName="toAccountId"
@@ -23,12 +23,12 @@
     </app-field>
   </div>
 
-  <app-field label="transactions.fields.description" fieldId="tf-description" [control]="form.controls.description">
+  <app-field label="Descrição" fieldId="tf-description" [control]="form.controls.description">
     <input pInputText id="tf-description" formControlName="description" />
   </app-field>
 
   <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
-    <app-field label="transactions.fields.amount" fieldId="tf-amount" [control]="form.controls.amount">
+    <app-field label="Valor" fieldId="tf-amount" [control]="form.controls.amount">
       <p-inputnumber
         inputId="tf-amount"
         formControlName="amount"
@@ -40,7 +40,7 @@
       />
     </app-field>
 
-    <app-field label="transactions.fields.date" fieldId="tf-date" [control]="form.controls.date">
+    <app-field label="Data" fieldId="tf-date" [control]="form.controls.date">
       <p-datepicker
         inputId="tf-date"
         formControlName="date"
@@ -51,7 +51,7 @@
       />
     </app-field>
 
-    <app-field label="transactions.fields.status" fieldId="tf-status" [control]="form.controls.status">
+    <app-field label="Situação" fieldId="tf-status" [control]="form.controls.status">
       <p-select
         inputId="tf-status"
         formControlName="status"
@@ -63,7 +63,7 @@
     </app-field>
   </div>
 
-  <app-field label="transactions.fields.notes" fieldId="tf-notes" [control]="form.controls.notes">
+  <app-field label="Observações" fieldId="tf-notes" [control]="form.controls.notes">
     <textarea pTextarea id="tf-notes" formControlName="notes" rows="2" [autoResize]="true"></textarea>
   </app-field>
 

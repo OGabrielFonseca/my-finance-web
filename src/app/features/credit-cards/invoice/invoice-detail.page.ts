@@ -1,7 +1,7 @@
+import { EnumLabelPipe } from '@shared/i18n/enum-labels';
 import { CurrencyPipe, DatePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { TranslocoPipe } from '@jsverse/transloco';
 import { TransactionApiService } from '@features/transactions';
 import type { Transaction } from '@features/transactions';
 import { injectCrudList } from '@shared/crud/list';
@@ -16,7 +16,7 @@ import type { Invoice } from '../data/credit-card.model';
 /** Lançamentos de uma fatura. Só se exclui compra com a fatura aberta. */
 @Component({
   selector: 'app-invoice-detail-page',
-  imports: [CellDirective, CurrencyPipe, DatePipe, RouterLink, TranslocoPipe, Button, DataTableComponent],
+  imports: [EnumLabelPipe, CellDirective, CurrencyPipe, DatePipe, RouterLink, Button, DataTableComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './invoice-detail.page.html',
 })
@@ -32,17 +32,17 @@ export class InvoiceDetailPage {
   protected readonly invoice = signal<Invoice | null>(null);
 
   protected readonly columns: ColumnDef<Transaction>[] = [
-    { field: 'date', sortField: 'transactionDate', header: 'creditCards.invoice.fields.date', type: 'date' },
-    { field: 'description', header: 'creditCards.invoice.fields.description' },
+    { field: 'date', sortField: 'transactionDate', header: 'Data', type: 'date' },
+    { field: 'description', header: 'Descrição' },
     {
       field: 'installmentNumber',
       key: 'installment',
-      header: 'creditCards.invoice.fields.installment',
+      header: 'Parcela',
       sortField: false,
       align: 'center',
       hideOnMobile: true,
     },
-    { field: 'amount', header: 'creditCards.invoice.fields.amount', type: 'money', align: 'right' },
+    { field: 'amount', header: 'Valor', type: 'money', align: 'right' },
   ];
 
   protected readonly rowActions = computed<RowActionDef<Transaction>[]>(() =>

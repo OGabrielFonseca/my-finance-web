@@ -12,11 +12,11 @@ import { errorInterceptor } from './error.interceptor';
 describe('errorInterceptor', () => {
   let http: HttpClient;
   let backend: HttpTestingController;
-  let notifier: { error: ReturnType<typeof vi.fn>; errorKey: ReturnType<typeof vi.fn> };
+  let notifier: { error: ReturnType<typeof vi.fn> };
   let auth: { expireSession: ReturnType<typeof vi.fn> };
 
   beforeEach(() => {
-    notifier = { error: vi.fn(), errorKey: vi.fn() };
+    notifier = { error: vi.fn() };
     auth = { expireSession: vi.fn() };
     TestBed.configureTestingModule({
       providers: [
@@ -54,7 +54,7 @@ describe('errorInterceptor', () => {
   it('400 VALIDATION_ERROR: sem toast', () => {
     call('/api/v1/x', 400, { ...problem(400, 'common.VALIDATION_ERROR'), errors: [] });
     expect(notifier.error).not.toHaveBeenCalled();
-    expect(notifier.errorKey).not.toHaveBeenCalled();
+    expect(notifier.error).not.toHaveBeenCalled();
   });
 
   it('400 MALFORMED_REQUEST: toast com o detail', () => {
@@ -91,11 +91,11 @@ describe('errorInterceptor', () => {
 
   it('500: toast genérico traduzido', () => {
     call('/api/v1/x', 500, problem(500, 'common.INTERNAL_ERROR'));
-    expect(notifier.errorKey).toHaveBeenCalledWith('errors.unexpected');
+    expect(notifier.error).toHaveBeenCalledWith('Erro inesperado. Tente novamente.');
   });
 
   it('falha de rede: toast de conexão', () => {
     call('/api/v1/x', 0, null);
-    expect(notifier.errorKey).toHaveBeenCalledWith('errors.network');
+    expect(notifier.error).toHaveBeenCalledWith('Sem conexão com o servidor.');
   });
 });

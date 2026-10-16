@@ -1,3 +1,4 @@
+import { EnumLabelPipe } from '@shared/i18n/enum-labels';
 import { CurrencyPipe, DatePipe, NgTemplateOutlet } from '@angular/common';
 import type { TemplateRef } from '@angular/core';
 import {
@@ -5,13 +6,11 @@ import {
   Component,
   computed,
   contentChildren,
-  inject,
   input,
   output,
   signal,
   viewChild,
 } from '@angular/core';
-import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import type { MenuItem } from 'primeng/api';
 import { Button } from 'primeng/button';
 import { Menu } from 'primeng/menu';
@@ -29,10 +28,10 @@ import type { PagedList } from '../list/crud-list';
 @Component({
   selector: 'app-data-table',
   imports: [
+    EnumLabelPipe,
     CurrencyPipe,
     DatePipe,
     NgTemplateOutlet,
-    TranslocoPipe,
     Button,
     Menu,
     TableModule,
@@ -46,10 +45,8 @@ export class DataTableComponent<T extends { id: string }> {
   readonly columns = input.required<readonly ColumnDef<T>[]>();
   readonly list = input.required<PagedList<T>>();
   readonly actions = input<readonly RowActionDef<T>[]>([]);
-  readonly emptyMessage = input('common.noResults');
+  readonly emptyMessage = input('Nenhum registro encontrado.');
   readonly action = output<RowActionEvent<T>>();
-
-  private readonly transloco = inject(TranslocoService);
   private readonly cells = contentChildren(CellDirective);
   private readonly menu = viewChild.required<Menu>('rowMenu');
 
@@ -92,7 +89,7 @@ export class DataTableComponent<T extends { id: string }> {
   protected openMenu(event: Event, row: T): void {
     this.menuItems.set(
       this.visibleActions(row).map((a) => ({
-        label: this.transloco.translate(a.label),
+        label: a.label,
         icon: a.icon,
         command: () => this.emit(a.id, row),
       })),

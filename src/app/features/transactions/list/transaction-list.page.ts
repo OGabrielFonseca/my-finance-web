@@ -1,7 +1,8 @@
+import { EnumLabelPipe } from '@shared/i18n/enum-labels';
+import { enumLabel } from '@shared/i18n/enum-labels';
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { AccountLookupService, toAccountOptions } from '@features/accounts';
 import { ActiveCategoryLookupService, AllCategoryLookupService, toCategoryOptions } from '@features/categories';
-import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { CellDirective } from '@shared/crud/table';
 import type { ColumnDef, RowActionDef, RowActionEvent } from '@shared/crud/table';
 import { DELETE_ACTION, EDIT_ACTION } from '@shared/crud/table';
@@ -19,13 +20,17 @@ import { Menu } from 'primeng/menu';
 import { Tag } from 'primeng/tag';
 
 import { TransactionApiService } from '../data/transaction-api.service';
-import type { Transaction, TransactionFilter } from '../data/transaction.model';
+import type { ReadOnlyReason, Transaction, TransactionFilter } from '../data/transaction.model';
 import { TRANSACTION_STATUSES, TRANSACTION_TYPES, readOnlyReason, toUpdateRequest } from '../data/transaction.model';
 import type { TransactionFormData } from '../form/transaction-form.component';
 import { TransactionFormComponent } from '../form/transaction-form.component';
 import { TransferFormComponent } from '../form/transfer-form.component';
 
-const CLEAR_ACTION = { id: 'clear', label: 'transactions.clear', icon: 'pi pi-check' } as const;
+const READ_ONLY_LABELS: Record<ReadOnlyReason, string> = {
+  card: 'Gerenciado pela fatura do cartão',
+  system: 'Gerado pela aplicação',
+};
+const CLEAR_ACTION = { id: 'clear', label: 'Efetivar', icon: 'pi pi-check' } as const;
 
 function currentMonth(): Partial<TransactionFilter> {
   const today = new Date();
@@ -38,7 +43,7 @@ function currentMonth(): Partial<TransactionFilter> {
 @Component({
   selector: 'app-transaction-list-page',
   imports: [
-    TranslocoPipe,
+    EnumLabelPipe,
     CellDirective,
     CrudPageComponent,
     DataTableComponent,
@@ -54,7 +59,6 @@ function currentMonth(): Partial<TransactionFilter> {
 export class TransactionListPage {
   private readonly api = inject(TransactionApiService);
   private readonly crud = inject(CrudActionsService);
-  private readonly transloco = inject(TranslocoService);
   private readonly accountLookup = inject(AccountLookupService);
   private readonly activeCategoryLookup = inject(ActiveCategoryLookupService);
   private readonly allCategoryLookup = inject(AllCategoryLookupService);
@@ -66,42 +70,42 @@ export class TransactionListPage {
 
   protected readonly initialFilter = currentMonth();
   protected readonly filters: FilterField[] = [
-    { key: 'period', type: 'dateRange', label: 'transactions.fields.period', fromKey: 'from', toKey: 'to' },
-    { key: 'description', type: 'text', label: 'transactions.fields.description' },
+    { key: 'period', type: 'dateRange', label: 'Período', fromKey: 'from', toKey: 'to' },
+    { key: 'description', type: 'text', label: 'Descrição' },
     {
       key: 'accountId',
       type: 'lookup',
-      label: 'transactions.fields.account',
+      label: 'Conta',
       options: computed(() => toAccountOptions(this.accountLookup.items())),
     },
     {
       key: 'categoryId',
       type: 'lookup',
-      label: 'transactions.fields.category',
+      label: 'Categoria',
       options: computed(() => toCategoryOptions(this.activeCategoryLookup.items())),
     },
     {
       key: 'type',
       type: 'enum',
-      label: 'transactions.fields.type',
+      label: 'Tipo',
       enumKey: 'transactionType',
       options: TRANSACTION_TYPES,
     },
     {
       key: 'status',
       type: 'enum',
-      label: 'transactions.fields.status',
+      label: 'Situação',
       enumKey: 'transactionStatus',
       options: TRANSACTION_STATUSES,
     },
   ];
   protected readonly columns: ColumnDef<Transaction>[] = [
-    { field: 'date', header: 'transactions.fields.date', type: 'date', sortField: 'transactionDate', width: '8rem' },
-    { field: 'description', header: 'transactions.fields.description' },
-    { field: 'category', header: 'transactions.fields.category', sortField: false, hideOnMobile: true },
-    { field: 'account', header: 'transactions.fields.account', sortField: false, hideOnMobile: true },
-    { field: 'status', header: 'transactions.fields.status', hideOnMobile: true },
-    { field: 'amount', header: 'transactions.fields.amount', align: 'right' },
+    { field: 'date', header: 'Data', type: 'date', sortField: 'transactionDate', width: '8rem' },
+    { field: 'description', header: 'Descrição' },
+    { field: 'category', header: 'Categoria', sortField: false, hideOnMobile: true },
+    { field: 'account', header: 'Conta', sortField: false, hideOnMobile: true },
+    { field: 'status', header: 'Situação', hideOnMobile: true },
+    { field: 'amount', header: 'Valor', align: 'right' },
   ];
   private readonly editable = (t: Transaction) => readOnlyReason(t, this.knownCategoryIds()) === null;
   protected readonly actions: RowActionDef<Transaction>[] = [
@@ -110,7 +114,7 @@ export class TransactionListPage {
     { ...DELETE_ACTION, visible: this.editable },
   ];
   protected readonly newItems: MenuItem[] = (['INCOME', 'EXPENSE', 'TRANSFER'] as const).map((type) => ({
-    label: this.transloco.translate(`enums.transactionType.${type}`),
+    label: enumLabel('transactionType', type),
     icon:
       type === 'TRANSFER' ? 'pi pi-arrow-right-arrow-left' : type === 'INCOME' ? 'pi pi-arrow-up' : 'pi pi-arrow-down',
     command: () => this.create(type),
@@ -131,11 +135,15 @@ export class TransactionListPage {
     return readOnlyReason(t, this.knownCategoryIds());
   }
 
+  protected readOnlyLabel(reason: ReadOnlyReason): string {
+    return READ_ONLY_LABELS[reason];
+  }
+
   protected onAction({ id, row }: RowActionEvent<Transaction>): void {
     if (id === EDIT_ACTION.id) this.edit(row);
     if (id === CLEAR_ACTION.id) {
       this.crud
-        .run(() => this.api.update(row.id, toUpdateRequest(row, { status: 'CLEARED' })), 'transactions.cleared')
+        .run(() => this.api.update(row.id, toUpdateRequest(row, { status: 'CLEARED' })), 'Lançamento efetivado.')
         .subscribe(() => this.list.reload());
     }
     if (id === DELETE_ACTION.id) {
@@ -156,12 +164,10 @@ export class TransactionListPage {
 
   private edit(transaction: Transaction): void {
     if (transaction.type === 'TRANSFER') {
-      this.reloadWhenSaved(
-        this.crud.openForm(TransferFormComponent, 'transactions.editTransferTitle', { transaction }),
-      );
+      this.reloadWhenSaved(this.crud.openForm(TransferFormComponent, 'Editar transferência', { transaction }));
     } else {
       const data: TransactionFormData = { type: transaction.type, transaction };
-      this.reloadWhenSaved(this.crud.openForm(TransactionFormComponent, 'transactions.editTitle', data));
+      this.reloadWhenSaved(this.crud.openForm(TransactionFormComponent, 'Editar lançamento', data));
     }
   }
 

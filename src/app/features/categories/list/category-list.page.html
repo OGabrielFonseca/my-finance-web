@@ -1,9 +1,9 @@
-<app-crud-page title="categories.title" (create)="create()">
+<app-crud-page title="Categorias" (create)="create()">
   <div class="flex flex-wrap items-center justify-between gap-3">
     <p-tabs [value]="type()" (valueChange)="selectType($event)">
       <p-tablist>
         @for (t of types; track t) {
-          <p-tab [value]="t">{{ 'enums.categoryType.' + t | transloco }}</p-tab>
+          <p-tab [value]="t">{{ t | enumLabel: 'categoryType' }}</p-tab>
         }
       </p-tablist>
     </p-tabs>
@@ -14,16 +14,16 @@
         [ngModel]="onlyArchived()"
         (ngModelChange)="onlyArchived.set($event)"
       />
-      <label for="categories-archived" class="text-sm">{{ 'common.onlyArchived' | transloco }}</label>
+      <label for="categories-archived" class="text-sm">{{ 'Somente arquivados' }}</label>
     </div>
   </div>
 
   <p-treetable [value]="nodes()" [loading]="loading()" dataKey="id" [scrollable]="true">
     <ng-template #header>
       <tr>
-        <th>{{ 'categories.fields.name' | transloco }}</th>
+        <th>{{ 'Nome' }}</th>
         <th class="w-40">
-          <span class="sr-only">{{ 'common.actions' | transloco }}</span>
+          <span class="sr-only">{{ 'Ações' }}</span>
         </th>
       </tr>
     </ng-template>
@@ -41,7 +41,7 @@
             </span>
             {{ category.name }}
             @if (category.archived) {
-              <p-tag severity="secondary" [value]="'common.archived' | transloco" />
+              <p-tag severity="secondary" [value]="'Arquivado'" />
             }
           </div>
         </td>
@@ -52,7 +52,7 @@
               severity="secondary"
               [text]="true"
               [rounded]="true"
-              [ariaLabel]="'categories.addSub' | transloco"
+              [ariaLabel]="'Adicionar subcategoria'"
               (onClick)="addSub(category)"
             />
           }
@@ -61,7 +61,7 @@
             severity="secondary"
             [text]="true"
             [rounded]="true"
-            [ariaLabel]="'common.edit' | transloco"
+            [ariaLabel]="'Editar'"
             (onClick)="edit(category)"
           />
           @if (!category.archived) {
@@ -70,7 +70,7 @@
               severity="secondary"
               [text]="true"
               [rounded]="true"
-              [ariaLabel]="'common.archive' | transloco"
+              [ariaLabel]="'Arquivar'"
               (onClick)="archive(category)"
             />
           }
@@ -81,7 +81,7 @@
     <ng-template #emptymessage>
       <tr>
         <td colspan="2">
-          <app-empty-state message="categories.empty" icon="pi pi-tags" />
+          <app-empty-state message="Nenhuma categoria cadastrada." icon="pi pi-tags" />
         </td>
       </tr>
     </ng-template>

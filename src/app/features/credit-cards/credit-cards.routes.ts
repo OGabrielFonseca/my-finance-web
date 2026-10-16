@@ -1,5 +1,4 @@
 import type { Routes } from '@angular/router';
-import { provideTranslocoScope } from '@jsverse/transloco';
 
 import { CreditCardDetailPage } from './detail/credit-card-detail.page';
 import { InvoiceDetailPage } from './invoice/invoice-detail.page';
@@ -9,16 +8,13 @@ export default [
   {
     path: '',
     component: CreditCardListPage,
-    providers: [provideTranslocoScope({ scope: 'credit-cards', alias: 'creditCards' })],
   },
   {
     path: ':id',
     component: CreditCardDetailPage,
-    providers: [provideTranslocoScope({ scope: 'credit-cards', alias: 'creditCards' })],
   },
   {
     path: ':id/invoices/:invoiceId',
     component: InvoiceDetailPage,
-    providers: [provideTranslocoScope({ scope: 'credit-cards', alias: 'creditCards' })],
   },
 ] satisfies Routes;

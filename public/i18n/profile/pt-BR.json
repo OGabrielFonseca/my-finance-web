@@ -1,9 +1,0 @@
-{
-  "title": "Meu perfil",
-  "subtitle": "Dados da sua conta.",
-  "fields": {
-    "name": "Nome",
-    "email": "E-mail",
-    "createdAt": "Membro desde"
-  }
-}

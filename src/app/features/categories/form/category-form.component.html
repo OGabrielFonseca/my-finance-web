@@ -1,19 +1,19 @@
 <form [formGroup]="form" (ngSubmit)="submit.submit()" class="flex flex-col gap-4">
   <dl class="m-0 grid grid-cols-[auto_1fr] gap-x-3 gap-y-1 text-sm">
-    <dt class="text-muted-color">{{ 'categories.fields.type' | transloco }}</dt>
-    <dd class="m-0">{{ 'enums.categoryType.' + data.type | transloco }}</dd>
+    <dt class="text-muted-color">{{ 'Tipo' }}</dt>
+    <dd class="m-0">{{ data.type | enumLabel: 'categoryType' }}</dd>
     @if (data.parent; as parent) {
-      <dt class="text-muted-color">{{ 'categories.fields.parent' | transloco }}</dt>
+      <dt class="text-muted-color">{{ 'Categoria pai' }}</dt>
       <dd class="m-0">{{ parent.name }}</dd>
     }
   </dl>
 
-  <app-field label="categories.fields.name" fieldId="category-name" [control]="form.controls.name">
+  <app-field label="Nome" fieldId="category-name" [control]="form.controls.name">
     <input pInputText id="category-name" formControlName="name" />
   </app-field>
 
   <div class="grid grid-cols-2 gap-4">
-    <app-field label="categories.fields.color" fieldId="category-color" [control]="form.controls.color">
+    <app-field label="Cor" fieldId="category-color" [control]="form.controls.color">
       <p-select inputId="category-color" formControlName="color" [options]="colors" optionValue="value" appendTo="body">
         <ng-template #selectedItem let-option>
           <span class="inline-block size-4 rounded-full" [style.background]="option.value"></span>
@@ -24,7 +24,7 @@
       </p-select>
     </app-field>
 
-    <app-field label="categories.fields.icon" fieldId="category-icon" [control]="form.controls.icon">
+    <app-field label="Ícone" fieldId="category-icon" [control]="form.controls.icon">
       <p-select inputId="category-icon" formControlName="icon" [options]="icons" optionValue="value" appendTo="body">
         <ng-template #selectedItem let-option>
           <i [class]="option.value"></i>

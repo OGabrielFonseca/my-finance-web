@@ -28,8 +28,8 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
 function react(error: ApiError, req: HttpRequest<unknown>, notifier: NotifierService, auth: AuthStoreService): void {
   const isAuthEndpoint = req.url.startsWith(`${environment.apiUrl}/auth/`);
 
-  if (error.status === 0) return notifier.errorKey('errors.network');
-  if (error.status >= 500) return notifier.errorKey('errors.unexpected');
+  if (error.status === 0) return notifier.error('Sem conexão com o servidor.');
+  if (error.status >= 500) return notifier.error('Erro inesperado. Tente novamente.');
   if (error.status === 401) {
     // No login/cadastro o formulário mostra o detail; fora dele, a sessão acabou.
     if (!isAuthEndpoint) auth.expireSession();
@@ -40,5 +40,5 @@ function react(error: ApiError, req: HttpRequest<unknown>, notifier: NotifierSer
   if (error.status === 400 && isDevMode()) console.error('[api] requisição malformada', req.urlWithParams, error);
 
   if (error.detail) notifier.error(error.detail);
-  else notifier.errorKey('errors.unexpected');
+  else notifier.error('Erro inesperado. Tente novamente.');
 }

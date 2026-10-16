@@ -1,6 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { TranslocoPipe } from '@jsverse/transloco';
 import { ActiveCategoryLookupService, toCategoryOptions } from '@features/categories';
 import { toLocalDate } from '@shared/data';
 import { FieldComponent, FormFooterComponent, injectFormSubmit } from '@shared/forms';
@@ -19,7 +18,7 @@ export interface BudgetFormData {
 
 @Component({
   selector: 'app-budget-form',
-  imports: [ReactiveFormsModule, TranslocoPipe, FieldComponent, FormFooterComponent, InputNumber, Select],
+  imports: [ReactiveFormsModule, FieldComponent, FormFooterComponent, InputNumber, Select],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './budget-form.component.html',
 })

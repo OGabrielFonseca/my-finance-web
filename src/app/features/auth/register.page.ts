@@ -2,7 +2,6 @@ import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthStoreService } from '@core/auth/auth-store.service';
-import { TranslocoPipe } from '@jsverse/transloco';
 import { FieldComponent } from '@shared/forms';
 import { injectFormSubmit } from '@shared/forms';
 import { Button } from 'primeng/button';
@@ -10,9 +9,20 @@ import { InputText } from 'primeng/inputtext';
 import { Message } from 'primeng/message';
 import { Password } from 'primeng/password';
 
+import { GoogleSignInComponent } from './google-sign-in.component';
+
 @Component({
   selector: 'app-register-page',
-  imports: [ReactiveFormsModule, RouterLink, TranslocoPipe, FieldComponent, Button, InputText, Message, Password],
+  imports: [
+    ReactiveFormsModule,
+    RouterLink,
+    FieldComponent,
+    Button,
+    InputText,
+    Message,
+    Password,
+    GoogleSignInComponent,
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './register.page.html',
 })
@@ -29,6 +39,10 @@ export class RegisterPage {
   protected readonly submit = injectFormSubmit(
     this.form,
     (value, context) => this.auth.register(value, context),
-    () => void this.router.navigateByUrl('/dashboard'),
+    () => this.goToApp(),
   );
+
+  protected goToApp(): void {
+    void this.router.navigateByUrl('/dashboard');
+  }
 }

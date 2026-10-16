@@ -1,6 +1,5 @@
 import { CurrencyPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, effect, inject, signal, untracked } from '@angular/core';
-import { TranslocoPipe } from '@jsverse/transloco';
 import { CellDirective } from '@shared/crud/table';
 import type { ColumnDef, RowActionDef, RowActionEvent } from '@shared/crud/table';
 import { ARCHIVE_ACTION, EDIT_ACTION } from '@shared/crud/table';
@@ -24,7 +23,6 @@ import { AccountFormComponent } from '../form/account-form.component';
   selector: 'app-account-list-page',
   imports: [
     CurrencyPipe,
-    TranslocoPipe,
     CellDirective,
     CrudPageComponent,
     DataTableComponent,
@@ -42,16 +40,16 @@ export class AccountListPage {
 
   protected readonly initialFilter: Partial<AccountFilter> = { archived: false };
   protected readonly filters: FilterField[] = [
-    { key: 'name', type: 'text', label: 'accounts.fields.name' },
-    { key: 'type', type: 'enum', label: 'accounts.fields.type', enumKey: 'accountType', options: ACCOUNT_TYPES },
-    { key: 'archived', type: 'boolean', label: 'common.onlyArchived' },
+    { key: 'name', type: 'text', label: 'Nome' },
+    { key: 'type', type: 'enum', label: 'Tipo', enumKey: 'accountType', options: ACCOUNT_TYPES },
+    { key: 'archived', type: 'boolean', label: 'Somente arquivados' },
   ];
   protected readonly columns: ColumnDef<Account>[] = [
-    { field: 'name', header: 'accounts.fields.name' },
-    { field: 'type', header: 'accounts.fields.type', type: 'enum', enumKey: 'accountType' },
-    { field: 'institution', header: 'accounts.fields.institution', hideOnMobile: true },
-    { field: 'initialBalance', header: 'accounts.fields.initialBalance', type: 'money', hideOnMobile: true },
-    { field: 'id', key: 'balance', header: 'accounts.fields.balance', sortField: false, align: 'right' },
+    { field: 'name', header: 'Nome' },
+    { field: 'type', header: 'Tipo', type: 'enum', enumKey: 'accountType' },
+    { field: 'institution', header: 'Instituição', hideOnMobile: true },
+    { field: 'initialBalance', header: 'Saldo inicial', type: 'money', hideOnMobile: true },
+    { field: 'id', key: 'balance', header: 'Saldo atual', sortField: false, align: 'right' },
   ];
   protected readonly actions: RowActionDef<Account>[] = [
     EDIT_ACTION,
@@ -80,7 +78,7 @@ export class AccountListPage {
   }
 
   protected openForm(account?: Account): void {
-    const header = account ? 'accounts.editTitle' : 'accounts.newTitle';
+    const header = account ? 'Editar conta' : 'Nova conta';
     this.crud.openForm(AccountFormComponent, header, { id: account?.id }).subscribe((saved) => {
       if (saved) this.refresh();
     });

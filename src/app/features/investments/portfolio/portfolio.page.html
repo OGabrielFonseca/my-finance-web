@@ -1,28 +1,28 @@
 <section class="flex flex-col gap-4">
   <header class="flex flex-wrap items-center gap-3">
-    <h1 class="m-0 flex-1 text-2xl font-semibold">{{ 'investments.title' | transloco }}</h1>
+    <h1 class="m-0 flex-1 text-2xl font-semibold">{{ 'Investimentos' }}</h1>
   </header>
 
   <app-investments-nav />
 
   @if (portfolio(); as p) {
     <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
-      <app-stat-card label="investments.portfolio.totalCost" icon="pi pi-wallet" [value]="p.totalCost" />
+      <app-stat-card label="Custo total" icon="pi pi-wallet" [value]="p.totalCost" />
 
       <section class="rounded-border border border-surface bg-surface-0 p-4 dark:bg-surface-900">
-        <h2 class="m-0 mb-2 text-lg font-semibold">{{ 'investments.portfolio.allocation' | transloco }}</h2>
+        <h2 class="m-0 mb-2 text-lg font-semibold">{{ 'Distribuição por classe' }}</h2>
         @if (p.allocation.length) {
           <app-chart [options]="chartOptions()" [dark]="theme.isDark()" height="14rem" />
           <ul class="m-0 mt-2 flex list-none flex-col gap-1 p-0 text-sm">
             @for (a of p.allocation; track a.assetClass) {
               <li class="flex justify-between">
-                <span>{{ 'enums.assetClass.' + a.assetClass | transloco }}</span>
+                <span>{{ a.assetClass | enumLabel: 'assetClass' }}</span>
                 <span class="text-muted-color">{{ a.percentage | number: '1.0-1' }}%</span>
               </li>
             }
           </ul>
         } @else {
-          <p class="m-0 text-muted-color">{{ 'common.noResults' | transloco }}</p>
+          <p class="m-0 text-muted-color">{{ 'Nenhum registro encontrado.' }}</p>
         }
       </section>
     </div>
@@ -31,11 +31,11 @@
       <table class="w-full text-sm">
         <thead>
           <tr class="text-left text-muted-color">
-            <th class="p-3 font-medium">{{ 'investments.positions.fields.ticker' | transloco }}</th>
-            <th class="p-3 font-medium">{{ 'investments.positions.fields.assetClass' | transloco }}</th>
-            <th class="p-3 text-right font-medium">{{ 'investments.positions.fields.quantity' | transloco }}</th>
-            <th class="p-3 text-right font-medium">{{ 'investments.positions.fields.averagePrice' | transloco }}</th>
-            <th class="p-3 text-right font-medium">{{ 'investments.positions.fields.totalCost' | transloco }}</th>
+            <th class="p-3 font-medium">{{ 'Ativo' }}</th>
+            <th class="p-3 font-medium">{{ 'Classe' }}</th>
+            <th class="p-3 text-right font-medium">{{ 'Quantidade' }}</th>
+            <th class="p-3 text-right font-medium">{{ 'Preço médio' }}</th>
+            <th class="p-3 text-right font-medium">{{ 'Custo total' }}</th>
           </tr>
         </thead>
         <tbody>
@@ -45,14 +45,14 @@
                 <span class="font-semibold">{{ position.ticker }}</span>
                 <span class="block text-muted-color">{{ position.name }}</span>
               </td>
-              <td class="p-3">{{ 'enums.assetClass.' + position.assetClass | transloco }}</td>
+              <td class="p-3">{{ position.assetClass | enumLabel: 'assetClass' }}</td>
               <td class="p-3 text-right tabular-nums">{{ position.quantity | number: '1.0-8' }}</td>
               <td class="p-3 text-right tabular-nums">{{ position.averagePrice | currency }}</td>
               <td class="p-3 text-right tabular-nums">{{ position.totalCost | currency }}</td>
             </tr>
           } @empty {
             <tr>
-              <td colspan="5" class="p-3 text-center text-muted-color">{{ 'common.noResults' | transloco }}</td>
+              <td colspan="5" class="p-3 text-center text-muted-color">{{ 'Nenhum registro encontrado.' }}</td>
             </tr>
           }
         </tbody>

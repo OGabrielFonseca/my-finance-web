@@ -1,4 +1,4 @@
-<app-crud-page title="creditCards.title" (create)="openForm()">
+<app-crud-page title="Cartões" (create)="openForm()">
   <app-filter-bar [fields]="filters" [initial]="initialFilter" (changed)="list.setFilter($event)" />
 
   <app-data-table [columns]="columns" [list]="list" [actions]="actions" (action)="onAction($event)" />

@@ -1,10 +1,11 @@
+import { EnumLabelPipe } from '@shared/i18n/enum-labels';
+import { enumLabel } from '@shared/i18n/enum-labels';
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { AccountLookupService, toAccountOptions } from '@features/accounts';
 import { ActiveCategoryLookupService, toCategoryOptions } from '@features/categories';
-import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { fromLocalDate, toLocalDate } from '@shared/data';
 import { FieldComponent } from '@shared/forms';
 import { FormFooterComponent } from '@shared/forms';
@@ -30,9 +31,9 @@ export interface TransactionFormData {
 @Component({
   selector: 'app-transaction-form',
   imports: [
+    EnumLabelPipe,
     ReactiveFormsModule,
     RouterLink,
-    TranslocoPipe,
     FieldComponent,
     FormFooterComponent,
     DatePicker,
@@ -47,7 +48,6 @@ export interface TransactionFormData {
 })
 export class TransactionFormComponent {
   private readonly api = inject(TransactionApiService);
-  private readonly transloco = inject(TranslocoService);
   private readonly accountLookup = inject(AccountLookupService);
   private readonly categoryLookup = inject(ActiveCategoryLookupService);
   protected readonly ref = inject(DynamicDialogRef);
@@ -59,7 +59,7 @@ export class TransactionFormComponent {
   protected readonly noCategories = computed(() => this.categoryLookup.loaded() && !this.categoryOptions().length);
   protected readonly statusOptions = TRANSACTION_STATUSES.map((value) => ({
     value,
-    label: this.transloco.translate(`enums.transactionStatus.${value}`),
+    label: enumLabel('transactionStatus', value),
   }));
 
   private readonly fb = inject(NonNullableFormBuilder);

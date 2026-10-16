@@ -1,6 +1,5 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { TranslocoPipe } from '@jsverse/transloco';
 import { injectCrudList } from '@shared/crud/list';
 import { CrudActionsService, CrudPageComponent } from '@shared/crud/page';
 import type { ColumnDef, RowActionDef, RowActionEvent } from '@shared/crud/table';
@@ -18,7 +17,7 @@ const firstOfMonth = (date: Date) => new Date(date.getFullYear(), date.getMonth(
 
 @Component({
   selector: 'app-budget-list-page',
-  imports: [CellDirective, CrudPageComponent, DataTableComponent, DatePicker, FormsModule, ProgressBar, TranslocoPipe],
+  imports: [CellDirective, CrudPageComponent, DataTableComponent, DatePicker, FormsModule, ProgressBar],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './budget-list.page.html',
 })
@@ -34,10 +33,10 @@ export class BudgetListPage {
   });
 
   protected readonly columns: ColumnDef<Budget>[] = [
-    { field: 'category', key: 'category', header: 'budgets.fields.category', sortField: false },
-    { field: 'amount', header: 'budgets.fields.amount', type: 'money', align: 'right' },
-    { field: 'spent', header: 'budgets.fields.spent', type: 'money', align: 'right', hideOnMobile: true },
-    { field: 'spent', key: 'progress', header: 'budgets.fields.progress', sortField: false, width: '14rem' },
+    { field: 'category', key: 'category', header: 'Categoria', sortField: false },
+    { field: 'amount', header: 'Planejado', type: 'money', align: 'right' },
+    { field: 'spent', header: 'Realizado', type: 'money', align: 'right', hideOnMobile: true },
+    { field: 'spent', key: 'progress', header: 'Progresso', sortField: false, width: '14rem' },
   ];
   protected readonly actions: RowActionDef<Budget>[] = [EDIT_ACTION, DELETE_ACTION];
 
@@ -54,7 +53,7 @@ export class BudgetListPage {
   }
 
   protected openForm(budget?: Budget): void {
-    const header = budget ? 'budgets.editTitle' : 'budgets.newTitle';
+    const header = budget ? 'Editar orçamento' : 'Novo orçamento';
     this.crud.openForm(BudgetFormComponent, header, { budget, month: this.month() }).subscribe((saved) => {
       if (saved) this.list.reload();
     });

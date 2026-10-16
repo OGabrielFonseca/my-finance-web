@@ -11,11 +11,11 @@ const user = { id: 'u1', name: 'Gabriel', email: 'demo@myfinance.dev', createdAt
 
 describe('AuthStoreService', () => {
   let http: HttpTestingController;
-  let notifier: { errorKey: ReturnType<typeof vi.fn> };
+  let notifier: { error: ReturnType<typeof vi.fn> };
 
   beforeEach(() => {
     localStorage.clear();
-    notifier = { errorKey: vi.fn() };
+    notifier = { error: vi.fn() };
     TestBed.configureTestingModule({
       providers: [
         provideHttpClient(),
@@ -59,6 +59,24 @@ describe('AuthStoreService', () => {
       .register({ name: 'Gabriel', email: 'demo@myfinance.dev', password: '12345678' })
       .subscribe(() => (done = true));
     http.expectOne('/api/v1/auth/register').flush({ accessToken: 'jwt', tokenType: 'Bearer', expiresIn: 3600 });
+    http.expectOne('/api/v1/me').flush(user);
+
+    expect(done).toBe(true);
+    expect(store.isAuthenticated()).toBe(true);
+    expect(store.token()).toBe('jwt');
+    expect(store.user()?.name).toBe('Gabriel');
+    expect(readSession()).toEqual({ token: 'jwt', expiresAt: Date.now() + 3600 * 1000 });
+  });
+
+  it('loginWithGoogle envia o idToken, grava a sessão e carrega o usuário', () => {
+    vi.useFakeTimers({ now: new Date(2026, 9, 12, 10, 0) });
+    const store = TestBed.inject(AuthStoreService);
+    let done = false;
+
+    store.loginWithGoogle('google-id-token').subscribe(() => (done = true));
+    const request = http.expectOne('/api/v1/auth/google');
+    expect(request.request.body).toEqual({ idToken: 'google-id-token' });
+    request.flush({ accessToken: 'jwt', tokenType: 'Bearer', expiresIn: 3600 });
     http.expectOne('/api/v1/me').flush(user);
 
     expect(done).toBe(true);
@@ -129,7 +147,7 @@ describe('AuthStoreService', () => {
     vi.advanceTimersByTime(5_000);
 
     expect(store.isAuthenticated()).toBe(false);
-    expect(notifier.errorKey).toHaveBeenCalledWith('errors.sessionExpired');
+    expect(notifier.error).toHaveBeenCalledWith('Sua sessão expirou. Entre novamente.');
     expect(TestBed.inject(Router).navigate).toHaveBeenCalledWith(['/login'], { queryParams: { returnUrl: '/' } });
   });
 
@@ -143,7 +161,7 @@ describe('AuthStoreService', () => {
 
     expect(store.isAuthenticated()).toBe(false);
     expect(store.user()).toBeNull();
-    expect(notifier.errorKey).not.toHaveBeenCalled();
+    expect(notifier.error).not.toHaveBeenCalled();
     expect(localStorage.getItem(SESSION_STORAGE_KEY)).toBeNull();
   });
 });

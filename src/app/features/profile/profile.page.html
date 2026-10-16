@@ -1,28 +1,28 @@
 <main class="mx-auto flex max-w-xl flex-col gap-6 p-4">
   <header class="flex flex-col gap-1">
-    <h1 class="m-0 text-2xl font-semibold">{{ 'profile.title' | transloco }}</h1>
-    <p class="m-0 text-muted-color">{{ 'profile.subtitle' | transloco }}</p>
+    <h1 class="m-0 text-2xl font-semibold">{{ 'Meu perfil' }}</h1>
+    <p class="m-0 text-muted-color">{{ 'Dados da sua conta.' }}</p>
   </header>
 
   <section class="rounded-border border border-surface bg-surface-0 p-6 dark:bg-surface-900">
     <form [formGroup]="form" (ngSubmit)="submit.submit()" class="flex flex-col gap-4">
-      <app-field label="profile.fields.name" fieldId="profile-name" [control]="form.controls.name">
+      <app-field label="Nome" fieldId="profile-name" [control]="form.controls.name">
         <input pInputText id="profile-name" type="text" autocomplete="name" formControlName="name" />
       </app-field>
 
-      <app-field label="profile.fields.email" fieldId="profile-email" [control]="form.controls.email">
+      <app-field label="E-mail" fieldId="profile-email" [control]="form.controls.email">
         <input pInputText id="profile-email" type="email" autocomplete="email" formControlName="email" />
       </app-field>
 
       <p class="m-0 text-sm text-muted-color">
-        {{ 'profile.fields.createdAt' | transloco }}: {{ auth.user()?.createdAt | date: 'dd/MM/yyyy' }}
+        {{ 'Membro desde' }}: {{ auth.user()?.createdAt | date: 'dd/MM/yyyy' }}
       </p>
 
       @if (submit.error(); as message) {
         <p-message severity="error">{{ message }}</p-message>
       }
 
-      <p-button type="submit" [label]="'common.save' | transloco" [loading]="submit.submitting()" />
+      <p-button type="submit" [label]="'Salvar'" [loading]="submit.submitting()" />
     </form>
   </section>
 </main>

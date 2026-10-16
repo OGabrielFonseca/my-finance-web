@@ -19,16 +19,16 @@
       @for (column of columns(); track columnKey(column)) {
         @if (isSortable(column)) {
           <th [pSortableColumn]="columnKey(column)" [class]="alignClass(column)" [style.width]="column.width">
-            {{ column.header | transloco }}
+            {{ column.header }}
             <p-sortIcon [field]="columnKey(column)" />
           </th>
         } @else {
-          <th [class]="alignClass(column)" [style.width]="column.width">{{ column.header | transloco }}</th>
+          <th [class]="alignClass(column)" [style.width]="column.width">{{ column.header }}</th>
         }
       }
       @if (actions().length) {
         <th class="w-16">
-          <span class="sr-only">{{ 'common.actions' | transloco }}</span>
+          <span class="sr-only">{{ 'Ações' }}</span>
         </th>
       }
     </tr>
@@ -52,10 +52,10 @@
                 {{ $any(value(row, column)) | date: 'MM/yyyy' }}
               }
               @case ('enum') {
-                {{ 'enums.' + column.enumKey + '.' + value(row, column) | transloco }}
+                {{ value(row, column) | enumLabel: column.enumKey }}
               }
               @case ('boolean') {
-                {{ (value(row, column) ? 'common.yes' : 'common.no') | transloco }}
+                {{ value(row, column) ? 'Sim' : 'Não' }}
               }
               @case ('color') {
                 <span
@@ -69,7 +69,7 @@
             }
           }
           @if (isFirst && isArchived(row)) {
-            <p-tag class="ml-2" severity="secondary" [value]="'common.archived' | transloco" />
+            <p-tag class="ml-2" severity="secondary" [value]="'Arquivado'" />
           }
         </td>
       }
@@ -82,7 +82,7 @@
               severity="secondary"
               [text]="true"
               [rounded]="true"
-              [ariaLabel]="rowActions[0].label | transloco"
+              [ariaLabel]="rowActions[0].label"
               (onClick)="emit(rowActions[0].id, row)"
             />
           } @else if (rowActions.length > 1) {
@@ -91,7 +91,7 @@
               severity="secondary"
               [text]="true"
               [rounded]="true"
-              [ariaLabel]="'common.actions' | transloco"
+              [ariaLabel]="'Ações'"
               (onClick)="openMenu($event, row)"
             />
           }

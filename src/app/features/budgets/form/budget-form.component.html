@@ -1,11 +1,11 @@
 <form [formGroup]="form" (ngSubmit)="submit.submit()" class="flex flex-col gap-4">
   @if (data.budget; as budget) {
     <p class="m-0 flex flex-col gap-1">
-      <span class="text-sm text-muted-color">{{ 'budgets.fields.category' | transloco }}</span>
+      <span class="text-sm text-muted-color">{{ 'Categoria' }}</span>
       <span>{{ budget.category.name }}</span>
     </p>
   } @else {
-    <app-field label="budgets.fields.category" fieldId="budget-category" [control]="form.controls.categoryId">
+    <app-field label="Categoria" fieldId="budget-category" [control]="form.controls.categoryId">
       <p-select
         inputId="budget-category"
         formControlName="categoryId"
@@ -17,7 +17,7 @@
     </app-field>
   }
 
-  <app-field label="budgets.fields.amount" fieldId="budget-amount" [control]="form.controls.amount">
+  <app-field label="Planejado" fieldId="budget-amount" [control]="form.controls.amount">
     <p-inputnumber inputId="budget-amount" formControlName="amount" mode="currency" currency="BRL" locale="pt-BR" />
   </app-field>
 

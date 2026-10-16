@@ -1,6 +1,6 @@
-<app-crud-page title="transactions.title" [showCreate]="false">
+<app-crud-page title="Lançamentos" [showCreate]="false">
   <ng-container pageActions>
-    <p-button icon="pi pi-plus" [label]="'common.new' | transloco" (onClick)="newMenu.toggle($event)" />
+    <p-button icon="pi pi-plus" [label]="'Novo'" (onClick)="newMenu.toggle($event)" />
     <p-menu #newMenu [model]="newItems" [popup]="true" appendTo="body" />
   </ng-container>
 
@@ -16,8 +16,8 @@
         @if (readOnly(t); as reason) {
           <i
             class="pi pi-lock text-xs text-muted-color"
-            [attr.title]="'transactions.readOnly.' + reason | transloco"
-            [attr.aria-label]="'transactions.readOnly.' + reason | transloco"
+            [attr.title]="readOnlyLabel(reason)"
+            [attr.aria-label]="readOnlyLabel(reason)"
           ></i>
         }
       </span>
@@ -30,7 +30,7 @@
           {{ category.name }}
         </span>
       } @else {
-        <span class="text-muted-color">{{ 'enums.transactionType.TRANSFER' | transloco }}</span>
+        <span class="text-muted-color">{{ 'Transferência' }}</span>
       }
     </ng-template>
 
@@ -45,7 +45,7 @@
     <ng-template appCell="status" let-t>
       <p-tag
         [severity]="t.status === 'PENDING' ? 'warn' : 'success'"
-        [value]="'enums.transactionStatus.' + t.status | transloco"
+        [value]="t.status | enumLabel: 'transactionStatus'"
       />
     </ng-template>
 

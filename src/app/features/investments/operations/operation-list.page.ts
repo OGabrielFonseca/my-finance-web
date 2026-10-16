@@ -30,30 +30,30 @@ export class OperationListPage {
   protected readonly accountOptions = computed(() => toAccountOptions(this.accounts.items()));
 
   protected readonly filters: FilterField[] = [
-    { key: 'assetId', type: 'lookup', label: 'investments.operations.fields.asset', options: this.assetOptions },
-    { key: 'accountId', type: 'lookup', label: 'investments.operations.fields.account', options: this.accountOptions },
+    { key: 'assetId', type: 'lookup', label: 'Ativo', options: this.assetOptions },
+    { key: 'accountId', type: 'lookup', label: 'Corretora', options: this.accountOptions },
     {
       key: 'type',
       type: 'enum',
-      label: 'investments.operations.fields.type',
+      label: 'Tipo',
       enumKey: 'operationType',
       options: OPERATION_TYPES,
     },
-    { key: 'period', type: 'dateRange', label: 'investments.operations.fields.period', fromKey: 'from', toKey: 'to' },
+    { key: 'period', type: 'dateRange', label: 'Período', fromKey: 'from', toKey: 'to' },
   ];
   protected readonly columns: ColumnDef<Operation>[] = [
-    { field: 'operationDate', header: 'investments.operations.fields.date', type: 'date' },
-    { field: 'asset', key: 'asset', header: 'investments.operations.fields.asset', sortField: false },
-    { field: 'type', header: 'investments.operations.fields.type', type: 'enum', enumKey: 'operationType' },
-    { field: 'quantity', header: 'investments.operations.fields.quantity', align: 'right' },
+    { field: 'operationDate', header: 'Data', type: 'date' },
+    { field: 'asset', key: 'asset', header: 'Ativo', sortField: false },
+    { field: 'type', header: 'Tipo', type: 'enum', enumKey: 'operationType' },
+    { field: 'quantity', header: 'Quantidade', align: 'right' },
     {
       field: 'unitPrice',
-      header: 'investments.operations.fields.unitPrice',
+      header: 'Preço unitário',
       type: 'money',
       align: 'right',
       hideOnMobile: true,
     },
-    { field: 'fees', header: 'investments.operations.fields.fees', type: 'money', align: 'right', hideOnMobile: true },
+    { field: 'fees', header: 'Taxas', type: 'money', align: 'right', hideOnMobile: true },
   ];
 
   protected readonly actions: RowActionDef<Operation>[] = [EDIT_ACTION, DELETE_ACTION];
@@ -68,7 +68,7 @@ export class OperationListPage {
   }
 
   protected openForm(operation?: Operation): void {
-    const header = operation ? 'investments.operations.editTitle' : 'investments.operations.newTitle';
+    const header = operation ? 'Editar operação' : 'Nova operação';
     this.crud.openForm(OperationFormComponent, header, { operation }).subscribe((saved) => {
       if (saved) this.list.reload();
     });

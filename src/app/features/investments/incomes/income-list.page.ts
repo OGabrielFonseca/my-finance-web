@@ -31,30 +31,30 @@ export class IncomeListPage {
   protected readonly accountOptions = computed(() => toAccountOptions(this.accounts.items()));
 
   protected readonly filters: FilterField[] = [
-    { key: 'assetId', type: 'lookup', label: 'investments.incomes.fields.asset', options: this.assetOptions },
-    { key: 'accountId', type: 'lookup', label: 'investments.incomes.fields.account', options: this.accountOptions },
+    { key: 'assetId', type: 'lookup', label: 'Ativo', options: this.assetOptions },
+    { key: 'accountId', type: 'lookup', label: 'Corretora', options: this.accountOptions },
     {
       key: 'type',
       type: 'enum',
-      label: 'investments.incomes.fields.type',
+      label: 'Tipo',
       enumKey: 'incomeType',
       options: INCOME_TYPES,
     },
-    { key: 'period', type: 'dateRange', label: 'investments.incomes.fields.period', fromKey: 'from', toKey: 'to' },
+    { key: 'period', type: 'dateRange', label: 'Período', fromKey: 'from', toKey: 'to' },
   ];
   protected readonly columns: ColumnDef<Income>[] = [
-    { field: 'paymentDate', header: 'investments.incomes.fields.paymentDate', type: 'date' },
-    { field: 'asset', key: 'asset', header: 'investments.incomes.fields.asset', sortField: false },
-    { field: 'type', header: 'investments.incomes.fields.type', type: 'enum', enumKey: 'incomeType' },
-    { field: 'grossAmount', header: 'investments.incomes.fields.grossAmount', type: 'money', align: 'right' },
+    { field: 'paymentDate', header: 'Pagamento', type: 'date' },
+    { field: 'asset', key: 'asset', header: 'Ativo', sortField: false },
+    { field: 'type', header: 'Tipo', type: 'enum', enumKey: 'incomeType' },
+    { field: 'grossAmount', header: 'Bruto', type: 'money', align: 'right' },
     {
       field: 'taxAmount',
-      header: 'investments.incomes.fields.taxAmount',
+      header: 'Imposto',
       type: 'money',
       align: 'right',
       hideOnMobile: true,
     },
-    { field: 'netAmount', header: 'investments.incomes.fields.netAmount', type: 'money', align: 'right' },
+    { field: 'netAmount', header: 'Líquido', type: 'money', align: 'right' },
   ];
   protected readonly actions: RowActionDef<Income>[] = [EDIT_ACTION, DELETE_ACTION];
 
@@ -68,7 +68,7 @@ export class IncomeListPage {
   }
 
   protected openForm(income?: Income): void {
-    const header = income ? 'investments.incomes.editTitle' : 'investments.incomes.newTitle';
+    const header = income ? 'Editar provento' : 'Novo provento';
     this.crud.openForm(IncomeFormComponent, header, { income }).subscribe((saved) => {
       if (saved) this.list.reload();
     });

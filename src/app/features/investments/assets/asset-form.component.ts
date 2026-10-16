@@ -1,6 +1,6 @@
+import { enumLabel } from '@shared/i18n/enum-labels';
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { fromLocalDate, toLocalDate } from '@shared/data';
 import { FieldComponent, FormFooterComponent, injectFormSubmit } from '@shared/forms';
 import { DatePicker } from 'primeng/datepicker';
@@ -18,7 +18,6 @@ import { ASSET_CLASSES, INDEXERS, isFixedIncomeClass } from '../data/investment.
   selector: 'app-asset-form',
   imports: [
     ReactiveFormsModule,
-    TranslocoPipe,
     FieldComponent,
     FormFooterComponent,
     Checkbox,
@@ -32,17 +31,16 @@ import { ASSET_CLASSES, INDEXERS, isFixedIncomeClass } from '../data/investment.
 })
 export class AssetFormComponent {
   private readonly api = inject(AssetApiService);
-  private readonly transloco = inject(TranslocoService);
   protected readonly ref = inject(DynamicDialogRef);
   private readonly id = (inject(DynamicDialogConfig).data as { id?: string } | undefined)?.id;
 
   protected readonly classOptions = ASSET_CLASSES.map((value) => ({
     value,
-    label: this.transloco.translate(`enums.assetClass.${value}`),
+    label: enumLabel('assetClass', value),
   }));
   protected readonly indexerOptions = INDEXERS.map((value) => ({
     value,
-    label: this.transloco.translate(`enums.indexer.${value}`),
+    label: enumLabel('indexer', value),
   }));
 
   /** Renda fixa e Tesouro mostram os detalhes e exigem indexador e taxa. */

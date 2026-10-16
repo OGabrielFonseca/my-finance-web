@@ -20,6 +20,7 @@ export const routes: Routes = [
       { path: 'credit-cards', loadChildren: () => import('./features/credit-cards/credit-cards.routes') },
       { path: 'budgets', loadChildren: () => import('./features/budgets/budgets.routes') },
       { path: 'investments', loadChildren: () => import('./features/investments/investments.routes') },
+      { path: 'integrations', loadChildren: () => import('./features/integrations/integrations.routes') },
       { path: 'profile', loadChildren: () => import('./features/profile/profile.routes') },
       { path: '**', component: NotFoundPage },
     ],

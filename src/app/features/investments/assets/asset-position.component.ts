@@ -1,6 +1,5 @@
 import { CurrencyPipe, DecimalPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
-import { TranslocoPipe } from '@jsverse/transloco';
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { Button } from 'primeng/button';
 
@@ -10,27 +9,27 @@ import type { AssetPosition } from '../data/investment.model';
 /** Posição derivada das operações, a preço de custo (a API calcula preço médio e custo total). */
 @Component({
   selector: 'app-asset-position',
-  imports: [CurrencyPipe, DecimalPipe, TranslocoPipe, Button],
+  imports: [CurrencyPipe, DecimalPipe, Button],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     @if (position(); as p) {
       <dl class="m-0 grid grid-cols-2 gap-x-6 gap-y-3 text-sm">
         <div>
-          <dt class="text-muted-color">{{ 'investments.positions.fields.quantity' | transloco }}</dt>
+          <dt class="text-muted-color">{{ 'Quantidade' }}</dt>
           <dd class="m-0 tabular-nums">{{ p.quantity | number: '1.0-8' }}</dd>
         </div>
         <div>
-          <dt class="text-muted-color">{{ 'investments.positions.fields.averagePrice' | transloco }}</dt>
+          <dt class="text-muted-color">{{ 'Preço médio' }}</dt>
           <dd class="m-0 tabular-nums">{{ p.averagePrice | currency }}</dd>
         </div>
         <div>
-          <dt class="text-muted-color">{{ 'investments.positions.fields.totalCost' | transloco }}</dt>
+          <dt class="text-muted-color">{{ 'Custo total' }}</dt>
           <dd class="m-0 font-semibold tabular-nums">{{ p.totalCost | currency }}</dd>
         </div>
       </dl>
     }
     <div class="mt-4 flex justify-end">
-      <p-button severity="secondary" [label]="'common.close' | transloco" (onClick)="ref.close()" />
+      <p-button severity="secondary" [label]="'Fechar'" (onClick)="ref.close()" />
     </div>
   `,
 })

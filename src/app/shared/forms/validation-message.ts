@@ -1,16 +1,22 @@
 import type { ValidationErrors } from '@angular/forms';
 
-const KNOWN_ERRORS = ['required', 'maxlength', 'minlength', 'min', 'email', 'pattern'];
+const MESSAGES: Record<string, (params: Record<string, unknown>) => string> = {
+  required: () => 'Campo obrigatório',
+  maxlength: (p) => `Máximo de ${p['requiredLength']} caracteres`,
+  minlength: (p) => `Mínimo de ${p['requiredLength']} caracteres`,
+  min: (p) => `Valor mínimo: ${p['min']}`,
+  email: () => 'E-mail inválido',
+  pattern: () => 'Formato inválido',
+};
 
-/** Mensagem do primeiro erro: o erro do servidor aparece como veio; os do Angular viram `validation.<erro>`. */
-export function validationMessage(
-  errors: ValidationErrors,
-  translate: (key: string, params?: Record<string, unknown>) => string,
-): string {
+const INVALID = 'Valor inválido';
+
+/** Mensagem do primeiro erro: o erro do servidor aparece como veio; os do Angular viram texto em português. */
+export function validationMessage(errors: ValidationErrors): string {
   if (typeof errors['server'] === 'string') return errors['server'];
   const [key] = Object.keys(errors);
   if (!key) return '';
   const params =
     typeof errors[key] === 'object' && errors[key] !== null ? (errors[key] as Record<string, unknown>) : {};
-  return translate(`validation.${KNOWN_ERRORS.includes(key) ? key : 'invalid'}`, params);
+  return MESSAGES[key]?.(params) ?? INVALID;
 }

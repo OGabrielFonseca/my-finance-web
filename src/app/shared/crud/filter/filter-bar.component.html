@@ -5,11 +5,11 @@
       <div class="flex flex-col gap-1 lg:w-56">
         @switch (field.type) {
           @case ('text') {
-            <label [for]="id" class="text-sm text-muted-color">{{ field.label | transloco }}</label>
+            <label [for]="id" class="text-sm text-muted-color">{{ field.label }}</label>
             <input pInputText [id]="id" [formControlName]="field.key" />
           }
           @case ('enum') {
-            <label [for]="id" class="text-sm text-muted-color">{{ field.label | transloco }}</label>
+            <label [for]="id" class="text-sm text-muted-color">{{ field.label }}</label>
             <p-select
               [inputId]="id"
               [formControlName]="field.key"
@@ -17,12 +17,12 @@
               optionLabel="label"
               optionValue="value"
               [showClear]="true"
-              [placeholder]="'common.all' | transloco"
+              [placeholder]="'Todos'"
               appendTo="body"
             />
           }
           @case ('lookup') {
-            <label [for]="id" class="text-sm text-muted-color">{{ field.label | transloco }}</label>
+            <label [for]="id" class="text-sm text-muted-color">{{ field.label }}</label>
             <p-select
               [inputId]="id"
               [formControlName]="field.key"
@@ -32,7 +32,7 @@
               [filter]="true"
               filterBy="label"
               [showClear]="true"
-              [placeholder]="'common.all' | transloco"
+              [placeholder]="'Todos'"
               appendTo="body"
             >
               <ng-template #item let-option>
@@ -46,7 +46,7 @@
             </p-select>
           }
           @case ('dateRange') {
-            <label [for]="id" class="text-sm text-muted-color">{{ field.label | transloco }}</label>
+            <label [for]="id" class="text-sm text-muted-color">{{ field.label }}</label>
             <p-datepicker
               [inputId]="id"
               [formControlName]="field.key"
@@ -60,7 +60,7 @@
           @case ('boolean') {
             <div class="flex items-center gap-2 lg:h-10">
               <p-checkbox [inputId]="id" [formControlName]="field.key" [binary]="true" />
-              <label [for]="id" class="text-sm">{{ field.label | transloco }}</label>
+              <label [for]="id" class="text-sm">{{ field.label }}</label>
             </div>
           }
         }
@@ -71,7 +71,7 @@
       icon="pi pi-filter-slash"
       severity="secondary"
       [text]="true"
-      [label]="'common.clearFilters' | transloco"
+      [label]="'Limpar filtros'"
       (onClick)="clear()"
     />
   </form>
@@ -86,12 +86,12 @@
     icon="pi pi-filter"
     severity="secondary"
     [outlined]="true"
-    [label]="'common.filters' | transloco"
+    [label]="'Filtros'"
     [badge]="activeCount() ? '' + activeCount() : undefined"
     (onClick)="drawerOpen.set(true)"
   />
 </div>
 
-<p-drawer [(visible)]="drawerOpen" position="right" [header]="'common.filters' | transloco">
+<p-drawer [(visible)]="drawerOpen" position="right" [header]="'Filtros'">
   <ng-container *ngTemplateOutlet="fieldsTemplate; context: { $implicit: 'filter-drawer-' }" />
 </p-drawer>

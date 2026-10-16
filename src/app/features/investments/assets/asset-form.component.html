@@ -1,10 +1,10 @@
 <form [formGroup]="form" (ngSubmit)="submit.submit()" class="flex flex-col gap-4">
   <div class="grid grid-cols-2 gap-4">
-    <app-field label="investments.assets.fields.ticker" fieldId="asset-ticker" [control]="form.controls.ticker">
+    <app-field label="Ticker" fieldId="asset-ticker" [control]="form.controls.ticker">
       <input pInputText id="asset-ticker" formControlName="ticker" />
     </app-field>
 
-    <app-field label="investments.assets.fields.assetClass" fieldId="asset-class" [control]="form.controls.assetClass">
+    <app-field label="Classe" fieldId="asset-class" [control]="form.controls.assetClass">
       <p-select
         inputId="asset-class"
         formControlName="assetClass"
@@ -16,24 +16,20 @@
     </app-field>
   </div>
 
-  <app-field label="investments.assets.fields.name" fieldId="asset-name" [control]="form.controls.name">
+  <app-field label="Nome" fieldId="asset-name" [control]="form.controls.name">
     <input pInputText id="asset-name" formControlName="name" />
   </app-field>
 
   @if (fixedIncome()) {
     <fieldset class="m-0 flex flex-col gap-4 rounded-border border border-surface p-4">
-      <legend class="px-1 text-sm text-muted-color">{{ 'investments.assets.fixedIncome.title' | transloco }}</legend>
+      <legend class="px-1 text-sm text-muted-color">{{ 'Detalhes de renda fixa' }}</legend>
 
-      <app-field label="investments.assets.fixedIncome.issuer" fieldId="asset-issuer" [control]="form.controls.issuer">
+      <app-field label="Emissor" fieldId="asset-issuer" [control]="form.controls.issuer">
         <input pInputText id="asset-issuer" formControlName="issuer" />
       </app-field>
 
       <div class="grid grid-cols-2 gap-4">
-        <app-field
-          label="investments.assets.fixedIncome.indexer"
-          fieldId="asset-indexer"
-          [control]="form.controls.indexer"
-        >
+        <app-field label="Indexador" fieldId="asset-indexer" [control]="form.controls.indexer">
           <p-select
             inputId="asset-indexer"
             formControlName="indexer"
@@ -44,7 +40,7 @@
           />
         </app-field>
 
-        <app-field label="investments.assets.fixedIncome.rate" fieldId="asset-rate" [control]="form.controls.rate">
+        <app-field label="Taxa (%)" fieldId="asset-rate" [control]="form.controls.rate">
           <p-inputnumber
             inputId="asset-rate"
             formControlName="rate"
@@ -56,11 +52,7 @@
       </div>
 
       <div class="grid grid-cols-2 items-end gap-4">
-        <app-field
-          label="investments.assets.fixedIncome.maturityDate"
-          fieldId="asset-maturity"
-          [control]="form.controls.maturityDate"
-        >
+        <app-field label="Vencimento" fieldId="asset-maturity" [control]="form.controls.maturityDate">
           <p-datepicker
             inputId="asset-maturity"
             formControlName="maturityDate"
@@ -72,7 +64,7 @@
 
         <label for="asset-tax" class="flex items-center gap-2 pb-2 text-sm">
           <p-checkbox inputId="asset-tax" formControlName="taxExempt" [binary]="true" />
-          {{ 'investments.assets.fixedIncome.taxExempt' | transloco }}
+          {{ 'Isento de imposto de renda' }}
         </label>
       </div>
     </fieldset>

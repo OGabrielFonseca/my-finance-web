@@ -2,20 +2,20 @@
   @if (noCategories()) {
     <p-message severity="warn">
       <span class="flex flex-wrap items-center gap-2">
-        {{ 'transactions.noCategories' | transloco: { type: ('enums.categoryType.' + data.type | transloco) } }}
+        Cadastre uma categoria de {{ data.type | enumLabel: 'categoryType' }} antes de lançar.
         <a routerLink="/categories" class="font-semibold" (click)="ref.close(false)">
-          {{ 'transactions.goToCategories' | transloco }}
+          {{ 'Ir para categorias' }}
         </a>
       </span>
     </p-message>
   }
 
-  <app-field label="transactions.fields.description" fieldId="tx-description" [control]="form.controls.description">
+  <app-field label="Descrição" fieldId="tx-description" [control]="form.controls.description">
     <input pInputText id="tx-description" formControlName="description" />
   </app-field>
 
   <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
-    <app-field label="transactions.fields.amount" fieldId="tx-amount" [control]="form.controls.amount">
+    <app-field label="Valor" fieldId="tx-amount" [control]="form.controls.amount">
       <p-inputnumber
         inputId="tx-amount"
         formControlName="amount"
@@ -27,7 +27,7 @@
       />
     </app-field>
 
-    <app-field label="transactions.fields.date" fieldId="tx-date" [control]="form.controls.date">
+    <app-field label="Data" fieldId="tx-date" [control]="form.controls.date">
       <p-datepicker
         inputId="tx-date"
         formControlName="date"
@@ -39,7 +39,7 @@
     </app-field>
   </div>
 
-  <app-field label="transactions.fields.category" fieldId="tx-category" [control]="form.controls.categoryId">
+  <app-field label="Categoria" fieldId="tx-category" [control]="form.controls.categoryId">
     <p-select
       inputId="tx-category"
       formControlName="categoryId"
@@ -48,7 +48,7 @@
       optionValue="value"
       [filter]="true"
       filterBy="label"
-      [placeholder]="'common.select' | transloco"
+      [placeholder]="'Selecione'"
       appendTo="body"
     >
       <ng-template #item let-option>
@@ -61,19 +61,19 @@
   </app-field>
 
   <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
-    <app-field label="transactions.fields.account" fieldId="tx-account" [control]="form.controls.accountId">
+    <app-field label="Conta" fieldId="tx-account" [control]="form.controls.accountId">
       <p-select
         inputId="tx-account"
         formControlName="accountId"
         [options]="accountOptions()"
         optionLabel="label"
         optionValue="value"
-        [placeholder]="'common.select' | transloco"
+        [placeholder]="'Selecione'"
         appendTo="body"
       />
     </app-field>
 
-    <app-field label="transactions.fields.status" fieldId="tx-status" [control]="form.controls.status">
+    <app-field label="Situação" fieldId="tx-status" [control]="form.controls.status">
       <p-select
         inputId="tx-status"
         formControlName="status"
@@ -82,11 +82,11 @@
         optionValue="value"
         appendTo="body"
       />
-      <small class="text-muted-color">{{ 'transactions.statusHint' | transloco }}</small>
+      <small class="text-muted-color">{{ 'Pendentes não entram no saldo atual da conta.' }}</small>
     </app-field>
   </div>
 
-  <app-field label="transactions.fields.notes" fieldId="tx-notes" [control]="form.controls.notes">
+  <app-field label="Observações" fieldId="tx-notes" [control]="form.controls.notes">
     <textarea pTextarea id="tx-notes" formControlName="notes" rows="2" [autoResize]="true"></textarea>
   </app-field>
 

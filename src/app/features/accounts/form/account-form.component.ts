@@ -1,6 +1,6 @@
+import { enumLabel } from '@shared/i18n/enum-labels';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { TranslocoService } from '@jsverse/transloco';
 import { FieldComponent } from '@shared/forms';
 import { FormFooterComponent } from '@shared/forms';
 import { injectFormSubmit } from '@shared/forms';
@@ -21,13 +21,12 @@ import { ACCOUNT_TYPES } from '../data/account.model';
 })
 export class AccountFormComponent {
   private readonly api = inject(AccountApiService);
-  private readonly transloco = inject(TranslocoService);
   protected readonly ref = inject(DynamicDialogRef);
   private readonly id = (inject(DynamicDialogConfig).data as { id?: string } | undefined)?.id;
 
   protected readonly typeOptions = ACCOUNT_TYPES.map((value) => ({
     value,
-    label: this.transloco.translate(`enums.accountType.${value}`),
+    label: enumLabel('accountType', value),
   }));
 
   protected readonly form = inject(NonNullableFormBuilder).group({

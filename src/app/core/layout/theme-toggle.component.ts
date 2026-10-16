@@ -1,6 +1,5 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { TranslocoPipe } from '@jsverse/transloco';
 import { SelectButton } from 'primeng/selectbutton';
 
 import type { ThemePreference } from '../theme/theme.service';
@@ -13,10 +12,10 @@ interface ThemeOption {
 
 @Component({
   selector: 'app-theme-toggle',
-  imports: [FormsModule, SelectButton, TranslocoPipe],
+  imports: [FormsModule, SelectButton],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <div role="group" [attr.aria-label]="'theme.label' | transloco">
+    <div role="group" [attr.aria-label]="'Tema'">
       <p-selectbutton
         [options]="options"
         [ngModel]="theme.preference()"
@@ -26,7 +25,7 @@ interface ThemeOption {
         size="small"
       >
         <ng-template #item let-option>
-          <i [class]="option.icon" [attr.aria-label]="'theme.' + option.value | transloco"></i>
+          <i [class]="option.icon" [attr.aria-label]="'theme.' + option.value"></i>
         </ng-template>
       </p-selectbutton>
     </div>

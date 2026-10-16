@@ -1,8 +1,8 @@
+import { enumLabel } from '@shared/i18n/enum-labels';
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AccountLookupService, toAccountOptions } from '@features/accounts';
-import { TranslocoService } from '@jsverse/transloco';
 import { fromLocalDate, toLocalDate } from '@shared/data';
 import { FieldComponent } from '@shared/forms';
 import { FormFooterComponent } from '@shared/forms';
@@ -39,7 +39,6 @@ import { TRANSACTION_STATUSES, statusForDate } from '../data/transaction.model';
 })
 export class TransferFormComponent {
   private readonly api = inject(TransactionApiService);
-  private readonly transloco = inject(TranslocoService);
   private readonly accountLookup = inject(AccountLookupService);
   protected readonly ref = inject(DynamicDialogRef);
   private readonly transaction = (inject(DynamicDialogConfig).data as { transaction?: Transaction } | undefined)
@@ -48,7 +47,7 @@ export class TransferFormComponent {
   protected readonly accountOptions = computed(() => toAccountOptions(this.accountLookup.items()));
   protected readonly statusOptions = TRANSACTION_STATUSES.map((value) => ({
     value,
-    label: this.transloco.translate(`enums.transactionStatus.${value}`),
+    label: enumLabel('transactionStatus', value),
   }));
 
   private readonly fb = inject(NonNullableFormBuilder);

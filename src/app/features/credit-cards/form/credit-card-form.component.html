@@ -1,31 +1,27 @@
 <form [formGroup]="form" (ngSubmit)="submit.submit()" class="flex flex-col gap-4">
-  <app-field label="creditCards.fields.name" fieldId="card-name" [control]="form.controls.name">
+  <app-field label="Nome" fieldId="card-name" [control]="form.controls.name">
     <input pInputText id="card-name" formControlName="name" />
   </app-field>
 
-  <app-field label="creditCards.fields.brand" fieldId="card-brand" [control]="form.controls.brand">
+  <app-field label="Bandeira" fieldId="card-brand" [control]="form.controls.brand">
     <input pInputText id="card-brand" formControlName="brand" />
   </app-field>
 
-  <app-field label="creditCards.fields.creditLimit" fieldId="card-limit" [control]="form.controls.creditLimit">
+  <app-field label="Limite" fieldId="card-limit" [control]="form.controls.creditLimit">
     <p-inputnumber inputId="card-limit" formControlName="creditLimit" mode="currency" currency="BRL" locale="pt-BR" />
   </app-field>
 
   <div class="grid grid-cols-2 gap-4">
-    <app-field label="creditCards.fields.closingDay" fieldId="card-closing" [control]="form.controls.closingDay">
+    <app-field label="Dia de fechamento" fieldId="card-closing" [control]="form.controls.closingDay">
       <p-inputnumber inputId="card-closing" formControlName="closingDay" [min]="1" [max]="31" [fluid]="true" />
     </app-field>
 
-    <app-field label="creditCards.fields.dueDay" fieldId="card-due" [control]="form.controls.dueDay">
+    <app-field label="Dia de vencimento" fieldId="card-due" [control]="form.controls.dueDay">
       <p-inputnumber inputId="card-due" formControlName="dueDay" [min]="1" [max]="31" [fluid]="true" />
     </app-field>
   </div>
 
-  <app-field
-    label="creditCards.fields.paymentAccount"
-    fieldId="card-account"
-    [control]="form.controls.paymentAccountId"
-  >
+  <app-field label="Conta de pagamento" fieldId="card-account" [control]="form.controls.paymentAccountId">
     <p-select
       inputId="card-account"
       formControlName="paymentAccountId"

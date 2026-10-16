@@ -1,6 +1,6 @@
+import { EnumLabelPipe } from '@shared/i18n/enum-labels';
 import { ChangeDetectionStrategy, Component, effect, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { TranslocoPipe } from '@jsverse/transloco';
 import { CrudActionsService } from '@shared/crud/page';
 import { CrudPageComponent } from '@shared/crud/page';
 import { EmptyStateComponent } from '@shared/ui';
@@ -24,8 +24,8 @@ import { CategoryFormComponent } from '../form/category-form.component';
 @Component({
   selector: 'app-category-list-page',
   imports: [
+    EnumLabelPipe,
     FormsModule,
-    TranslocoPipe,
     CrudPageComponent,
     EmptyStateComponent,
     Button,
@@ -70,15 +70,15 @@ export class CategoryListPage {
   }
 
   protected create(): void {
-    this.openForm({ type: this.type() }, 'categories.newTitle');
+    this.openForm({ type: this.type() }, 'Nova categoria');
   }
 
   protected addSub(parent: Category): void {
-    this.openForm({ type: parent.type, parent }, 'categories.newSubTitle');
+    this.openForm({ type: parent.type, parent }, 'Nova subcategoria');
   }
 
   protected edit(category: Category): void {
-    this.openForm({ type: category.type, category }, 'categories.editTitle');
+    this.openForm({ type: category.type, category }, 'Editar categoria');
   }
 
   protected archive(category: Category): void {

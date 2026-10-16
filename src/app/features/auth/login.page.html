@@ -3,18 +3,18 @@
     <header class="mb-6 flex flex-col gap-1">
       <span class="flex items-center gap-2 text-xl font-semibold">
         <i class="pi pi-wallet"></i>
-        {{ 'app.name' | transloco }}
+        {{ 'MyFinance' }}
       </span>
-      <h1 class="m-0 text-2xl font-semibold">{{ 'auth.title' | transloco }}</h1>
-      <p class="m-0 text-muted-color">{{ 'auth.subtitle' | transloco }}</p>
+      <h1 class="m-0 text-2xl font-semibold">{{ 'Entrar' }}</h1>
+      <p class="m-0 text-muted-color">{{ 'Suas finanças e investimentos em um só lugar.' }}</p>
     </header>
 
     <form [formGroup]="form" (ngSubmit)="submit.submit()" class="flex flex-col gap-4">
-      <app-field label="auth.fields.email" fieldId="login-email" [control]="form.controls.email">
+      <app-field label="E-mail" fieldId="login-email" [control]="form.controls.email">
         <input pInputText id="login-email" type="email" autocomplete="username" formControlName="email" />
       </app-field>
 
-      <app-field label="auth.fields.password" fieldId="login-password" [control]="form.controls.password">
+      <app-field label="Senha" fieldId="login-password" [control]="form.controls.password">
         <p-password
           inputId="login-password"
           formControlName="password"
@@ -29,9 +29,11 @@
         <p-message severity="error">{{ message }}</p-message>
       }
 
-      <p-button type="submit" [label]="'auth.submit' | transloco" [loading]="submit.submitting()" [fluid]="true" />
+      <p-button type="submit" [label]="'Entrar'" [loading]="submit.submitting()" [fluid]="true" />
 
-      <a routerLink="/register" class="text-center text-sm text-primary">{{ 'auth.link' | transloco }}</a>
+      <app-google-sign-in text="signin_with" (signedIn)="goToApp()" />
+
+      <a routerLink="/register" class="text-center text-sm text-primary">{{ 'Não tem conta? Cadastre-se' }}</a>
     </form>
   </section>
 </main>

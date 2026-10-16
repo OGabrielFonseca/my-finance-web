@@ -1,7 +1,7 @@
+import { enumLabel } from '@shared/i18n/enum-labels';
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AccountLookupService, toAccountOptions } from '@features/accounts';
-import { TranslocoService } from '@jsverse/transloco';
 import { fromLocalDate, toLocalDate } from '@shared/data';
 import { FieldComponent, FormFooterComponent, injectFormSubmit } from '@shared/forms';
 import { DatePicker } from 'primeng/datepicker';
@@ -28,7 +28,6 @@ export class OperationFormComponent {
   private readonly api = inject(OperationApiService);
   private readonly accounts = inject(AccountLookupService);
   private readonly assets = inject(AssetLookupService);
-  private readonly transloco = inject(TranslocoService);
   protected readonly ref = inject(DynamicDialogRef);
   protected readonly data = inject(DynamicDialogConfig).data as OperationFormData;
 
@@ -36,7 +35,7 @@ export class OperationFormComponent {
   protected readonly assetOptions = computed(() => toAssetOptions(this.assets.items()));
   protected readonly typeOptions = OPERATION_TYPES.map((value) => ({
     value,
-    label: this.transloco.translate(`enums.operationType.${value}`),
+    label: enumLabel('operationType', value),
   }));
 
   /** Compra e venda pedem preço e taxas; desdobramento e bonificação não. */

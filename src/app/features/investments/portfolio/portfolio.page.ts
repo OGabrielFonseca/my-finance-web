@@ -1,7 +1,8 @@
+import { EnumLabelPipe } from '@shared/i18n/enum-labels';
+import { enumLabel } from '@shared/i18n/enum-labels';
 import { CurrencyPipe, DecimalPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { ThemeService } from '@core/theme/theme.service';
-import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { ChartComponent } from '@shared/ui/chart';
 import { StatCardComponent } from '@shared/ui';
 import type { EChartsCoreOption } from 'echarts/core';
@@ -14,9 +15,9 @@ import type { Portfolio } from '../data/investment.model';
 @Component({
   selector: 'app-portfolio-page',
   imports: [
+    EnumLabelPipe,
     CurrencyPipe,
     DecimalPipe,
-    TranslocoPipe,
     ChartComponent,
     InvestmentsNavComponent,
     Skeleton,
@@ -27,7 +28,6 @@ import type { Portfolio } from '../data/investment.model';
 })
 export class PortfolioPage {
   private readonly api = inject(PortfolioApiService);
-  private readonly transloco = inject(TranslocoService);
   protected readonly theme = inject(ThemeService);
 
   protected readonly portfolio = signal<Portfolio | null>(null);
@@ -41,7 +41,7 @@ export class PortfolioPage {
         radius: ['55%', '80%'],
         label: { show: false },
         data: (this.portfolio()?.allocation ?? []).map((a) => ({
-          name: this.transloco.translate(`enums.assetClass.${a.assetClass}`),
+          name: enumLabel('assetClass', a.assetClass),
           value: a.totalCost,
         })),
       },

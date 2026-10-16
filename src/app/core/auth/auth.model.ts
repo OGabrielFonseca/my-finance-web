@@ -9,6 +9,11 @@ export interface RegisterRequest {
   password: string;
 }
 
+/** ID token (credential) devolvido pelo Google Identity Services. */
+export interface GoogleLoginRequest {
+  idToken: string;
+}
+
 export interface TokenResponse {
   accessToken: string;
   tokenType: string;

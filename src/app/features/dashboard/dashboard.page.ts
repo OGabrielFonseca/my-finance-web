@@ -3,7 +3,6 @@ import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } 
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { ThemeService } from '@core/theme/theme.service';
-import { TranslocoPipe } from '@jsverse/transloco';
 import { toLocalDate, toYearMonth } from '@shared/data';
 import { ChartComponent } from '@shared/ui/chart';
 import { EmptyStateComponent } from '@shared/ui';
@@ -26,7 +25,6 @@ const firstOfMonth = (date: Date) => new Date(date.getFullYear(), date.getMonth(
     DecimalPipe,
     FormsModule,
     RouterLink,
-    TranslocoPipe,
     ChartComponent,
     EmptyStateComponent,
     StatCardComponent,

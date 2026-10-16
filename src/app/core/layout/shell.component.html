@@ -7,10 +7,10 @@
       icon="pi pi-bars"
       severity="secondary"
       [text]="true"
-      [ariaLabel]="'menu.open' | transloco"
+      [ariaLabel]="'Abrir menu'"
       (onClick)="menuOpen.set(true)"
     />
-    <a routerLink="/dashboard" class="text-lg font-semibold text-color no-underline">{{ 'app.name' | transloco }}</a>
+    <a routerLink="/dashboard" class="text-lg font-semibold text-color no-underline">{{ 'MyFinance' }}</a>
     <span class="flex-1"></span>
     <app-theme-toggle />
     <app-user-menu />
@@ -26,12 +26,12 @@
   </div>
 </div>
 
-<p-drawer [(visible)]="menuOpen" [header]="'app.name' | transloco">
+<p-drawer [(visible)]="menuOpen" [header]="'MyFinance'">
   <ng-container *ngTemplateOutlet="nav" />
 </p-drawer>
 
 <ng-template #nav>
-  <nav [attr.aria-label]="'menu.label' | transloco">
+  <nav [attr.aria-label]="'Menu principal'">
     <ul class="m-0 flex list-none flex-col gap-1 p-0">
       @for (item of menu; track item.route) {
         <li>
@@ -42,7 +42,7 @@
             (click)="menuOpen.set(false)"
           >
             <i [class]="item.icon"></i>
-            {{ item.label | transloco }}
+            {{ item.label }}
           </a>
         </li>
       }

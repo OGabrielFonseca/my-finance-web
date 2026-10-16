@@ -1,14 +1,14 @@
 <section class="flex flex-col gap-4">
   <header class="flex flex-wrap items-center gap-3">
-    <a [routerLink]="['/credit-cards', cardId]" class="text-sm">{{ 'creditCards.invoice.back' | transloco }}</a>
+    <a [routerLink]="['/credit-cards', cardId]" class="text-sm">{{ 'Voltar para o cartão' }}</a>
     <h1 class="m-0 flex-1 text-2xl font-semibold">{{ invoice()?.creditCard?.name }}</h1>
 
     @if (invoice(); as invoice) {
       @if (invoice.status === 'OPEN') {
-        <p-button severity="secondary" [label]="'common.close' | transloco" (onClick)="close()" />
+        <p-button severity="secondary" [label]="'Fechar'" (onClick)="close()" />
       }
       @if (invoice.status === 'CLOSED') {
-        <p-button icon="pi pi-check" [label]="'common.pay' | transloco" (onClick)="pay()" />
+        <p-button icon="pi pi-check" [label]="'Pagar'" (onClick)="pay()" />
       }
     }
   </header>
@@ -18,19 +18,19 @@
       class="m-0 grid grid-cols-2 gap-x-6 gap-y-2 rounded-border border border-surface bg-surface-0 p-4 text-sm sm:grid-cols-4 dark:bg-surface-900"
     >
       <div>
-        <dt class="text-muted-color">{{ 'creditCards.invoices.fields.status' | transloco }}</dt>
-        <dd class="m-0">{{ 'enums.invoiceStatus.' + invoice.status | transloco }}</dd>
+        <dt class="text-muted-color">{{ 'Situação' }}</dt>
+        <dd class="m-0">{{ invoice.status | enumLabel: 'invoiceStatus' }}</dd>
       </div>
       <div>
-        <dt class="text-muted-color">{{ 'creditCards.invoices.fields.closingDate' | transloco }}</dt>
+        <dt class="text-muted-color">{{ 'Fechamento' }}</dt>
         <dd class="m-0">{{ invoice.closingDate | date: 'dd/MM/yyyy' }}</dd>
       </div>
       <div>
-        <dt class="text-muted-color">{{ 'creditCards.invoices.fields.dueDate' | transloco }}</dt>
+        <dt class="text-muted-color">{{ 'Vencimento' }}</dt>
         <dd class="m-0">{{ invoice.dueDate | date: 'dd/MM/yyyy' }}</dd>
       </div>
       <div>
-        <dt class="text-muted-color">{{ 'creditCards.invoices.fields.total' | transloco }}</dt>
+        <dt class="text-muted-color">{{ 'Total' }}</dt>
         <dd class="m-0 font-semibold">{{ invoice.total | currency }}</dd>
       </div>
     </dl>

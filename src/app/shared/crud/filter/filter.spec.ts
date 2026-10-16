@@ -6,7 +6,7 @@ import { countActiveFilters, filterToForm, formToFilter, sameFilter } from './fi
 const fields: FilterField[] = [
   { key: 'description', type: 'text', label: 'f.description' },
   { key: 'type', type: 'enum', label: 'f.type', enumKey: 'transactionType', options: ['INCOME', 'EXPENSE'] },
-  { key: 'archived', type: 'boolean', label: 'common.onlyArchived' },
+  { key: 'archived', type: 'boolean', label: 'Somente arquivados' },
   { key: 'period', type: 'dateRange', label: 'f.period', fromKey: 'from', toKey: 'to' },
   { key: 'accountId', type: 'lookup', label: 'f.account', options: signal([]) },
 ];

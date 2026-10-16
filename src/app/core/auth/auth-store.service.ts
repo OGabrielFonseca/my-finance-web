@@ -43,6 +43,10 @@ export class AuthStoreService {
     return this.api.register(data, context).pipe(switchMap((token) => this.startFromToken(token)));
   }
 
+  loginWithGoogle(idToken: string, context?: HttpContext): Observable<void> {
+    return this.api.google({ idToken }, context).pipe(switchMap((token) => this.startFromToken(token)));
+  }
+
   logout(): void {
     this.end();
     void this.router.navigateByUrl('/login');
@@ -52,7 +56,7 @@ export class AuthStoreService {
   expireSession(): void {
     if (!this.session()) return;
     this.end();
-    this.notifier.errorKey('errors.sessionExpired');
+    this.notifier.error('Sua sessão expirou. Entre novamente.');
     void this.router.navigate(['/login'], { queryParams: { returnUrl: this.router.url } });
   }
 

@@ -1,8 +1,0 @@
-{
-  "keysManager": {
-    "input": ["src/app"],
-    "output": "public/i18n",
-    "translationsPath": "public/i18n",
-    "langs": ["pt-BR"]
-  }
-}

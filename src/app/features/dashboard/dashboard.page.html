@@ -1,15 +1,15 @@
 <section class="flex flex-col gap-4">
   <header class="flex flex-wrap items-center gap-3">
-    <h1 class="m-0 flex-1 text-2xl font-semibold">{{ 'dashboard.title' | transloco }}</h1>
+    <h1 class="m-0 flex-1 text-2xl font-semibold">{{ 'Dashboard' }}</h1>
     <div class="flex items-center gap-1">
       <p-button
         icon="pi pi-chevron-left"
         severity="secondary"
         [text]="true"
-        [ariaLabel]="'dashboard.previousMonth' | transloco"
+        [ariaLabel]="'Mês anterior'"
         (onClick)="shiftMonth(-1)"
       />
-      <label for="dashboard-month" class="sr-only">{{ 'dashboard.month' | transloco }}</label>
+      <label for="dashboard-month" class="sr-only">{{ 'Mês' }}</label>
       <p-datepicker
         inputId="dashboard-month"
         view="month"
@@ -23,7 +23,7 @@
         icon="pi pi-chevron-right"
         severity="secondary"
         [text]="true"
-        [ariaLabel]="'dashboard.nextMonth' | transloco"
+        [ariaLabel]="'Próximo mês'"
         (onClick)="shiftMonth(1)"
       />
     </div>
@@ -31,10 +31,10 @@
 
   <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
     @if (summary(); as s) {
-      <app-stat-card label="dashboard.cards.totalBalance" icon="pi pi-wallet" [value]="s.totalBalance" />
-      <app-stat-card label="dashboard.cards.income" icon="pi pi-arrow-up" kind="INCOME" [value]="s.income" />
-      <app-stat-card label="dashboard.cards.expenses" icon="pi pi-arrow-down" kind="EXPENSE" [value]="s.expenses" />
-      <app-stat-card label="dashboard.cards.result" icon="pi pi-chart-line" [value]="s.result" />
+      <app-stat-card label="Saldo total" icon="pi pi-wallet" [value]="s.totalBalance" />
+      <app-stat-card label="Receitas" icon="pi pi-arrow-up" kind="INCOME" [value]="s.income" />
+      <app-stat-card label="Despesas" icon="pi pi-arrow-down" kind="EXPENSE" [value]="s.expenses" />
+      <app-stat-card label="Resultado" icon="pi pi-chart-line" [value]="s.result" />
     } @else {
       @for (i of [1, 2, 3, 4]; track i) {
         <p-skeleton height="5.5rem" />
@@ -44,10 +44,8 @@
 
   <section class="rounded-border border border-surface bg-surface-0 p-4 dark:bg-surface-900">
     <header class="mb-2 flex flex-wrap items-center gap-2">
-      <h2 class="m-0 flex-1 text-lg font-semibold">{{ 'dashboard.expensesByCategory' | transloco }}</h2>
-      <a routerLink="/transactions" [queryParams]="monthFilter()" class="text-sm">{{
-        'dashboard.seeTransactions' | transloco
-      }}</a>
+      <h2 class="m-0 flex-1 text-lg font-semibold">{{ 'Despesas por categoria' }}</h2>
+      <a routerLink="/transactions" [queryParams]="monthFilter()" class="text-sm">{{ 'Ver lançamentos do mês' }}</a>
     </header>
 
     @if (expenses(); as data) {
@@ -66,7 +64,7 @@
           </ul>
         </div>
       } @else {
-        <app-empty-state message="dashboard.noExpenses" icon="pi pi-chart-pie" />
+        <app-empty-state message="Nenhuma despesa neste mês." icon="pi pi-chart-pie" />
       }
     } @else if (loading()) {
       <p-skeleton height="18rem" />

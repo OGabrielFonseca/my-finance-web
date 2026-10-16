@@ -1,9 +1,9 @@
 <form [formGroup]="form" (ngSubmit)="submit.submit()" class="flex flex-col gap-4">
-  <app-field label="accounts.fields.name" fieldId="account-name" [control]="form.controls.name">
+  <app-field label="Nome" fieldId="account-name" [control]="form.controls.name">
     <input pInputText id="account-name" formControlName="name" />
   </app-field>
 
-  <app-field label="accounts.fields.type" fieldId="account-type" [control]="form.controls.type">
+  <app-field label="Tipo" fieldId="account-type" [control]="form.controls.type">
     <p-select
       inputId="account-type"
       formControlName="type"
@@ -14,11 +14,11 @@
     />
   </app-field>
 
-  <app-field label="accounts.fields.institution" fieldId="account-institution" [control]="form.controls.institution">
+  <app-field label="Instituição" fieldId="account-institution" [control]="form.controls.institution">
     <input pInputText id="account-institution" formControlName="institution" />
   </app-field>
 
-  <app-field label="accounts.fields.initialBalance" fieldId="account-balance" [control]="form.controls.initialBalance">
+  <app-field label="Saldo inicial" fieldId="account-balance" [control]="form.controls.initialBalance">
     <p-inputnumber
       inputId="account-balance"
       formControlName="initialBalance"

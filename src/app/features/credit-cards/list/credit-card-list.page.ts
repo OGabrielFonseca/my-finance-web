@@ -11,7 +11,7 @@ import { CreditCardApiService } from '../data/credit-card-api.service';
 import type { CreditCard, CreditCardFilter } from '../data/credit-card.model';
 import { CreditCardFormComponent } from '../form/credit-card-form.component';
 
-const OPEN_ACTION: RowActionDef<CreditCard> = { id: 'open', label: 'common.open', icon: 'pi pi-arrow-right' };
+const OPEN_ACTION: RowActionDef<CreditCard> = { id: 'open', label: 'Abrir', icon: 'pi pi-arrow-right' };
 
 @Component({
   selector: 'app-credit-card-list-page',
@@ -26,15 +26,15 @@ export class CreditCardListPage {
 
   protected readonly initialFilter: Partial<CreditCardFilter> = { archived: false };
   protected readonly filters: FilterField[] = [
-    { key: 'name', type: 'text', label: 'creditCards.fields.name' },
-    { key: 'archived', type: 'boolean', label: 'common.onlyArchived' },
+    { key: 'name', type: 'text', label: 'Nome' },
+    { key: 'archived', type: 'boolean', label: 'Somente arquivados' },
   ];
   protected readonly columns: ColumnDef<CreditCard>[] = [
-    { field: 'name', header: 'creditCards.fields.name' },
-    { field: 'brand', header: 'creditCards.fields.brand', hideOnMobile: true },
-    { field: 'creditLimit', header: 'creditCards.fields.creditLimit', type: 'money', hideOnMobile: true },
-    { field: 'closingDay', header: 'creditCards.fields.closingDay', align: 'center', hideOnMobile: true },
-    { field: 'dueDay', header: 'creditCards.fields.dueDay', align: 'center' },
+    { field: 'name', header: 'Nome' },
+    { field: 'brand', header: 'Bandeira', hideOnMobile: true },
+    { field: 'creditLimit', header: 'Limite', type: 'money', hideOnMobile: true },
+    { field: 'closingDay', header: 'Dia de fechamento', align: 'center', hideOnMobile: true },
+    { field: 'dueDay', header: 'Dia de vencimento', align: 'center' },
   ];
   protected readonly actions: RowActionDef<CreditCard>[] = [
     OPEN_ACTION,
@@ -48,7 +48,7 @@ export class CreditCardListPage {
   });
 
   protected openForm(card?: CreditCard): void {
-    const header = card ? 'creditCards.editTitle' : 'creditCards.newTitle';
+    const header = card ? 'Editar cartão' : 'Novo cartão';
     this.crud.openForm(CreditCardFormComponent, header, { id: card?.id }).subscribe((saved) => {
       if (saved) this.list.reload();
     });

@@ -1,9 +1,9 @@
+import { enumLabel } from '@shared/i18n/enum-labels';
 import { NgTemplateOutlet } from '@angular/common';
 import type { OnInit } from '@angular/core';
 import { ChangeDetectionStrategy, Component, DestroyRef, computed, inject, input, output, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { Button } from 'primeng/button';
 import { Checkbox } from 'primeng/checkbox';
 import { DatePicker } from 'primeng/datepicker';
@@ -22,17 +22,7 @@ import { countActiveFilters, filterToForm, formToFilter, sameFilter } from './fi
  */
 @Component({
   selector: 'app-filter-bar',
-  imports: [
-    NgTemplateOutlet,
-    ReactiveFormsModule,
-    TranslocoPipe,
-    Button,
-    Checkbox,
-    DatePicker,
-    Drawer,
-    InputText,
-    Select,
-  ],
+  imports: [NgTemplateOutlet, ReactiveFormsModule, Button, Checkbox, DatePicker, Drawer, InputText, Select],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './filter-bar.component.html',
 })
@@ -41,8 +31,6 @@ export class FilterBarComponent<F extends object> implements OnInit {
   /** Valor inicial do formulário e do botão "Limpar" (normalmente o initialFilter da lista). */
   readonly initial = input<Partial<F>>({});
   readonly changed = output<Partial<F>>();
-
-  private readonly transloco = inject(TranslocoService);
   private readonly destroyRef = inject(DestroyRef);
   protected readonly drawerOpen = signal(false);
   /** Último filtro emitido: evita emitir de novo o que já está na lista. */
@@ -78,7 +66,7 @@ export class FilterBarComponent<F extends object> implements OnInit {
     if (field.type !== 'enum') return [];
     return field.options.map((value) => ({
       value,
-      label: this.transloco.translate(`enums.${field.enumKey}.${value}`),
+      label: enumLabel(field.enumKey, value),
     }));
   }
 

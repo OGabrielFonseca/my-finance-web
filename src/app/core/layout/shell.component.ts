@@ -1,7 +1,6 @@
 import { NgTemplateOutlet } from '@angular/common';
 import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
-import { TranslocoPipe } from '@jsverse/transloco';
 import { Button } from 'primeng/button';
 import { Drawer } from 'primeng/drawer';
 
@@ -16,7 +15,6 @@ import { UserMenuComponent } from './user-menu.component';
     RouterLink,
     RouterLinkActive,
     RouterOutlet,
-    TranslocoPipe,
     Button,
     Drawer,
     ThemeToggleComponent,

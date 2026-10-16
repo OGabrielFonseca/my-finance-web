@@ -1,6 +1,6 @@
+import { EnumLabelPipe } from '@shared/i18n/enum-labels';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { TranslocoPipe } from '@jsverse/transloco';
 import { FieldComponent } from '@shared/forms';
 import { FormFooterComponent } from '@shared/forms';
 import { injectFormSubmit } from '@shared/forms';
@@ -21,7 +21,7 @@ export interface CategoryFormData {
 
 @Component({
   selector: 'app-category-form',
-  imports: [ReactiveFormsModule, TranslocoPipe, FieldComponent, FormFooterComponent, InputText, Select],
+  imports: [EnumLabelPipe, ReactiveFormsModule, FieldComponent, FormFooterComponent, InputText, Select],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './category-form.component.html',
 })

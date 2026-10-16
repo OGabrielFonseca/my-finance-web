@@ -31,9 +31,9 @@ export interface RowActionEvent<T> {
   row: T;
 }
 
-export const EDIT_ACTION = { id: 'edit', label: 'common.edit', icon: 'pi pi-pencil' } as const;
-export const ARCHIVE_ACTION = { id: 'archive', label: 'common.archive', icon: 'pi pi-inbox' } as const;
-export const DELETE_ACTION = { id: 'delete', label: 'common.delete', icon: 'pi pi-trash' } as const;
+export const EDIT_ACTION = { id: 'edit', label: 'Editar', icon: 'pi pi-pencil' } as const;
+export const ARCHIVE_ACTION = { id: 'archive', label: 'Arquivar', icon: 'pi pi-inbox' } as const;
+export const DELETE_ACTION = { id: 'delete', label: 'Excluir', icon: 'pi pi-trash' } as const;
 
 export function columnKey<T>(column: ColumnDef<T>): string {
   return column.key ?? column.field;

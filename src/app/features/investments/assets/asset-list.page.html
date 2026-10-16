@@ -1,4 +1,4 @@
-<app-crud-page title="investments.assets.title" (create)="openForm()">
+<app-crud-page title="Ativos" (create)="openForm()">
   <app-investments-nav />
 
   <app-filter-bar [fields]="filters" [initial]="{}" (changed)="list.setFilter($event)" />
@@ -6,7 +6,7 @@
   <app-data-table [columns]="columns" [list]="list" [actions]="actions" (action)="onAction($event)">
     <ng-template appCell="fixedIncome" let-row>
       @if (row.fixedIncome; as fi) {
-        {{ 'enums.indexer.' + fi.indexer | transloco }} {{ fi.rate }}%
+        {{ fi.indexer | enumLabel: 'indexer' }} {{ fi.rate }}%
       }
     </ng-template>
   </app-data-table>
