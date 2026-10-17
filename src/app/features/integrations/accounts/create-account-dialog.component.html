@@ -14,6 +14,16 @@
     />
   </app-field>
 
+  <app-field label="Saldo inicial" fieldId="create-account-balance" [control]="form.controls.initialBalance">
+    <p-inputnumber
+      inputId="create-account-balance"
+      formControlName="initialBalance"
+      mode="currency"
+      currency="BRL"
+      locale="pt-BR"
+    />
+  </app-field>
+
   <app-field label="Importar a partir de" fieldId="create-account-import-from" [control]="form.controls.importFrom">
     <p-datepicker
       inputId="create-account-import-from"
@@ -26,8 +36,8 @@
   </app-field>
 
   <p class="m-0 text-sm text-muted-color">
-    {{ 'O saldo inicial será o saldo atual do banco' }} ({{ link.bankBalance ?? 0 | currency }}).
-    {{ 'Lançamentos anteriores a essa data não entram na fila.' }}
+    {{ 'Saldo atual no banco' }}: {{ link.bankBalance ?? 0 | currency }}.
+    {{ 'Lançamentos anteriores a essa data não entram na fila agora. Você pode alterar a data depois.' }}
     {{ 'Entre' }} {{ range.min | date: 'dd/MM/yyyy' }} {{ 'e hoje.' }}
   </p>
 

@@ -8,6 +8,7 @@ import { NotifierService } from '@shared/ui';
 import { DatePicker } from 'primeng/datepicker';
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { InputText } from 'primeng/inputtext';
+import { InputNumber } from 'primeng/inputnumber';
 import { Select } from 'primeng/select';
 
 import { IntegrationApiService } from '../data/integration-api.service';
@@ -16,7 +17,7 @@ import type { BankAccountLink, CreateBankAccountRequest } from '../data/integrat
 
 const BANK_ACCOUNT_TYPES: CreateBankAccountRequest['type'][] = ['CHECKING', 'SAVINGS'];
 
-/** Cria uma conta do MyFinance a partir da conta do banco: o saldo inicial é o saldo atual do banco. */
+/** Cria uma conta do MyFinance a partir da conta do banco. O saldo inicial vem preenchido com o saldo do banco. */
 @Component({
   selector: 'app-create-account-dialog',
   imports: [
@@ -27,6 +28,7 @@ const BANK_ACCOUNT_TYPES: CreateBankAccountRequest['type'][] = ['CHECKING', 'SAV
     FormFooterComponent,
     DatePicker,
     InputText,
+    InputNumber,
     Select,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -48,6 +50,7 @@ export class CreateAccountDialogComponent {
   protected readonly form = inject(NonNullableFormBuilder).group({
     name: [this.link.externalName, [Validators.required, Validators.maxLength(100)]],
     type: ['CHECKING' as CreateBankAccountRequest['type'], Validators.required],
+    initialBalance: [this.link.bankBalance ?? 0, Validators.required],
     importFrom: [new Date(), Validators.required],
   });
 
@@ -56,7 +59,12 @@ export class CreateAccountDialogComponent {
     (value, context) =>
       this.api.createAccount(
         this.link.id,
-        { name: value.name.trim(), type: value.type, importFrom: toLocalDate(value.importFrom) },
+        {
+          name: value.name.trim(),
+          type: value.type,
+          initialBalance: value.initialBalance,
+          importFrom: toLocalDate(value.importFrom),
+        },
         context,
       ),
     (created) => {

@@ -101,6 +101,8 @@ export interface LinkAccountRequest {
 export interface CreateBankAccountRequest {
   name: string;
   type: 'CHECKING' | 'SAVINGS';
+  /** Omitido = saldo atual do banco. */
+  initialBalance?: number;
   /** Omitido = hoje. */
   importFrom?: string;
 }
