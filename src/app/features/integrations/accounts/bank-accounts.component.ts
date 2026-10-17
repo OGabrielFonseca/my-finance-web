@@ -11,6 +11,7 @@ import { Tag } from 'primeng/tag';
 
 import { IntegrationApiService } from '../data/integration-api.service';
 import type { BankAccountLink, LinkStatus } from '../data/integration.model';
+import { ChangeImportFromDialogComponent } from './change-import-from-dialog.component';
 import { CreateAccountDialogComponent } from './create-account-dialog.component';
 import { LinkAccountDialogComponent } from './link-account-dialog.component';
 
@@ -99,6 +100,12 @@ export class BankAccountsComponent {
   protected createAccount(link: BankAccountLink): void {
     this.crud
       .openForm(CreateAccountDialogComponent, 'Criar conta', { link })
+      .subscribe((saved) => saved && this.changed());
+  }
+
+  protected changeImportFrom(link: BankAccountLink): void {
+    this.crud
+      .openForm(ChangeImportFromDialogComponent, 'Alterar data de corte', { link })
       .subscribe((saved) => saved && this.changed());
   }
 

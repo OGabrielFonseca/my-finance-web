@@ -10,6 +10,7 @@ import { map } from 'rxjs';
 import type {
   BankAccountLink,
   ConnectTokenResponse,
+  ChangeImportFromRequest,
   CreateBankAccountRequest,
   Integration,
   IntegrationConnection,
@@ -93,6 +94,11 @@ export class IntegrationApiService {
 
   createAccount(linkId: string, body: CreateBankAccountRequest, context?: HttpContext): Observable<BankAccountLink> {
     return this.http.post<BankAccountLink>(`${this.url}/accounts/${linkId}/create-account`, body, { context });
+  }
+
+  /** Altera a data de corte de uma conta vinculada (API §1.3). Responde o vínculo com pendingItems atualizado. */
+  changeImportFrom(linkId: string, body: ChangeImportFromRequest, context?: HttpContext): Observable<BankAccountLink> {
+    return this.http.patch<BankAccountLink>(`${this.url}/accounts/${linkId}/import-from`, body, { context });
   }
 
   ignoreAccount(linkId: string): Observable<BankAccountLink> {

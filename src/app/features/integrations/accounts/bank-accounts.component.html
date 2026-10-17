@@ -94,6 +94,13 @@
                   <p-button
                     size="small"
                     severity="secondary"
+                    icon="pi pi-calendar"
+                    [label]="'Alterar data'"
+                    (onClick)="changeImportFrom(link)"
+                  />
+                  <p-button
+                    size="small"
+                    severity="secondary"
                     [text]="true"
                     [label]="'Desvincular'"
                     (onClick)="unlink(link)"

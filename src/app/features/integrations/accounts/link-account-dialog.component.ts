@@ -1,3 +1,4 @@
+import { DatePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AccountLookupService, toAccountOptions } from '@features/accounts';
@@ -9,12 +10,13 @@ import { DatePicker } from 'primeng/datepicker';
 import { Select } from 'primeng/select';
 
 import { IntegrationApiService } from '../data/integration-api.service';
+import { importFromRange } from '../data/import-from';
 import type { BankAccountLink } from '../data/integration.model';
 
 /** Vincula uma conta encontrada no banco a uma conta do MyFinance, a partir de uma data de corte. */
 @Component({
   selector: 'app-link-account-dialog',
-  imports: [ReactiveFormsModule, FieldComponent, FormFooterComponent, DatePicker, Select],
+  imports: [DatePipe, ReactiveFormsModule, FieldComponent, FormFooterComponent, DatePicker, Select],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './link-account-dialog.component.html',
 })
@@ -26,6 +28,7 @@ export class LinkAccountDialogComponent {
   protected readonly link = (inject(DynamicDialogConfig).data as { link: BankAccountLink }).link;
 
   protected readonly accountOptions = computed(() => toAccountOptions(this.lookup.items()));
+  protected readonly range = importFromRange(new Date());
 
   protected readonly form = inject(NonNullableFormBuilder).group({
     accountId: ['', Validators.required],

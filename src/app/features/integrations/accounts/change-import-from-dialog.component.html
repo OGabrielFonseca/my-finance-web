@@ -1,0 +1,30 @@
+<form [formGroup]="form" (ngSubmit)="submit.submit()" class="flex flex-col gap-4">
+  <app-field label="Importar a partir de" fieldId="change-import-from" [control]="form.controls.importFrom">
+    <p-datepicker
+      inputId="change-import-from"
+      formControlName="importFrom"
+      dateFormat="dd/mm/yy"
+      [minDate]="range.min"
+      [maxDate]="range.max"
+      appendTo="body"
+    />
+  </app-field>
+
+  <p class="m-0 text-sm text-muted-color">
+    @switch (change()) {
+      @case ('same') {
+        {{ 'A data já é esta.' }}
+      }
+      @case ('forward') {
+        {{ 'Os pendentes com data anterior a' }} {{ next() | date: 'dd/MM/yyyy' }}
+        {{ 'serão ignorados. Nada é apagado, mas eles não voltam para a fila.' }}
+      }
+      @case ('backward') {
+        {{ 'Vamos buscar os lançamentos desde' }} {{ next() | date: 'dd/MM/yyyy' }}
+        {{ 'agora. Os novos itens entram na fila.' }}
+      }
+    }
+  </p>
+
+  <app-form-footer [submit]="submit" (cancelled)="ref.close(false)" />
+</form>

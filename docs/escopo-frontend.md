@@ -761,7 +761,8 @@ Mesmo critério do backend: **só testes unitários de lógica**, sem testes de 
   página 0), conversão do `onLazyLoad` em `PageRequest`, `AuthStoreService` (expiração do token, `loginWithGoogle`),
   `GoogleIdentityService` (script carregado uma vez, callback, falha do script), montagem da árvore
   de categorias, `errorInterceptor` (status → comportamento), `PluggyConnectService` (SDK mockado: resultado do widget).
-  `ImportCountStore` (erro mantém o último valor) e `toApproveRequest` (separa itens com e sem categoria no lote).
+  `ImportCountStore` (erro mantém o último valor), `toApproveRequest` (separa itens com e sem categoria no lote),
+  `importFromRange` (limite de 12 meses, fim de mês como o backend) e `importFromChange` (igual, mais recente ou mais antiga).
 - **Não testar:** templates, telas de CRUD declarativas, componentes do PrimeNG, services que só repassam para o `CrudApiService`.
 - Ferramentas: Vitest + `TestBed` só quando precisar de injeção; `provideHttpClientTesting` para os services.
 
@@ -814,7 +815,7 @@ Alinhadas ao roadmap e aos endpoints do backend (seções 6 e 7 do escopo-backen
 
 | Rota | Tela | Endpoints |
 |---|---|---|
-| `/integrations` | Credenciais da Pluggy, bancos conectados (renomear, excluir, conectar pelo widget, sincronizar), contas do banco (vincular, criar, ignorar, ajustar saldo) e histórico paginado | `/integrations/pluggy`, `/integrations/pluggy/connect-token`, `/integrations/pluggy/connections`, `/integrations/pluggy/sync`, `/integrations/pluggy/accounts`, `/integrations/pluggy/logs` |
+| `/integrations` | Credenciais da Pluggy, bancos conectados (renomear, excluir, conectar pelo widget, sincronizar), contas do banco (vincular, criar com data de corte, ignorar, ajustar saldo, alterar data de corte) e histórico paginado | `/integrations/pluggy`, `/integrations/pluggy/connect-token`, `/integrations/pluggy/connections`, `/integrations/pluggy/sync`, `/integrations/pluggy/accounts`, `/integrations/pluggy/accounts/{linkId}/import-from`, `/integrations/pluggy/logs` |
 
 **Importações (fila de revisão, spec `docs/superpowers/specs/2026-10-15-importacoes-design.md`)**
 

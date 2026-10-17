@@ -1,14 +1,17 @@
-import { CurrencyPipe } from '@angular/common';
+import { CurrencyPipe, DatePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { enumLabel } from '@shared/i18n/enum-labels';
 import { FieldComponent, FormFooterComponent, injectFormSubmit } from '@shared/forms';
+import { toLocalDate } from '@shared/data';
 import { NotifierService } from '@shared/ui';
+import { DatePicker } from 'primeng/datepicker';
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { InputText } from 'primeng/inputtext';
 import { Select } from 'primeng/select';
 
 import { IntegrationApiService } from '../data/integration-api.service';
+import { importFromRange } from '../data/import-from';
 import type { BankAccountLink, CreateBankAccountRequest } from '../data/integration.model';
 
 const BANK_ACCOUNT_TYPES: CreateBankAccountRequest['type'][] = ['CHECKING', 'SAVINGS'];
@@ -16,7 +19,16 @@ const BANK_ACCOUNT_TYPES: CreateBankAccountRequest['type'][] = ['CHECKING', 'SAV
 /** Cria uma conta do MyFinance a partir da conta do banco: o saldo inicial é o saldo atual do banco. */
 @Component({
   selector: 'app-create-account-dialog',
-  imports: [CurrencyPipe, ReactiveFormsModule, FieldComponent, FormFooterComponent, InputText, Select],
+  imports: [
+    CurrencyPipe,
+    DatePipe,
+    ReactiveFormsModule,
+    FieldComponent,
+    FormFooterComponent,
+    DatePicker,
+    InputText,
+    Select,
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './create-account-dialog.component.html',
 })
@@ -31,14 +43,22 @@ export class CreateAccountDialogComponent {
     label: enumLabel('accountType', value),
   }));
 
+  protected readonly range = importFromRange(new Date());
+
   protected readonly form = inject(NonNullableFormBuilder).group({
     name: [this.link.externalName, [Validators.required, Validators.maxLength(100)]],
     type: ['CHECKING' as CreateBankAccountRequest['type'], Validators.required],
+    importFrom: [new Date(), Validators.required],
   });
 
   protected readonly submit = injectFormSubmit(
     this.form,
-    (value, context) => this.api.createAccount(this.link.id, { name: value.name.trim(), type: value.type }, context),
+    (value, context) =>
+      this.api.createAccount(
+        this.link.id,
+        { name: value.name.trim(), type: value.type, importFrom: toLocalDate(value.importFrom) },
+        context,
+      ),
     (created) => {
       const items = created.pendingItems;
       this.notifier.success(`Conta criada · ${items} ${items === 1 ? 'item' : 'itens'} na fila`);

@@ -101,4 +101,10 @@ export interface LinkAccountRequest {
 export interface CreateBankAccountRequest {
   name: string;
   type: 'CHECKING' | 'SAVINGS';
+  /** Omitido = hoje. */
+  importFrom?: string;
+}
+
+export interface ChangeImportFromRequest {
+  importFrom: string;
 }

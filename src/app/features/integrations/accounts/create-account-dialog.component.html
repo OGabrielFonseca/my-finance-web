@@ -14,9 +14,21 @@
     />
   </app-field>
 
+  <app-field label="Importar a partir de" fieldId="create-account-import-from" [control]="form.controls.importFrom">
+    <p-datepicker
+      inputId="create-account-import-from"
+      formControlName="importFrom"
+      dateFormat="dd/mm/yy"
+      [minDate]="range.min"
+      [maxDate]="range.max"
+      appendTo="body"
+    />
+  </app-field>
+
   <p class="m-0 text-sm text-muted-color">
     {{ 'O saldo inicial será o saldo atual do banco' }} ({{ link.bankBalance ?? 0 | currency }}).
-    {{ 'Só entram transações a partir de hoje.' }}
+    {{ 'Lançamentos anteriores a essa data não entram na fila.' }}
+    {{ 'Entre' }} {{ range.min | date: 'dd/MM/yyyy' }} {{ 'e hoje.' }}
   </p>
 
   <app-form-footer [submit]="submit" (cancelled)="ref.close(false)" />
