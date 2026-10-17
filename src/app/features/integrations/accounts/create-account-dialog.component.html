@@ -1,0 +1,23 @@
+<form [formGroup]="form" (ngSubmit)="submit.submit()" class="flex flex-col gap-4">
+  <app-field label="Nome" fieldId="create-account-name" [control]="form.controls.name">
+    <input pInputText id="create-account-name" formControlName="name" />
+  </app-field>
+
+  <app-field label="Tipo" fieldId="create-account-type" [control]="form.controls.type">
+    <p-select
+      inputId="create-account-type"
+      formControlName="type"
+      [options]="typeOptions"
+      optionLabel="label"
+      optionValue="value"
+      appendTo="body"
+    />
+  </app-field>
+
+  <p class="m-0 text-sm text-muted-color">
+    {{ 'O saldo inicial será o saldo atual do banco' }} ({{ link.bankBalance ?? 0 | currency }}).
+    {{ 'Só entram transações a partir de hoje.' }}
+  </p>
+
+  <app-form-footer [submit]="submit" (cancelled)="ref.close(false)" />
+</form>

@@ -13,13 +13,23 @@
           <h2 class="m-0 text-lg font-semibold">{{ 'Bancos conectados' }}</h2>
           <span class="text-sm text-muted-color"> {{ i.connections.length }} de {{ i.maxConnections }} bancos </span>
         </div>
-        <p-button
-          icon="pi pi-plus"
-          [label]="'Conectar banco'"
-          [disabled]="!canConnect()"
-          [loading]="opening() || registering()"
-          (onClick)="connect()"
-        />
+        <div class="flex flex-wrap gap-2">
+          <p-button
+            icon="pi pi-sync"
+            severity="secondary"
+            [label]="'Sincronizar agora'"
+            [disabled]="!connections().length || syncing()"
+            [loading]="syncing()"
+            (onClick)="syncAll()"
+          />
+          <p-button
+            icon="pi pi-plus"
+            [label]="'Conectar banco'"
+            [disabled]="!canConnect()"
+            [loading]="opening() || registering()"
+            (onClick)="connect()"
+          />
+        </div>
       </header>
 
       <p-table [value]="connections()" dataKey="id" [tableStyle]="{ 'min-width': '40rem' }">
@@ -81,13 +91,27 @@
               }
             </td>
             <td>
-              <p-tag [severity]="statusSeverity(connection.status)" [value]="statusLabel(connection.status)" />
+              <div class="flex items-center gap-2">
+                <p-tag [severity]="statusSeverity(connection.status)" [value]="statusLabel(connection.status)" />
+                @if (connection.status === 'SYNCING') {
+                  <p-progressSpinner styleClass="size-4" strokeWidth="6" [attr.aria-label]="'Sincronizando'" />
+                }
+              </div>
             </td>
             <td>
               {{ connection.lastSyncAt ? (connection.lastSyncAt | date: 'dd/MM/yyyy HH:mm') : '—' }}
             </td>
             <td>{{ connection.createdAt | date: 'dd/MM/yyyy HH:mm' }}</td>
             <td class="text-right">
+              <p-button
+                icon="pi pi-sync"
+                severity="secondary"
+                [text]="true"
+                [rounded]="true"
+                [disabled]="isSyncing(connection)"
+                [attr.aria-label]="'Sincronizar'"
+                (onClick)="syncOne(connection)"
+              />
               <p-button
                 icon="pi pi-trash"
                 severity="danger"
@@ -107,6 +131,8 @@
         </ng-template>
       </p-table>
     </p-card>
+
+    <app-bank-accounts />
 
     <p-card>
       <h2 class="m-0 mb-3 text-lg font-semibold">{{ 'Histórico' }}</h2>

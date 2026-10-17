@@ -1,0 +1,156 @@
+<section class="flex flex-col gap-4">
+  <header class="flex flex-col gap-1">
+    <h1 class="m-0 text-2xl font-semibold">{{ 'Importações' }}</h1>
+    <p class="m-0 text-muted-color">
+      {{ 'Revise os lançamentos trazidos dos bancos. Nada entra nas contas antes de você aprovar.' }}
+    </p>
+  </header>
+
+  <app-filter-bar [fields]="filters" [initial]="initialFilter" (changed)="list.setFilter($event)" />
+
+  @if (selected().length) {
+    <div class="flex flex-wrap items-center gap-2">
+      <span class="text-muted-color">{{ selected().length }} {{ 'selecionados' }}</span>
+      <p-button icon="pi pi-check" [label]="'Aprovar selecionados'" (onClick)="approve(selected())" />
+      <p-button
+        icon="pi pi-times"
+        severity="secondary"
+        [label]="'Ignorar selecionados'"
+        (onClick)="ignore(selected())"
+      />
+    </div>
+  }
+
+  <p-card>
+    <p-table
+      [value]="list.items()"
+      dataKey="id"
+      selectionMode="multiple"
+      [selection]="selected()"
+      (selectionChange)="onSelection($event)"
+      [lazy]="true"
+      [lazyLoadOnInit]="false"
+      [paginator]="true"
+      [rows]="list.page().size"
+      [first]="first()"
+      [totalRecords]="list.totalItems()"
+      [loading]="list.loading()"
+      [rowsPerPageOptions]="[20, 50, 100]"
+      [scrollable]="true"
+      (onLazyLoad)="onLazyLoad($event)"
+    >
+      <ng-template #header>
+        <tr>
+          <th class="w-12"><p-tableHeaderCheckbox /></th>
+          <th class="w-32">{{ 'Data' }}</th>
+          <th>{{ 'Descrição' }}</th>
+          <th class="text-right">{{ 'Valor' }}</th>
+          <th class="hidden md:table-cell">{{ 'Conta' }}</th>
+          <th class="min-w-56">{{ 'Categoria' }}</th>
+          <th class="w-28 text-right">
+            <span class="sr-only">{{ 'Ações' }}</span>
+          </th>
+        </tr>
+      </ng-template>
+
+      <ng-template #body let-item>
+        <tr>
+          <td>
+            <p-tableCheckbox [value]="item" [disabled]="item.status !== 'PENDING'" />
+          </td>
+          <td class="whitespace-nowrap">{{ item.date | date: 'dd/MM/yyyy' }}</td>
+          <td>
+            <div class="flex flex-col">
+              <span>{{ item.description }}</span>
+              <span class="flex flex-wrap items-center gap-2 text-sm text-muted-color">
+                @if (item.externalCategoryName) {
+                  <span [attr.title]="'Categoria no banco: ' + item.externalCategoryName">
+                    <i class="pi pi-tag"></i> {{ item.externalCategoryName }}
+                  </span>
+                }
+                @if (item.possibleTransfer) {
+                  <span title="Possível transferência" class="text-primary">
+                    <i class="pi pi-arrow-right-arrow-left"></i> {{ 'Possível transferência' }}
+                  </span>
+                }
+                @if (item.possibleDuplicate; as duplicate) {
+                  <a
+                    routerLink="/transactions"
+                    class="text-warn no-underline"
+                    [attr.title]="
+                      'Possível duplicata de ' + duplicate.description + ' em ' + (duplicate.date | date: 'dd/MM/yyyy')
+                    "
+                  >
+                    <i class="pi pi-clone"></i> {{ 'Possível duplicata' }}
+                  </a>
+                }
+              </span>
+            </div>
+          </td>
+          <td class="text-right">
+            <app-money [amount]="item.amount" [kind]="item.type" />
+          </td>
+          <td class="hidden md:table-cell">{{ item.account.name }}</td>
+          <td>
+            @if (item.status === 'PENDING') {
+              <p-select
+                [options]="categoryOptionsFor(item)"
+                optionLabel="label"
+                optionValue="value"
+                [ngModel]="categoryFor(item)"
+                (ngModelChange)="setCategory(item, $event)"
+                placeholder="Escolha uma categoria"
+                [showClear]="true"
+                appendTo="body"
+                styleClass="w-full"
+                [attr.aria-label]="'Categoria de ' + item.description"
+              />
+            } @else {
+              <span>{{ item.suggestedCategory?.name ?? '—' }}</span>
+            }
+          </td>
+          <td class="text-right">
+            @if (item.status === 'PENDING') {
+              <p-button
+                icon="pi pi-check"
+                severity="success"
+                [text]="true"
+                [rounded]="true"
+                [disabled]="!categoryFor(item)"
+                [attr.aria-label]="'Aprovar'"
+                (onClick)="approve([item])"
+              />
+              <p-button
+                icon="pi pi-times"
+                severity="secondary"
+                [text]="true"
+                [rounded]="true"
+                [attr.aria-label]="'Ignorar'"
+                (onClick)="ignore([item])"
+              />
+            } @else {
+              <p-tag
+                [severity]="item.status === 'APPROVED' ? 'success' : 'secondary'"
+                [value]="item.status | enumLabel: 'importStatus'"
+              />
+            }
+          </td>
+        </tr>
+      </ng-template>
+
+      <ng-template #emptymessage>
+        <tr>
+          <td colspan="7">
+            @if (linkedLoaded() && !linkedOptions().length) {
+              <app-empty-state message="Nenhuma conta do banco vinculada ainda.">
+                <a routerLink="/integrations" class="text-primary">{{ 'Ir para Integrações' }}</a>
+              </app-empty-state>
+            } @else {
+              <app-empty-state message="Nada para revisar." />
+            }
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </p-card>
+</section>

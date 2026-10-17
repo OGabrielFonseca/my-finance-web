@@ -32,6 +32,8 @@ export const ENUM_LABELS = {
   },
   operationType: { BUY: 'Compra', SELL: 'Venda', SPLIT: 'Desdobramento', BONUS: 'Bonificação' },
   indexer: { PRE: 'Pré-fixado', CDI: 'CDI', IPCA: 'IPCA', SELIC: 'Selic' },
+  importStatus: { PENDING: 'Pendente', APPROVED: 'Aprovado', IGNORED: 'Ignorado' },
+  yesNo: { true: 'Sim' },
 } as const;
 
 export type EnumLabelKind = keyof typeof ENUM_LABELS;

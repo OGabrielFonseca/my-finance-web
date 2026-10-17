@@ -1,0 +1,109 @@
+<p-card>
+  <header class="mb-3 flex flex-col">
+    <h2 class="m-0 text-lg font-semibold">{{ 'Contas do banco' }}</h2>
+    <span class="text-sm text-muted-color">
+      {{ 'Contas encontradas nos bancos. Vincule a uma conta existente ou crie uma nova.' }}
+    </span>
+  </header>
+
+  @if (loaded() && !accounts().length) {
+    <app-empty-state message="Nenhuma conta encontrada. Sincronize um banco para buscar as contas." />
+  }
+
+  @for (group of groups(); track group.connectionId) {
+    <section class="mb-4 flex flex-col gap-2">
+      <h3 class="m-0 text-base font-semibold">{{ group.name }}</h3>
+
+      <ul class="m-0 flex list-none flex-col gap-2 p-0">
+        @for (link of group.links; track link.id) {
+          <li class="rounded-border border border-surface p-3" [class.opacity-60]="link.status === 'IGNORED'">
+            <div class="flex flex-wrap items-start justify-between gap-2">
+              <div class="flex flex-col gap-1">
+                <span class="flex flex-wrap items-center gap-2">
+                  <span class="font-medium">{{ link.externalName }}</span>
+                  @if (link.number) {
+                    <span class="text-sm text-muted-color">{{ link.number }}</span>
+                  }
+                  <p-tag [severity]="statusSeverity(link.status)" [value]="statusLabel(link.status)" />
+                </span>
+
+                @if (link.status === 'PENDING') {
+                  <span class="text-sm text-muted-color">
+                    {{ 'Saldo do banco' }}: {{ link.bankBalance | currency }}
+                  </span>
+                }
+
+                @if (link.status === 'LINKED' && link.account) {
+                  <span class="text-sm">
+                    {{ 'Conta do MyFinance' }}: <strong>{{ link.account.name }}</strong> · {{ 'importa desde' }}
+                    {{ link.importFrom | date: 'dd/MM/yyyy' }}
+                  </span>
+                  <span class="text-sm">
+                    {{ 'Banco' }} {{ link.bankBalance | currency }} · MyFinance {{ link.myFinanceBalance | currency }}
+                    @if (difference(link); as diff) {
+                      @if (diff !== 0) {
+                        <span class="font-semibold text-red-500">
+                          ({{ diff > 0 ? '+' : '' }}{{ diff | currency }})
+                        </span>
+                      }
+                    }
+                  </span>
+                  @if (link.pendingItems > 0) {
+                    <a class="text-sm text-primary" routerLink="/imports" [queryParams]="{ accountLinkId: link.id }">
+                      {{ link.pendingItems }} {{ link.pendingItems === 1 ? 'pendente' : 'pendentes' }} {{ 'na fila' }}
+                    </a>
+                  }
+                }
+
+                @if (link.status === 'UNSUPPORTED') {
+                  <span class="text-sm text-muted-color">{{ 'Contas de cartão ainda não são importadas.' }}</span>
+                }
+              </div>
+
+              <div class="flex flex-wrap gap-2">
+                @if (link.status === 'PENDING' || link.status === 'IGNORED') {
+                  <p-button size="small" icon="pi pi-link" [label]="'Vincular'" (onClick)="linkAccount(link)" />
+                  <p-button
+                    size="small"
+                    severity="secondary"
+                    icon="pi pi-plus"
+                    [label]="'Criar conta'"
+                    (onClick)="createAccount(link)"
+                  />
+                }
+                @if (link.status === 'PENDING') {
+                  <p-button
+                    size="small"
+                    severity="secondary"
+                    [text]="true"
+                    [label]="'Ignorar'"
+                    (onClick)="ignore(link)"
+                  />
+                }
+                @if (link.status === 'LINKED') {
+                  @if (difference(link); as diff) {
+                    @if (diff !== 0) {
+                      <p-button
+                        size="small"
+                        icon="pi pi-sliders-h"
+                        [label]="'Ajustar saldo'"
+                        (onClick)="adjustBalance(link)"
+                      />
+                    }
+                  }
+                  <p-button
+                    size="small"
+                    severity="secondary"
+                    [text]="true"
+                    [label]="'Desvincular'"
+                    (onClick)="unlink(link)"
+                  />
+                }
+              </div>
+            </div>
+          </li>
+        }
+      </ul>
+    </section>
+  }
+</p-card>

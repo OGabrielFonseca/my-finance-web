@@ -43,6 +43,11 @@
           >
             <i [class]="item.icon"></i>
             {{ item.label }}
+            @if (item.badge; as badge) {
+              @if (badge() > 0) {
+                <p-badge class="ml-auto" [value]="badge()" severity="danger" />
+              }
+            }
           </a>
         </li>
       }

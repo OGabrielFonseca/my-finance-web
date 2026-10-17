@@ -15,6 +15,7 @@ export const routes: Routes = [
       { path: '', pathMatch: 'full', redirectTo: 'dashboard' },
       { path: 'dashboard', loadChildren: () => import('./features/dashboard/dashboard.routes') },
       { path: 'transactions', loadChildren: () => import('./features/transactions/transactions.routes') },
+      { path: 'imports', loadChildren: () => import('./features/imports/imports.routes') },
       { path: 'accounts', loadChildren: () => import('./features/accounts/accounts.routes') },
       { path: 'categories', loadChildren: () => import('./features/categories/categories.routes') },
       { path: 'credit-cards', loadChildren: () => import('./features/credit-cards/credit-cards.routes') },

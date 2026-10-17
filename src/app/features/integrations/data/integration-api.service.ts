@@ -3,18 +3,24 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { environment } from '@env/environment';
 import type { PageRequest, PageResponse } from '@shared/data';
-import { toHttpParams } from '@shared/data';
+import { MAX_PAGE_SIZE, toHttpParams } from '@shared/data';
 import type { Observable } from 'rxjs';
+import { map } from 'rxjs';
 
 import type {
+  BankAccountLink,
   ConnectTokenResponse,
+  CreateBankAccountRequest,
   Integration,
   IntegrationConnection,
   IntegrationLog,
   IntegrationProvider,
+  LinkAccountRequest,
   RegisterConnectionRequest,
   RenameConnectionRequest,
   SaveIntegrationRequest,
+  SyncOutcome,
+  SyncSummary,
 } from './integration.model';
 
 /** Endpoints de /integrations/{provider}. Não estende o CrudApiService: não seguem o formato de CRUD. */
@@ -59,5 +65,45 @@ export class IntegrationApiService {
 
   logs(page: PageRequest): Observable<PageResponse<IntegrationLog>> {
     return this.http.get<PageResponse<IntegrationLog>>(`${this.url}/logs`, { params: toHttpParams({}, page) });
+  }
+
+  /** Sincroniza todos os bancos do usuário. Um banco com erro não faz a chamada falhar. */
+  sync(): Observable<SyncOutcome[]> {
+    return this.http.post<SyncOutcome[]>(`${this.url}/sync`, null);
+  }
+
+  /** Contadores de um banco. Sincronizado há pouco ou em andamento vira 422 (tratado pelo errorInterceptor). */
+  syncConnection(connectionId: string): Observable<SyncSummary> {
+    return this.http.post<SyncSummary>(`${this.url}/connections/${connectionId}/sync`, null);
+  }
+
+  /** Todas as contas do banco. A API pagina; MAX_PAGE_SIZE cobre o uso de uma pessoa. */
+  accounts(): Observable<BankAccountLink[]> {
+    return this.http
+      .get<PageResponse<BankAccountLink>>(`${this.url}/accounts`, {
+        params: toHttpParams({}, { page: 0, size: MAX_PAGE_SIZE }),
+      })
+      .pipe(map((page) => page.items));
+  }
+
+  /** Vincula; devolve a conta já com pendingItems (itens na fila desta conta). */
+  link(linkId: string, body: LinkAccountRequest, context?: HttpContext): Observable<BankAccountLink> {
+    return this.http.post<BankAccountLink>(`${this.url}/accounts/${linkId}/link`, body, { context });
+  }
+
+  createAccount(linkId: string, body: CreateBankAccountRequest, context?: HttpContext): Observable<BankAccountLink> {
+    return this.http.post<BankAccountLink>(`${this.url}/accounts/${linkId}/create-account`, body, { context });
+  }
+
+  ignoreAccount(linkId: string): Observable<BankAccountLink> {
+    return this.http.post<BankAccountLink>(`${this.url}/accounts/${linkId}/ignore`, null);
+  }
+
+  unlinkAccount(linkId: string): Observable<BankAccountLink> {
+    return this.http.post<BankAccountLink>(`${this.url}/accounts/${linkId}/unlink`, null);
+  }
+
+  adjustBalance(linkId: string): Observable<BankAccountLink> {
+    return this.http.post<BankAccountLink>(`${this.url}/accounts/${linkId}/adjust-balance`, null);
   }
 }
