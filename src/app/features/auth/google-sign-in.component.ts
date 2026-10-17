@@ -15,7 +15,6 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AuthStoreService } from '@core/auth/auth-store.service';
 import { GoogleIdentityService } from '@core/auth/google-identity.service';
 import type { GoogleButtonOptions } from '@core/auth/google-identity.service';
-import { ThemeService } from '@core/theme/theme.service';
 import { ApiError, skipBusinessErrorToast } from '@shared/data';
 import { Button } from 'primeng/button';
 import { Divider } from 'primeng/divider';
@@ -33,7 +32,9 @@ import { finalize } from 'rxjs';
 
       <div class="flex flex-col gap-3">
         <!-- O GIS desenha um iframe aqui; escondido (não removido) durante o envio para não precisar re-renderizar. -->
-        <div #button class="flex min-h-10 justify-center" [class.hidden]="signingIn()"></div>
+        <div class="overflow-hidden rounded-border">
+          <div #button class="-mx-1 flex min-h-10 justify-center" [class.hidden]="signingIn()"></div>
+        </div>
 
         @if (signingIn()) {
           <p-button
@@ -58,7 +59,6 @@ export class GoogleSignInComponent {
 
   private readonly google = inject(GoogleIdentityService);
   private readonly auth = inject(AuthStoreService);
-  private readonly theme = inject(ThemeService);
   private readonly destroyRef = inject(DestroyRef);
   private readonly button = viewChild<ElementRef<HTMLElement>>('button');
 
@@ -70,11 +70,10 @@ export class GoogleSignInComponent {
     // Renderiza depois que o contêiner existe e de novo quando o tema muda.
     effect(() => {
       const element = this.button()?.nativeElement;
-      const theme = this.theme.isDark() ? 'filled_black' : 'outline';
       if (!element) return;
       const width = Math.min(element.parentElement?.clientWidth ?? 400, 400);
       this.google
-        .renderButton(element, { theme, text: this.text(), width }, (idToken) => this.signIn(idToken))
+        .renderButton(element, { theme: 'outline', text: this.text(), width }, (idToken) => this.signIn(idToken))
         .catch((err: unknown) => {
           if (isDevMode()) console.warn('[google] GIS indisponível', err);
           this.available.set(false);
