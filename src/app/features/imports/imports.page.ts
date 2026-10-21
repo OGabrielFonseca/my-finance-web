@@ -121,7 +121,11 @@ export class ImportsPage implements OnInit {
   }
 
   protected categoryOptionsFor(item: ImportItem): { label: string; value: string }[] {
-    return item.type === 'INCOME' ? this.incomeOptions() : this.expenseOptions();
+    const options = item.type === 'INCOME' ? this.incomeOptions() : this.expenseOptions();
+    const suggested = item.suggestedCategory;
+    if (!suggested || options.some((option) => option.value === suggested.id)) return options;
+    // Categoria de sistema (ex.: "Transferência entre contas") não está na lista de ativas; entra só para este item.
+    return [{ label: suggested.name, value: suggested.id }, ...options];
   }
 
   protected categoryFor(item: ImportItem): string | null {
