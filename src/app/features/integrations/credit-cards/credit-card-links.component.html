@@ -1,0 +1,77 @@
+<p-card>
+  <header class="mb-3 flex flex-col">
+    <h2 class="m-0 text-lg font-semibold">{{ 'Cartões do banco' }}</h2>
+    <span class="text-sm text-muted-color">
+      {{ 'Cartões de crédito encontrados nos bancos. Vincule a um cartão existente ou crie um novo.' }}
+    </span>
+  </header>
+
+  @if (loaded() && !links().length) {
+    <app-empty-state message="Nenhum cartão encontrado. Sincronize um banco para buscar os cartões." />
+  }
+
+  <ul class="m-0 flex list-none flex-col gap-2 p-0">
+    @for (link of links(); track link.id) {
+      <li class="rounded-border border border-surface p-3" [class.opacity-60]="link.status === 'IGNORED'">
+        <div class="flex flex-wrap items-start justify-between gap-2">
+          <div class="flex flex-col gap-1">
+            <span class="flex flex-wrap items-center gap-2">
+              <span class="font-medium">{{ link.externalName }}</span>
+              @if (link.number) {
+                <span class="text-sm text-muted-color">{{ link.number }}</span>
+              }
+              <p-tag [severity]="statusSeverity(link.status)" [value]="statusLabel(link.status)" />
+            </span>
+
+            @if (link.creditLimit !== null) {
+              <span class="text-sm text-muted-color">{{ 'Limite' }}: {{ link.creditLimit | currency }}</span>
+            }
+
+            @if (link.status === 'LINKED' && link.creditCard) {
+              <span class="text-sm">
+                {{ 'Cartão do MyFinance' }}:
+                <a class="text-primary" [routerLink]="['/credit-cards', link.creditCard.id]">
+                  <strong>{{ link.creditCard.name }}</strong>
+                </a>
+                @if (link.importFrom) {
+                  · {{ 'importa desde' }} {{ link.importFrom | date: 'dd/MM/yyyy' }}
+                }
+              </span>
+            }
+
+            @if (link.status !== 'LINKED' && missingDays(link)) {
+              <span class="text-sm text-muted-color">
+                {{ 'A instituição não informou os dias de fechamento e vencimento: informe-os ao criar o cartão.' }}
+              </span>
+            }
+          </div>
+
+          <div class="flex flex-wrap gap-2">
+            @if (link.status === 'PENDING' || link.status === 'IGNORED') {
+              <p-button size="small" icon="pi pi-link" [label]="'Vincular'" (onClick)="linkCard(link)" />
+              <p-button
+                size="small"
+                severity="secondary"
+                icon="pi pi-plus"
+                [label]="'Criar cartão'"
+                (onClick)="createCard(link)"
+              />
+            }
+            @if (link.status === 'PENDING') {
+              <p-button size="small" severity="secondary" [text]="true" [label]="'Ignorar'" (onClick)="ignore(link)" />
+            }
+            @if (link.status === 'LINKED') {
+              <p-button
+                size="small"
+                severity="secondary"
+                [text]="true"
+                [label]="'Desvincular'"
+                (onClick)="unlink(link)"
+              />
+            }
+          </div>
+        </div>
+      </li>
+    }
+  </ul>
+</p-card>

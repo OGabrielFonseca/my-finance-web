@@ -815,7 +815,7 @@ Alinhadas ao roadmap e aos endpoints do backend (seções 6 e 7 do escopo-backen
 
 | Rota | Tela | Endpoints |
 |---|---|---|
-| `/integrations` | Credenciais da Pluggy, bancos conectados (renomear, excluir, conectar pelo widget, sincronizar), contas do banco (vincular, criar com data de corte, ignorar, ajustar saldo, alterar data de corte) e histórico paginado | `/integrations/pluggy`, `/integrations/pluggy/connect-token`, `/integrations/pluggy/connections`, `/integrations/pluggy/sync`, `/integrations/pluggy/accounts`, `/integrations/pluggy/accounts/{linkId}/import-from`, `/integrations/pluggy/logs` |
+| `/integrations` | Credenciais da Pluggy, bancos conectados (renomear, excluir, conectar pelo widget, sincronizar), contas do banco (vincular, criar com data de corte, ignorar, ajustar saldo, alterar data de corte), cartões do banco (vincular a cartão existente, criar cartão, ignorar, desvincular) e histórico paginado | `/integrations/pluggy`, `/integrations/pluggy/connect-token`, `/integrations/pluggy/connections`, `/integrations/pluggy/sync`, `/integrations/pluggy/accounts`, `/integrations/pluggy/accounts/{linkId}/import-from`, `/integrations/pluggy/credit-card-links`, `/integrations/pluggy/credit-card-links/{linkId}/link`, `/integrations/pluggy/credit-card-links/{linkId}/create-card`, `/integrations/pluggy/credit-card-links/{linkId}/ignore`, `/integrations/pluggy/credit-card-links/{linkId}/unlink`, `/integrations/pluggy/logs` |
 
 **Importações (fila de revisão, spec `docs/superpowers/specs/2026-10-15-importacoes-design.md`)**
 

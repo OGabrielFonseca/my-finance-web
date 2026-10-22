@@ -1,3 +1,5 @@
+import type { CreditCardSummary } from '@features/credit-cards';
+
 /** Espelha os DTOs de /integrations/{provider} (escrito à mão, sem geração de código). */
 export type IntegrationProvider = 'PLUGGY';
 export type ConnectionStatus = 'PENDING_SYNC' | 'OK' | 'ERROR' | 'SYNCING';
@@ -108,5 +110,34 @@ export interface CreateBankAccountRequest {
 }
 
 export interface ChangeImportFromRequest {
+  importFrom: string;
+}
+
+/** Conta CREDIT da Pluggy (GET /credit-card-links). Os dias podem faltar: a instituição não os informa. */
+export interface CreditCardLink {
+  id: string;
+  externalName: string;
+  number: string | null;
+  status: LinkStatus;
+  creditLimit: number | null;
+  closingDay: number | null;
+  dueDay: number | null;
+  creditCard: CreditCardSummary | null;
+  /** Pedido P4 ao backend: data de corte do vínculo. Ausente até o backend entregar. */
+  importFrom?: string | null;
+}
+
+export interface LinkCreditCardRequest {
+  creditCardId: string;
+  importFrom: string;
+}
+
+export interface CreateLinkedCreditCardRequest {
+  /** Omitido = nome da Pluggy. */
+  name?: string;
+  /** Obrigatório só quando a Pluggy não informa o dia. */
+  closingDay?: number;
+  dueDay?: number;
+  paymentAccountId: string;
   importFrom: string;
 }

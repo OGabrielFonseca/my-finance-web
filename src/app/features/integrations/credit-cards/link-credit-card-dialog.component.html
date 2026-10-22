@@ -1,0 +1,29 @@
+<form [formGroup]="form" (ngSubmit)="submit.submit()" class="flex flex-col gap-4">
+  <app-field label="Cartão do MyFinance" fieldId="link-card" [control]="form.controls.creditCardId">
+    <p-select
+      inputId="link-card"
+      formControlName="creditCardId"
+      [options]="cardOptions()"
+      optionLabel="label"
+      optionValue="value"
+      appendTo="body"
+    />
+  </app-field>
+
+  <app-field label="Importar compras desde" fieldId="link-card-import-from" [control]="form.controls.importFrom">
+    <p-datepicker
+      inputId="link-card-import-from"
+      formControlName="importFrom"
+      dateFormat="dd/mm/yy"
+      [minDate]="range.min"
+      [maxDate]="range.max"
+      appendTo="body"
+    />
+  </app-field>
+
+  <p class="m-0 text-sm text-muted-color">
+    {{ 'Compras de faturas anteriores a essa data não entram na fila.' }}
+  </p>
+
+  <app-form-footer [submit]="submit" (cancelled)="ref.close(false)" />
+</form>

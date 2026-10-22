@@ -22,6 +22,26 @@ describe('toApiError', () => {
     expect(error.fieldErrors).toEqual([{ field: 'name', message: 'não deve estar em branco' }]);
   });
 
+  it('lê itemId quando a API informa o item que falhou no lote', () => {
+    const error = toApiError(
+      new HttpErrorResponse({
+        status: 422,
+        error: { status: 422, code: 'integration.CATEGORY_REQUIRED', detail: 'Escolha uma categoria.', itemId: 'i1' },
+      }),
+    );
+    expect(error.itemId).toBe('i1');
+  });
+
+  it('itemId é nulo quando a API não informa', () => {
+    const error = toApiError(
+      new HttpErrorResponse({
+        status: 422,
+        error: { status: 422, code: 'integration.CATEGORY_REQUIRED', detail: 'x' },
+      }),
+    );
+    expect(error.itemId).toBeNull();
+  });
+
   it('status 0 é erro de rede', () => {
     expect(toApiError(new HttpErrorResponse({ status: 0 })).code).toBe(NETWORK_ERROR);
   });

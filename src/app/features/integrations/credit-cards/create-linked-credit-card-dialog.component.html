@@ -1,0 +1,41 @@
+<form [formGroup]="form" (ngSubmit)="submit.submit()" class="flex flex-col gap-4">
+  <app-field label="Nome" fieldId="create-card-name" [control]="form.controls.name">
+    <input pInputText id="create-card-name" formControlName="name" [placeholder]="link.externalName" class="w-full" />
+  </app-field>
+
+  @if (askClosingDay) {
+    <app-field label="Dia de fechamento" fieldId="create-card-closing" [control]="form.controls.closingDay">
+      <p-inputnumber inputId="create-card-closing" formControlName="closingDay" [min]="1" [max]="31" />
+    </app-field>
+  }
+
+  @if (askDueDay) {
+    <app-field label="Dia de vencimento" fieldId="create-card-due" [control]="form.controls.dueDay">
+      <p-inputnumber inputId="create-card-due" formControlName="dueDay" [min]="1" [max]="31" />
+    </app-field>
+  }
+
+  <app-field label="Conta que paga a fatura" fieldId="create-card-account" [control]="form.controls.paymentAccountId">
+    <p-select
+      inputId="create-card-account"
+      formControlName="paymentAccountId"
+      [options]="accountOptions()"
+      optionLabel="label"
+      optionValue="value"
+      appendTo="body"
+    />
+  </app-field>
+
+  <app-field label="Importar compras desde" fieldId="create-card-import-from" [control]="form.controls.importFrom">
+    <p-datepicker
+      inputId="create-card-import-from"
+      formControlName="importFrom"
+      dateFormat="dd/mm/yy"
+      [minDate]="range.min"
+      [maxDate]="range.max"
+      appendTo="body"
+    />
+  </app-field>
+
+  <app-form-footer [submit]="submit" (cancelled)="ref.close(false)" />
+</form>

@@ -12,11 +12,14 @@ import type {
   ConnectTokenResponse,
   ChangeImportFromRequest,
   CreateBankAccountRequest,
+  CreateLinkedCreditCardRequest,
+  CreditCardLink,
   Integration,
   IntegrationConnection,
   IntegrationLog,
   IntegrationProvider,
   LinkAccountRequest,
+  LinkCreditCardRequest,
   RegisterConnectionRequest,
   RenameConnectionRequest,
   SaveIntegrationRequest,
@@ -111,5 +114,34 @@ export class IntegrationApiService {
 
   adjustBalance(linkId: string): Observable<BankAccountLink> {
     return this.http.post<BankAccountLink>(`${this.url}/accounts/${linkId}/adjust-balance`, null);
+  }
+
+  /** Contas CREDIT da Pluggy, todas (mesma paginação de accounts()). */
+  creditCardLinks(): Observable<CreditCardLink[]> {
+    return this.http
+      .get<PageResponse<CreditCardLink>>(`${this.url}/credit-card-links`, {
+        params: toHttpParams({}, { page: 0, size: MAX_PAGE_SIZE }),
+      })
+      .pipe(map((page) => page.items));
+  }
+
+  linkCreditCard(linkId: string, body: LinkCreditCardRequest, context?: HttpContext): Observable<CreditCardLink> {
+    return this.http.post<CreditCardLink>(`${this.url}/credit-card-links/${linkId}/link`, body, { context });
+  }
+
+  createLinkedCreditCard(
+    linkId: string,
+    body: CreateLinkedCreditCardRequest,
+    context?: HttpContext,
+  ): Observable<CreditCardLink> {
+    return this.http.post<CreditCardLink>(`${this.url}/credit-card-links/${linkId}/create-card`, body, { context });
+  }
+
+  ignoreCreditCard(linkId: string): Observable<CreditCardLink> {
+    return this.http.post<CreditCardLink>(`${this.url}/credit-card-links/${linkId}/ignore`, null);
+  }
+
+  unlinkCreditCard(linkId: string): Observable<CreditCardLink> {
+    return this.http.post<CreditCardLink>(`${this.url}/credit-card-links/${linkId}/unlink`, null);
   }
 }

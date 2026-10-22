@@ -25,7 +25,7 @@ const STATUS_LABELS: Record<LinkStatus, string> = {
   PENDING: 'Nova conta encontrada',
   LINKED: 'Vinculada',
   IGNORED: 'Ignorada',
-  UNSUPPORTED: 'Cartão: em breve',
+  UNSUPPORTED: 'Tipo ainda não suportado',
 };
 
 const money = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' });

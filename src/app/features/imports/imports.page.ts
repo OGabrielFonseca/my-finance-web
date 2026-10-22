@@ -7,6 +7,7 @@ import { FilterBarComponent } from '@shared/crud/filter';
 import type { FilterField, LookupOption } from '@shared/crud/filter';
 import { injectCrudList } from '@shared/crud/list';
 import { EnumLabelPipe } from '@shared/i18n/enum-labels';
+import type { ApiError } from '@shared/data';
 import { EmptyStateComponent, MoneyComponent, NotifierService } from '@shared/ui';
 import { ConfirmationService } from 'primeng/api';
 import { Button } from 'primeng/button';
@@ -21,7 +22,7 @@ import type { BankAccountLink } from '../integrations/data/integration.model';
 import { ImportApiService } from './data/import-api.service';
 import { ImportCountStore } from './data/import-count.store';
 import type { ImportFilter, ImportItem } from './data/import.model';
-import { IMPORT_STATUSES, toApproveRequest } from './data/import.model';
+import { IMPORT_STATUSES, isInvoicePayment, toApproveRequest } from './data/import.model';
 
 const PAGE_SIZE = 50;
 
@@ -89,6 +90,11 @@ export class ImportsPage implements OnInit {
   /** Categoria escolhida por item. Começa com a sugestão; o usuário pode trocar linha a linha. */
   protected readonly categoryByItem = signal<ReadonlyMap<string, string>>(new Map());
 
+  /** Item que a API recusou numa aprovação em lote (pedido P5; nulo quando a API não informa). */
+  protected readonly failedItemId = signal<string | null>(null);
+
+  protected readonly isInvoicePayment = isInvoicePayment;
+
   private readonly incomeOptions = computed(() => this.categoryOptions('INCOME'));
   private readonly expenseOptions = computed(() => this.categoryOptions('EXPENSE'));
 
@@ -139,15 +145,28 @@ export class ImportsPage implements OnInit {
     this.categoryByItem.set(next);
   }
 
+  /** Aprova se há categoria ou se é sugestão de pagamento de fatura (que dispensa categoria). */
+  protected isApprovable(item: ImportItem): boolean {
+    return isInvoicePayment(item) || !!this.categoryFor(item);
+  }
+
   protected approve(items: readonly ImportItem[]): void {
     const pending = items.filter((item) => item.status === 'PENDING');
     const { request, withoutCategory } = toApproveRequest(pending, this.categoryByItem());
     if (!request.items.length) return;
 
     const run = (): void => {
-      this.api.approve(request).subscribe(({ approved }) => {
-        this.notifier.success(`${approved} ${approved === 1 ? 'lançamento criado' : 'lançamentos criados'}`);
-        this.afterChange();
+      this.failedItemId.set(null);
+      this.api.approve(request).subscribe({
+        next: ({ approved }) => {
+          this.notifier.success(`${approved} ${approved === 1 ? 'lançamento criado' : 'lançamentos criados'}`);
+          this.afterChange();
+        },
+        // O errorInterceptor já mostrou o detail; aqui só marcamos a linha, se a API informar qual é.
+        error: (error: unknown) => {
+          const itemId = (error as Partial<ApiError>).itemId ?? null;
+          this.failedItemId.set(itemId);
+        },
       });
     };
     if (!withoutCategory) return run();

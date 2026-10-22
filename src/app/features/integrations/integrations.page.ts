@@ -16,6 +16,7 @@ import { TableModule } from 'primeng/table';
 import { firstValueFrom } from 'rxjs';
 
 import { BankAccountsComponent } from './accounts/bank-accounts.component';
+import { CreditCardLinksComponent } from './credit-cards/credit-card-links.component';
 import { IntegrationCredentialsComponent } from './credentials/integration-credentials.component';
 import { IntegrationApiService } from './data/integration-api.service';
 import type {
@@ -48,6 +49,7 @@ const OPERATION_LABELS: Partial<Record<string, string>> = {
   SYNC: 'Sincronização',
   LINK_ACCOUNT: 'Conta vinculada',
   BALANCE_ADJUSTMENT: 'Ajuste de saldo',
+  CARD_LINK: 'Cartão vinculado',
 };
 
 @Component({
@@ -58,6 +60,7 @@ const OPERATION_LABELS: Partial<Record<string, string>> = {
     DatePipe,
     IntegrationCredentialsComponent,
     BankAccountsComponent,
+    CreditCardLinksComponent,
     ReactiveFormsModule,
     Button,
     Card,
@@ -76,6 +79,7 @@ export class IntegrationsPage {
   private readonly notifier = inject(NotifierService);
   private readonly count = inject(ImportCountStore);
   private readonly bankAccounts = viewChild(BankAccountsComponent);
+  private readonly creditCardLinks = viewChild(CreditCardLinksComponent);
 
   protected readonly integration = signal<Integration | null>(null);
   protected statusLabel(status: ConnectionStatus): string {
@@ -129,6 +133,7 @@ export class IntegrationsPage {
     this.load();
     this.logs.reload();
     this.bankAccounts()?.reload();
+    this.creditCardLinks()?.reload();
     this.count.refresh();
   }
 
